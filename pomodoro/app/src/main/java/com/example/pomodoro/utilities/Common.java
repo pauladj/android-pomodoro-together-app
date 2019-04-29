@@ -1,3 +1,4 @@
+package com.example.pomodoro.utilities;/*
 package com.example.pomodoro.utilities;
 
 import android.content.Context;
@@ -31,11 +32,13 @@ public class Common extends LanguageActivity  implements AsyncTaskFragment.TaskC
         }
     }
 
-    /**
+    */
+/**
      * Show a toast in the view
      * @param acrossWindows - if true the toast does not disappear when view changes
      * @param messageId - the message id to show
-     */
+     *//*
+
     public void showToast(Boolean acrossWindows, int messageId){
         int tiempo = Toast.LENGTH_SHORT;
         Context context;
@@ -49,10 +52,12 @@ public class Common extends LanguageActivity  implements AsyncTaskFragment.TaskC
         aviso.show();
     }
 
-    /**
+    */
+/**
      * Get the active username
      * @param - the active username (token)
-     */
+     *//*
+
     public String getActiveUsername(){
         SharedPreferences prefs_especiales= getSharedPreferences(
                 "preferencias_especiales",
@@ -61,10 +66,12 @@ public class Common extends LanguageActivity  implements AsyncTaskFragment.TaskC
         return prefs_especiales.getString("activeUsername", null);
     }
 
-    /**
+    */
+/**
      * Set the active username
      * @param username - the active username
-     */
+     *//*
+
     public void setActiveUsername(String username){
         SharedPreferences prefs_especiales= getSharedPreferences(
                 "preferencias_especiales",
@@ -75,13 +82,22 @@ public class Common extends LanguageActivity  implements AsyncTaskFragment.TaskC
         editor2.apply();
     }
 
-    /**
+    */
+
+import com.example.pomodoro.utilities.LanguageActivity;
+
+/**
      * Get the fragment containing the asynctask
      * @return - The async task fragment
-     */
+     *//*
+
     public AsyncTaskFragment getmTaskFragment(){
         return mTaskFragment;
     }
 
+
+}
+*/
+public class Common extends LanguageActivity {
 
 }

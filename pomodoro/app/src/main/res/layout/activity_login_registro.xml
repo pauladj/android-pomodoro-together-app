@@ -21,7 +21,7 @@ tools:context=".LoginRegistroActivity">
     android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
 
 
-<android.support.v7.view.ViewPager
+<android.support.v4.view.ViewPager
     android:id="@+id/viewPager"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
