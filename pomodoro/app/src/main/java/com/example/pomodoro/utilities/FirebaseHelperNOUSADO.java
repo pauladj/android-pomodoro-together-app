@@ -9,13 +9,13 @@ import com.example.pomodoro.models.Project;
 
 import java.util.ArrayList;
 
-public class FirebaseHelper {
+public class FirebaseHelperNOUSADO {
 
     DatabaseReference db;
     Boolean saved = null;
     ArrayList<String> projects = new ArrayList<>();
 
-    public FirebaseHelper(DatabaseReference db) {
+    public FirebaseHelperNOUSADO(DatabaseReference db) {
         this.db = db;
     }
 
