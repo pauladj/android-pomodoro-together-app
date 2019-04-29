@@ -16,7 +16,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 
-public class MainActivity extends MainToolbar {
+public class ProyectosActivity extends MainToolbar {
 
     DatabaseReference databaseReference;
     ProgressDialog progressDialog;
@@ -36,10 +36,10 @@ public class MainActivity extends MainToolbar {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL,
          false));
-        adapter = new MyAdapter(MainActivity.this, list);
+        adapter = new MyAdapter(ProyectosActivity.this, list);
         recyclerView.setAdapter(adapter);
 
-        progressDialog = new ProgressDialog(MainActivity.this);
+        progressDialog = new ProgressDialog(ProyectosActivity.this);
         progressDialog.setMessage("Loading Data from Firebase Database");
         progressDialog.show();
 
@@ -66,7 +66,11 @@ public class MainActivity extends MainToolbar {
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
+                Project proyecto = dataSnapshot.getValue(Project.class);
+                int index = list.indexOf(proyecto);
+                list.remove(index);
 
+                adapter.notifyItemRemoved(index);
             }
 
             @Override
