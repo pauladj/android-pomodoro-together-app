@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/menuTags"
+        android:icon="@drawable/ic_label"
+        android:title="@string/menuTag"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/menuMaps"
+        android:icon="@drawable/ic_maps"
+        android:title="@string/menuMaps"
+        app:showAsAction="ifRoom" />
+
+    <!-- Only show in landscape mode -->
+    <item
+        android:id="@+id/menuCalendar"
+        android:icon="@drawable/ic_calendar"
+        android:title="@string/menuCalendar"
+        android:visible="false"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/menuEdit"
+        android:icon="@drawable/ic_edit"
+        android:title="@string/menuEdit"
+        android:visible="false"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/menuDelete"
+        android:icon="@drawable/ic_delete"
+        android:title="@string/menuDelete"
+        android:visible="false"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/menuSendEmail"
+        android:icon="@drawable/ic_email"
+        android:title="@string/menuSendEmail"
+        android:visible="false"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/menuUploadToDrive"
+        android:icon="@drawable/ic_upload"
+        android:title="@string/menuUploadToDrive"
+        android:visible="false"
+        app:showAsAction="ifRoom" />
+    <!-- end -->
+
+    <item
+        android:id="@+id/menuSettings"
+        android:icon="@drawable/ic_settings"
+        android:title="@string/menuSettings"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menuLogout"
+        android:title="@string/menuLogout"
+        app:showAsAction="never" />
+
+</menu>
