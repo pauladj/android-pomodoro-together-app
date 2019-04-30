@@ -10,7 +10,7 @@ import android.widget.ImageView;
 public class MainActivity extends AppCompatActivity {
 
     private ImageView imagen;
-    private final int DURACION_SPLASH = 200; // 2 segundos
+    private final int DURACION_SPLASH = 800; // 2 segundos
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -65,4 +65,9 @@ public class LoginRegistroActivity extends AppCompatActivity implements loginfra
     public void onFragmentInteraction(Uri uri) {
 
     }
+
+    @Override
+    public void onFragmentInteractionlogin(Uri uri) {
+
+    }
 }
