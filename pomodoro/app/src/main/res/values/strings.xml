@@ -3,4 +3,8 @@
     <string name="menuEdit">Edit</string>
     <string name="nuevoPomodoro">New Pomodoro</string>
     <string name="loadingData">Loading data...</string>
+    <string name="encurso">Online</string>
+    <string name="myProjects">My Projects</string>
+    <string name="activePomodoro">Active Pomodoro</string>
+    <string name="settings">Settings</string>
 </resources>

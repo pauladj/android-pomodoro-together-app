@@ -1,0 +1,17 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/projects"
+        android:title= "@string/myProjects"
+        android:icon="@drawable/ic_reorder"/>
+
+    <item
+        android:id="@+id/active"
+        android:title= "@string/activePomodoro"
+        android:icon="@drawable/ic_clock"/>
+
+    <item
+        android:id="@+id/settings"
+        android:title= "@string/settings"
+        android:icon="@drawable/ic_settings"/>
+
+</menu>
