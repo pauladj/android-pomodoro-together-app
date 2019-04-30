@@ -9,5 +9,10 @@
     <string name="settings">Configuración</string>
     <string name="addProject">Proyecto</string>
     <string name="logout">Cerrar sesión</string>
+    <string name="projectName">Nombre del Proyecto</string>
+    <string name="newProject">Nuevo proyecto</string>
+    <string name="create">Crear</string>
+    <string name="cancel">Cancelar</string>
+    <string name="projectCreated">El proyecto se ha creado</string>
 
 </resources>
