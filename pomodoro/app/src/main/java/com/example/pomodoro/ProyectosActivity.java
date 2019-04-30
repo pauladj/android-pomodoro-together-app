@@ -2,10 +2,13 @@ package com.example.pomodoro;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 import com.example.pomodoro.models.Project;
+import com.example.pomodoro.models.UserProyectos;
 import com.example.pomodoro.recyclerView.MyAdapter;
 import com.example.pomodoro.utilities.MainToolbar;
 import com.google.firebase.database.ChildEventListener;
@@ -13,12 +16,15 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
 public class ProyectosActivity extends MainToolbar {
 
-    DatabaseReference databaseReference;
+    DatabaseReference databaseReferenceUserProyectos;
+    DatabaseReference databaseReferenceProyectos;
     ProgressDialog progressDialog;
     ArrayList<Project> list = new ArrayList<>();
     RecyclerView recyclerView;
@@ -40,33 +46,92 @@ public class ProyectosActivity extends MainToolbar {
         recyclerView.setAdapter(adapter);
 
         progressDialog = new ProgressDialog(ProyectosActivity.this);
-        progressDialog.setMessage("Loading Data from Firebase Database");
+        progressDialog.setMessage(getResources().getString(R.string.loadingData));
         progressDialog.show();
 
-        databaseReference = FirebaseDatabase.getInstance().getReference("Proyectos");
-        databaseReference.addChildEventListener(new ChildEventListener() {
+        String actualUser = getActiveUsername();
+        actualUser = "nombreUsuario";
+
+        databaseReferenceUserProyectos =
+                FirebaseDatabase.getInstance().getReference("UserProyectos");
+        Query query = databaseReferenceUserProyectos.orderByChild("user").equalTo(actualUser);
+
+        databaseReferenceProyectos = FirebaseDatabase.getInstance().getReference("Proyectos");
+
+        query.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                Project proyecto = dataSnapshot.getValue(Project.class);
-                list.add(proyecto);
+                UserProyectos userProyecto = dataSnapshot.getValue(UserProyectos.class);
+                databaseReferenceProyectos.child(userProyecto.getProyecto()).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        Project proyecto = dataSnapshot.getValue(Project.class);
+                        proyecto.setKey(dataSnapshot.getKey());
+                        list.add(proyecto);
 
-                adapter.notifyItemInserted(list.size()-1);
+                        adapter.notifyItemInserted(list.size()-1);
 
-                progressDialog.dismiss();
+                        if (progressDialog != null){
+                            progressDialog.dismiss();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+                databaseReferenceProyectos.addChildEventListener(new ChildEventListener() {
+                    @Override
+                    public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                    }
+
+                    @Override
+                    public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                        Project proyecto = dataSnapshot.getValue(Project.class);
+                        proyecto.setKey(dataSnapshot.getKey());
+                        int index = list.indexOf(proyecto);
+                        if (index != -1) {
+                            list.set(index, proyecto);
+
+                            adapter.notifyItemChanged(index);
+
+                        }
+                    }
+
+                    @Override
+                    public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+                    }
+
+                    @Override
+                    public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+
+
+                });
             }
 
             @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                Project proyecto = dataSnapshot.getValue(Project.class);
-                int index = list.indexOf(proyecto);
-                list.set(index, proyecto);
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
-                adapter.notifyItemChanged(index);
             }
+
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
-                Project proyecto = dataSnapshot.getValue(Project.class);
+                UserProyectos userProyecto = dataSnapshot.getValue(UserProyectos.class);
+                String proyectoKey = userProyecto.getProyecto();
+                Project proyecto = new Project();
+                proyecto.setKey(proyectoKey);
                 int index = list.indexOf(proyecto);
                 list.remove(index);
 
@@ -74,9 +139,10 @@ public class ProyectosActivity extends MainToolbar {
             }
 
             @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
             }
+
 
             @Override
             public void onCancelled(DatabaseError databaseError) {

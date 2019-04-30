@@ -3,9 +3,9 @@ package com.example.pomodoro.models;
 public class Project {
 
     private String nombre;
-    private int numeroMiembros;
     private String estado;
-    private String timestamp;
+
+    private String key;
 
     public Project(){
 
@@ -28,22 +28,6 @@ public class Project {
     }
 
     /**
-     * Obtener el número de miembros del proyecto
-     * @return - el número
-     */
-    public int getNumeroMiembros(){
-        return numeroMiembros;
-    }
-
-    /**
-     * Cambiar el número de miembros del proyecto
-     * @param numeroMiembros - el número de miembros
-     */
-    public void setNumeroMiembros(int numeroMiembros){
-        this.numeroMiembros = numeroMiembros;
-    }
-
-    /**
      * Obtener estado
      * @return
      */
@@ -60,19 +44,19 @@ public class Project {
     }
 
     /**
-     * Obtener el timestamp
-     * @return - el timestamp
+     * Obtener la clave
+     * @return - la clave
      */
-    public String getTimestamp(){
-        return timestamp;
+    public String getKey(){
+        return key;
     }
 
     /**
-     * Set the new timestamp
-     * @param timestamp
+     * Set the new key
+     * @param key
      */
-    public void setTimestamp(String timestamp){
-        this.timestamp = timestamp;
+    public void setKey(String key){
+        this.key = key;
     }
 
     /**
@@ -86,10 +70,12 @@ public class Project {
         if (o == this) return true;
 
         Project a = (Project) o;
-        if (timestamp == a.getTimestamp()) {
+        String otherKey = a.getKey();
+        if (key.equals(otherKey)) {
             return true;
         }else{
             return false;
         }
     }
+
 }

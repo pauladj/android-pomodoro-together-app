@@ -51,14 +51,6 @@
                     android:id="@+id/estadoProyecto"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_toStartOf="@+id/numMiembrosProyecto"
-                    android:text="TextView"
-                    />
-
-                <TextView
-                    android:id="@+id/numMiembrosProyecto"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:text="TextView"
                     />

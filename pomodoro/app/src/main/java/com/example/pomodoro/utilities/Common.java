@@ -32,65 +32,66 @@ public class Common extends LanguageActivity  implements AsyncTaskFragment.TaskC
     }
 **/
 
+/**
+ * Get the fragment containing the asynctask
+ *
+ * @return - The async task fragment
+ */
+
+/**
+ public AsyncTaskFragment getmTaskFragment(){
+ return mTaskFragment;
+ }
+
+
+ }
+ */
+
+public class Common extends LanguageActivity {
+
     /**
      * Show a toast in the view
      * @param acrossWindows - if true the toast does not disappear when view changes
      * @param messageId - the message id to show
      */
-    /**
-    public void showToast(Boolean acrossWindows, int messageId){
+
+    public void showToast(Boolean acrossWindows, int messageId) {
         int tiempo = Toast.LENGTH_SHORT;
         Context context;
-        if (acrossWindows){
+        if (acrossWindows) {
             context = getApplicationContext();
-        }else{
+        } else {
             context = this;
         }
         Toast aviso = Toast.makeText(context, getResources().getString(messageId), tiempo);
-        aviso.setGravity(Gravity.BOTTOM| Gravity.CENTER, 0, 100);
+        aviso.setGravity(Gravity.BOTTOM | Gravity.CENTER, 0, 100);
         aviso.show();
     }
-**/
+
     /**
      * Get the active username
      * @param - the active username (token)
      */
-    /**
-    public String getActiveUsername(){
-        SharedPreferences prefs_especiales= getSharedPreferences(
+    public String getActiveUsername() {
+        SharedPreferences prefs_especiales = getSharedPreferences(
                 "preferencias_especiales",
                 Context.MODE_PRIVATE);
 
         return prefs_especiales.getString("activeUsername", null);
     }
-**/
+
     /**
      * Set the active username
      * @param username - the active username
      */
-    /**
-    public void setActiveUsername(String username){
-        SharedPreferences prefs_especiales= getSharedPreferences(
+
+    public void setActiveUsername(String username) {
+        SharedPreferences prefs_especiales = getSharedPreferences(
                 "preferencias_especiales",
                 Context.MODE_PRIVATE);
 
-        SharedPreferences.Editor editor2= prefs_especiales.edit();
+        SharedPreferences.Editor editor2 = prefs_especiales.edit();
         editor2.putString("activeUsername", username);
         editor2.apply();
     }
-**/
-    /**
-     * Get the fragment containing the asynctask
-     * @return - The async task fragment
-     */
-    /**
-    public AsyncTaskFragment getmTaskFragment(){
-        return mTaskFragment;
-    }
-
-
 }
-*/
-
-    public class Common extends LanguageActivity  {
-    }

@@ -34,7 +34,6 @@ public class MyAdapter extends RecyclerView.Adapter<ViewHolder> {
         Project project = proyectos.get(position);
         holder.nombreProyecto.setText(project.getNombre());
         holder.estadoProyecto.setText(project.getEstado());
-        holder.numMiembrosProyecto.setText(String.valueOf(project.getNumeroMiembros()));
     }
 
     @Override

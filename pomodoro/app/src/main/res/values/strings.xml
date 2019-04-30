@@ -2,5 +2,5 @@
     <string name="app_name">Notes.</string>
     <string name="menuEdit">Edit</string>
     <string name="nuevoPomodoro">New Pomodoro</string>
-
+    <string name="loadingData">Loading data...</string>
 </resources>
