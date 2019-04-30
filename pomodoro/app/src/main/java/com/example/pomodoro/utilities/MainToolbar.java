@@ -47,7 +47,7 @@ public class MainToolbar extends Common {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id=item.getItemId();
 
-        if (id == R.id.menuEdit){
+        if (id == R.id.menuLogout){
 
         }
 
