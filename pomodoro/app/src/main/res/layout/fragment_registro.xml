@@ -77,12 +77,7 @@
             app:backgroundTint="@color/colorPrimary"
             android:text="guardar"/>
 
-        <Button
-            android:id="@+id/btnCancelar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:backgroundTint="@color/colorPrimary"
-            android:text="cancelar" />
+
 
     </LinearLayout>
 
