@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Notes.</string>
+    <string name="app_name">this.Pomodoro</string>
     <string name="menuEdit">Editar</string>
     <string name="nuevoPomodoro">Pomodoro</string>
     <string name="loadingData">Cargando datos...</string>
@@ -7,6 +7,7 @@
     <string name="myProjects">Mis Proyectos</string>
     <string name="activePomodoro">Pomodoro Activo</string>
     <string name="settings">Configuración</string>
+    <string name="active">Activo</string>
     <string name="addProject">Proyecto</string>
     <string name="logout">Cerrar sesión</string>
     <string name="projectName">Nombre del Proyecto</string>
@@ -14,5 +15,9 @@
     <string name="create">Crear</string>
     <string name="cancel">Cancelar</string>
     <string name="projectCreated">El proyecto se ha creado</string>
+    <string name="error">Se ha producido un error</string>
+    <string name="pomodoroNotActive">El pomodoro no está activo</string>
+    <string name="work">Trabajar</string>
+    <string name="descansar">Descansar</string>
 
 </resources>

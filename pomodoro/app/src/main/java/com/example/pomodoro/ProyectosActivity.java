@@ -1,6 +1,6 @@
 package com.example.pomodoro;
 
-import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -15,16 +15,12 @@ import com.example.pomodoro.models.Project;
 import com.example.pomodoro.models.UserProyectos;
 import com.example.pomodoro.recyclerView.MyAdapter;
 import com.example.pomodoro.utilities.MainToolbar;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.FirebaseError;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Query;
-import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -34,7 +30,6 @@ public class ProyectosActivity extends MainToolbar implements NuevoProyecto.List
     private DatabaseReference databaseReference;
     private DatabaseReference databaseReferenceUserProyectos;
     private DatabaseReference databaseReferenceProyectos;
-    private ProgressDialog progressDialog;
     private ArrayList<Project> list = new ArrayList<>();
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
@@ -45,7 +40,7 @@ public class ProyectosActivity extends MainToolbar implements NuevoProyecto.List
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // load main activity with fragment(s)
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_proyectos);
         // load top toolbar
         loadToolbar();
 
@@ -54,17 +49,37 @@ public class ProyectosActivity extends MainToolbar implements NuevoProyecto.List
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL,
          false));
         adapter = new MyAdapter(ProyectosActivity.this, list);
-        recyclerView.setAdapter(adapter);
+        // Add listeners
+        ((MyAdapter) adapter).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Se clicka en un proyecto
+                int clickedPosition = recyclerView.getChildAdapterPosition(v);
 
-        progressDialog = new ProgressDialog(ProyectosActivity.this);
-        progressDialog.setMessage(getResources().getString(R.string.loadingData));
-        progressDialog.show();
+                try {
+                    // obtener el proyecto correspondiente a la posición
+                    Project proyecto = list.get(clickedPosition);
+
+                    // abrir actividad para ver los pomodoros dentro del proyecto
+                    Intent i = new Intent(ProyectosActivity.this, ProyectoPomodorosActivity.class);
+                    i.putExtra("projectKey", proyecto.getKey());
+                    i.putExtra("projectName", proyecto.getNombre());
+                    startActivity(i);
+                }catch (IndexOutOfBoundsException e){
+                    showToast(false, R.string.error);
+                }
+
+            }
+        });
+
+        recyclerView.setAdapter(adapter);
 
         String actualUser = getActiveUsername();
         actualUser = "nombreUsuario"; // TODO
 
         // Add listener to bottom menu
         BottomNavigationView bottomMenu = findViewById(R.id.bottomNavigationView);
+        selectProjects(bottomMenu);
         addListenerToBottomMenu(bottomMenu);
 
         // Sincronizar proyectos
@@ -89,9 +104,6 @@ public class ProyectosActivity extends MainToolbar implements NuevoProyecto.List
 
                         adapter.notifyItemInserted(list.size()-1);
 
-                        if (progressDialog != null){
-                            progressDialog.dismiss();
-                        }
                     }
 
                     @Override
@@ -164,7 +176,7 @@ public class ProyectosActivity extends MainToolbar implements NuevoProyecto.List
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                progressDialog.dismiss();
+                showToast(false, R.string.error);
             }
         });
 
@@ -195,6 +207,11 @@ public class ProyectosActivity extends MainToolbar implements NuevoProyecto.List
         databaseReferenceProyectos.push().setValue(nuevoProyecto, new DatabaseReference.CompletionListener() {
             @Override
             public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                if (databaseError != null){
+                    // error
+                    showToast(false, R.string.error);
+                    return;
+                }
                 String key = databaseReference.getKey();
                 UserProyectos userProyecto = new UserProyectos();
 
@@ -206,6 +223,11 @@ public class ProyectosActivity extends MainToolbar implements NuevoProyecto.List
                 databaseReferenceUserProyectos.push().setValue(userProyecto, new DatabaseReference.CompletionListener() {
                     @Override
                     public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                        if (databaseError != null){
+                            // error
+                            showToast(false, R.string.error);
+                            return;
+                        }
                         showToast(true, R.string.projectCreated);
                     }
                 });
@@ -213,8 +235,6 @@ public class ProyectosActivity extends MainToolbar implements NuevoProyecto.List
         });
 
 
-        // TODO fallos, mirar que pasa si no hay internet, el problema es con el nombre user que
-        // no va no se porque
-
+        // TODO fallos, mirar que pasa si no hay internet
     }
 }

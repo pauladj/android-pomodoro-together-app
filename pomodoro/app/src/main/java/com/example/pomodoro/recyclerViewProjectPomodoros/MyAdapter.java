@@ -1,13 +1,13 @@
-package com.example.pomodoro.recyclerView;
+package com.example.pomodoro.recyclerViewProjectPomodoros;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.pomodoro.R;
+import com.example.pomodoro.models.Pomodoro;
 import com.example.pomodoro.models.Project;
 
 import java.util.ArrayList;
@@ -16,13 +16,13 @@ import java.util.ArrayList;
 public class MyAdapter extends RecyclerView.Adapter<ViewHolder>  implements View.OnClickListener {
 
     Context c;
-    ArrayList<Project> proyectos;
+    ArrayList<Pomodoro> pomodoros;
 
     private View.OnClickListener listener;
 
-    public MyAdapter(Context c, ArrayList<Project> proyectos) {
+    public MyAdapter(Context c, ArrayList<Pomodoro> pomodoros) {
         this.c = c;
-        this.proyectos = proyectos;
+        this.pomodoros = pomodoros;
     }
 
     @Override
@@ -35,17 +35,18 @@ public class MyAdapter extends RecyclerView.Adapter<ViewHolder>  implements View
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        Project project = proyectos.get(position);
-        holder.nombreProyecto.setText(project.getNombre());
-        if (project.getEstado().equals("ACTIVO")){
-            // si hay un pomodoro activo dentro mostrarlo aquí
-            holder.estadoProyecto.setText(R.string.active);
+        Pomodoro pomodoro = pomodoros.get(position);
+        holder.minutosTrabajo.setText(String.valueOf(pomodoro.getWork()));
+        holder.minutosDescanso.setText(String.valueOf(pomodoro.getRelax()));
+        if (pomodoro.getEmpezado()){
+            // El pomodoro está iniciado
+            holder.estado.setText(R.string.active);
         }
     }
 
     @Override
     public int getItemCount() {
-        return proyectos.size();
+        return pomodoros.size();
     }
 
 

@@ -127,4 +127,12 @@ public class Common extends LanguageActivity {
             }
         });
     }
+
+    /**
+     * Change the UI of the bottom menu
+     * @param bottomMenu
+     */
+    public void selectProjects(final BottomNavigationView bottomMenu){
+        bottomMenu.setSelectedItemId(R.id.projects);
+    }
 }

@@ -20,6 +20,15 @@ public class MainToolbar extends Common {
         setSupportActionBar(toolbar);
     }
 
+    /**
+     * Loads top toolbar
+     */
+    public void loadToolbar(String title){
+        Toolbar toolbar = (Toolbar)findViewById(R.id.labarra);
+        toolbar.setTitle(title);
+        setSupportActionBar(toolbar);
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_toolbar, menu);
