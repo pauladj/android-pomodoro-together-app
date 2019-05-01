@@ -31,7 +31,6 @@ public class ProyectoPomodorosActivity extends MainToolbar implements ConfirmAba
 
     private String projectKey; // de que proyecto son los pomodoros
 
-    private DatabaseReference databaseReference;
     private DatabaseReference databaseReferenceUserProyectos;
     private DatabaseReference databaseReferenceProyectosPomodoro;
 
@@ -123,8 +122,6 @@ public class ProyectoPomodorosActivity extends MainToolbar implements ConfirmAba
      */
     private void databaseSincronizacion(){
         // Sincronizar pomodoros
-        databaseReference = FirebaseDatabase.getInstance().getReference();
-
         databaseReferenceUserProyectos = FirebaseDatabase.getInstance().getReference(
                 "UserProyectos");
 
@@ -244,6 +241,8 @@ public class ProyectoPomodorosActivity extends MainToolbar implements ConfirmAba
         userProyecto.setUsuario(username);
         userProyecto.setProyecto(projectKey);
 
+        // Se utilizan transacciones para evitar que un mismo usuario sea añadido más de una vez
+        // al mismo proyecto.
         databaseReferenceUserProyectos.runTransaction(new Transaction.Handler() {
             @NonNull
             @Override
