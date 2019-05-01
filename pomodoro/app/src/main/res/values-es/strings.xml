@@ -24,4 +24,8 @@
     <string name="projectAbandoned">El proyecto se ha abandonado</string>
     <string name="confirmarAbandono">Abandonar proyecto</string>
     <string name="confirmarAbandono_body">¿Estás seguro de que quieres abandonar y eliminar este proyecto?</string>
+    <string name="addUserToProject">Añadir usuario</string>
+    <string name="userAddedToProject">El usuario se ha añadido correctamente al proyecto</string>
+    <string name="username">Nombre de usuario</string>
+
 </resources>

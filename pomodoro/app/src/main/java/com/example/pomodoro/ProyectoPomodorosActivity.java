@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.View;
 
+import com.example.pomodoro.dialogs.AddUserToProject;
 import com.example.pomodoro.dialogs.ConfirmAbandonarProyecto;
 import com.example.pomodoro.models.Pomodoro;
 import com.example.pomodoro.models.UserProyectos;
@@ -19,12 +20,14 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-public class ProyectoPomodorosActivity extends MainToolbar implements ConfirmAbandonarProyecto.ListenerDelDialogo {
+public class ProyectoPomodorosActivity extends MainToolbar implements ConfirmAbandonarProyecto.ListenerDelDialogo, AddUserToProject.ListenerDelDialogo {
 
     private String projectKey; // de que proyecto son los pomodoros
 
@@ -194,6 +197,7 @@ public class ProyectoPomodorosActivity extends MainToolbar implements ConfirmAba
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot oneData : dataSnapshot.getChildren()){
                     UserProyectos userProyecto = oneData.getValue(UserProyectos.class);
+                    // la clave de la relación entre usuario y proyecto
                     String key = oneData.getKey();
                     if (userProyecto.getProyecto().equals(projectKey)){
                         databaseReferenceUserProyectos.child(key).removeValue(new DatabaseReference.CompletionListener() {
@@ -216,6 +220,54 @@ public class ProyectoPomodorosActivity extends MainToolbar implements ConfirmAba
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 showToast(false, R.string.error);
+            }
+        });
+    }
+
+    /**
+     * The user wants to add another user to the project knowing their username
+     * @param username
+     */
+    @Override
+    public void yesAddUser(final String username) {
+        String activeUser = getActiveUsername();
+        activeUser = "nombreUsuario"; // TODO
+
+        if (activeUser.equals(username)){
+            // un usuario no puede invitarse a si mismo
+            showToast(false, R.string.error);
+        }
+
+        // TODO mirar si funciona a la vez, es decir, a la otra persona le sale automáticamente,
+        // mirar que pasa si dos personas distintas intentan añadir al mismo user al mismo tiempo
+        final UserProyectos userProyecto = new UserProyectos();
+        userProyecto.setUsuario(username);
+        userProyecto.setProyecto(projectKey);
+
+        databaseReferenceUserProyectos.runTransaction(new Transaction.Handler() {
+            @NonNull
+            @Override
+            public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
+                for (MutableData child : mutableData.getChildren()){
+                    String proyecto = child.child("proyecto").getValue().toString();
+                    String usuario = child.child("usuario").getValue().toString();
+                    if (proyecto.equals(projectKey) && usuario.equals(username)){
+                        // la relación existe
+                        return Transaction.success(mutableData);
+                    }
+                }
+                // la relación no existe, añadirla
+                mutableData.child(username + projectKey).setValue(userProyecto);
+                return Transaction.success(mutableData);
+            }
+
+            @Override
+            public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
+                if (databaseError != null){
+                    showToast(false, R.string.error);
+                    return;
+                }
+                showToast(false, R.string.userAddedToProject);
             }
         });
     }

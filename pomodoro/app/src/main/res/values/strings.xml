@@ -24,4 +24,8 @@
     <string name="confirmarAbandono">Leave project</string>
     <string name="projectAbandoned">The project has been left</string>
     <string name="confirmarAbandono_body">Are you sure you want to leave and delete this group?</string>
+    <string name="addUserToProject">Add user</string>
+    <string name="userAddedToProject">The user has been added successfully to the project</string>
+    <string name="username">Username</string>
+
 </resources>
