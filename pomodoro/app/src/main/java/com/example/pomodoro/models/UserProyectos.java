@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public class UserProyectos {
 
     private String proyecto;
-    private String user;
+    private String usuario;
 
     public UserProyectos(){
 
@@ -29,9 +29,16 @@ public class UserProyectos {
 
     /**
      * Cambiar el usuario
-     * @param user
+     * @param usuario
      */
-    public void setUser(String user){
-        this.user = user;
+    public void setUsuario(String usuario){
+        this.usuario = usuario;
+    }
+
+    /**
+     * Obtener el usuario
+     */
+    public String getUsuario(){
+        return usuario;
     }
 }

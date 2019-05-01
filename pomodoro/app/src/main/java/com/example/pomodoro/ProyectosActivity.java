@@ -72,7 +72,7 @@ public class ProyectosActivity extends MainToolbar implements NuevoProyecto.List
 
         databaseReferenceUserProyectos =
                 FirebaseDatabase.getInstance().getReference("UserProyectos");
-        Query query = databaseReferenceUserProyectos.orderByChild("user").equalTo(actualUser);
+        Query query = databaseReferenceUserProyectos.orderByChild("usuario").equalTo(actualUser);
 
         databaseReferenceProyectos = FirebaseDatabase.getInstance().getReference("Proyectos");
 
@@ -201,7 +201,7 @@ public class ProyectosActivity extends MainToolbar implements NuevoProyecto.List
                 String actualUser = getActiveUsername();
                 actualUser = "nombreUsuario"; // TODO
 
-                userProyecto.setUser(actualUser);
+                userProyecto.setUsuario(actualUser);
                 userProyecto.setProyecto(key);
                 databaseReferenceUserProyectos.push().setValue(userProyecto, new DatabaseReference.CompletionListener() {
                     @Override
