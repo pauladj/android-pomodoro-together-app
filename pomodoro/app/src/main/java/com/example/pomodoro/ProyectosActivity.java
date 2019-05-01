@@ -197,7 +197,6 @@ public class ProyectosActivity extends MainToolbar implements NuevoProyecto.List
      */
     @Override
     public void yesAddProject(String name) {
-        // mirar si ya tiene uno con el mismo nombre, si es así no se puede añadir
         nameOfNewProject = name;
 
         Project nuevoProyecto = new Project();

@@ -1,12 +1,14 @@
 package com.example.pomodoro.models;
 
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class Pomodoro {
 
     private Boolean empezado;
     private Boolean enDescanso;
-    private Timestamp horaFin;
+    private Timestamp horaFin_;
     private String proyecto;
     private int relax;
     private int work;
@@ -44,8 +46,16 @@ public class Pomodoro {
         this.empezado = empezado;
     }
 
-    public void setHoraFin(Timestamp horaFin) {
-        this.horaFin = horaFin;
+    public void setHoraFin(String horaFin) {
+        try {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
+            Date parsedDate = dateFormat.parse(horaFin);
+            Timestamp timestamp = new java.sql.Timestamp(parsedDate.getTime());
+            this.horaFin_ = timestamp;
+        }catch(Exception e){
+            //
+        }
+
     }
 
     public void setProyecto(String proyecto) {
@@ -65,7 +75,7 @@ public class Pomodoro {
     }
 
     public Timestamp getHoraFin() {
-        return horaFin;
+        return horaFin_;
     }
 
     public String getProyecto() {

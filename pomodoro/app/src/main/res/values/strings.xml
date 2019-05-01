@@ -14,9 +14,14 @@
     <string name="newProject">New project</string>
     <string name="create">Create</string>
     <string name="cancel">Cancel</string>
+    <string name="continuar">Continue</string>
     <string name="projectCreated">The project has been created</string>
     <string name="error">There was an error</string>
     <string name="pomodoroNotActive">The pomodoro is not active</string>
     <string name="work">Work</string>
     <string name="descansar">Relax</string>
+    <string name="leaveProject">Leave project</string>
+    <string name="confirmarAbandono">Leave project</string>
+    <string name="projectAbandoned">The project has been left</string>
+    <string name="confirmarAbandono_body">Are you sure you want to leave and delete this group?</string>
 </resources>

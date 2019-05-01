@@ -3,8 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/menuLogout"
-        android:icon="@drawable/ic_add"
-        android:title="@string/logout"
-        app:showAsAction="never" />
+        android:id="@+id/menuLeaveProject"
+        android:icon="@drawable/ic_exit"
+        android:title="@string/leaveProject"
+        app:showAsAction="ifRoom" />
 </menu>

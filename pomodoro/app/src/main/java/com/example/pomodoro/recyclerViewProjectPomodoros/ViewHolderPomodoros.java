@@ -7,13 +7,13 @@ import android.widget.TextView;
 import com.example.pomodoro.R;
 
 
-public class ViewHolder extends RecyclerView.ViewHolder  {
+public class ViewHolderPomodoros extends RecyclerView.ViewHolder  {
 
     TextView minutosTrabajo;
     TextView minutosDescanso;
     TextView estado;
 
-    public ViewHolder(View itemView) {
+    public ViewHolderPomodoros(View itemView) {
         super(itemView);
 
         minutosDescanso=(TextView) itemView.findViewById(R.id.minutosDescanso);

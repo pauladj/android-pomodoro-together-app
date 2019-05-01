@@ -8,33 +8,32 @@ import android.view.ViewGroup;
 
 import com.example.pomodoro.R;
 import com.example.pomodoro.models.Pomodoro;
-import com.example.pomodoro.models.Project;
 
 import java.util.ArrayList;
 
 
-public class MyAdapter extends RecyclerView.Adapter<ViewHolder>  implements View.OnClickListener {
+public class MyAdapterPomodoros extends RecyclerView.Adapter<ViewHolderPomodoros>  implements View.OnClickListener {
 
     Context c;
     ArrayList<Pomodoro> pomodoros;
 
     private View.OnClickListener listener;
 
-    public MyAdapter(Context c, ArrayList<Pomodoro> pomodoros) {
+    public MyAdapterPomodoros(Context c, ArrayList<Pomodoro> pomodoros) {
         this.c = c;
         this.pomodoros = pomodoros;
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v=LayoutInflater.from(parent.getContext()).inflate(R.layout.proyectos_card_view,parent,
+    public ViewHolderPomodoros onCreateViewHolder(ViewGroup parent, int viewType) {
+        View v=LayoutInflater.from(parent.getContext()).inflate(R.layout.proyectos_pomodoros_card_view,parent,
                 false);
         v.setOnClickListener(this); // add listener
-        return new ViewHolder(v);
+        return new ViewHolderPomodoros(v);
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(ViewHolderPomodoros holder, int position) {
         Pomodoro pomodoro = pomodoros.get(position);
         holder.minutosTrabajo.setText(String.valueOf(pomodoro.getWork()));
         holder.minutosDescanso.setText(String.valueOf(pomodoro.getRelax()));

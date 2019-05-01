@@ -1,10 +1,13 @@
 package com.example.pomodoro.utilities;
 
+import android.support.v4.app.DialogFragment;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.pomodoro.R;
+import com.example.pomodoro.dialogs.ConfirmAbandonarProyecto;
+import com.example.pomodoro.dialogs.NuevoProyecto;
 
 public class MainToolbar extends Common {
 
@@ -58,6 +61,10 @@ public class MainToolbar extends Common {
 
         if (id == R.id.menuLogout){
 
+        }else if(id == R.id.menuLeaveProject){
+            // El usuario quiere abandonar un proyecto, pedir confirmación
+            DialogFragment dialog = new ConfirmAbandonarProyecto();
+            dialog.show(getSupportFragmentManager(), "abandonarProyecto");
         }
 
         return super.onOptionsItemSelected(item);

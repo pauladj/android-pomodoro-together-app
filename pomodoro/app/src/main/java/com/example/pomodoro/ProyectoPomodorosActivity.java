@@ -1,20 +1,18 @@
 package com.example.pomodoro;
 
-import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.View;
 
+import com.example.pomodoro.dialogs.ConfirmAbandonarProyecto;
 import com.example.pomodoro.models.Pomodoro;
-import com.example.pomodoro.models.Project;
 import com.example.pomodoro.models.UserProyectos;
-import com.example.pomodoro.recyclerViewProjectPomodoros.MyAdapter;
+import com.example.pomodoro.recyclerViewProjectPomodoros.MyAdapterPomodoros;
 import com.example.pomodoro.utilities.MainToolbar;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -26,13 +24,12 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-public class ProyectoPomodorosActivity extends MainToolbar {
+public class ProyectoPomodorosActivity extends MainToolbar implements ConfirmAbandonarProyecto.ListenerDelDialogo {
 
     private String projectKey; // de que proyecto son los pomodoros
 
     private DatabaseReference databaseReference;
     private DatabaseReference databaseReferenceUserProyectos;
-    private DatabaseReference databaseReferenceProyectos;
     private DatabaseReference databaseReferenceProyectosPomodoro;
 
     private ArrayList<Pomodoro> list = new ArrayList<>();
@@ -80,9 +77,9 @@ public class ProyectoPomodorosActivity extends MainToolbar {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL,
                 false));
-        adapter = new MyAdapter(ProyectoPomodorosActivity.this, list);
+        adapter = new MyAdapterPomodoros(ProyectoPomodorosActivity.this, list);
         // Add listeners
-        ((MyAdapter) adapter).setOnClickListener(new View.OnClickListener() {
+        ((MyAdapterPomodoros) adapter).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Se clicka en un pomodoro
@@ -125,6 +122,9 @@ public class ProyectoPomodorosActivity extends MainToolbar {
         // Sincronizar pomodoros
         databaseReference = FirebaseDatabase.getInstance().getReference();
 
+        databaseReferenceUserProyectos = FirebaseDatabase.getInstance().getReference(
+                "UserProyectos");
+
         databaseReferenceProyectosPomodoro =
                 FirebaseDatabase.getInstance().getReference("ProyectosPomodoro");
         Query query = databaseReferenceProyectosPomodoro.orderByChild("proyecto").equalTo(projectKey);
@@ -135,6 +135,9 @@ public class ProyectoPomodorosActivity extends MainToolbar {
                 Pomodoro pomodoro = dataSnapshot.getValue(Pomodoro.class);
 
                 pomodoro.setKey(dataSnapshot.getKey());
+                if (pomodoro.getEmpezado()){
+                    pomodoro.setHoraFin(dataSnapshot.child("horaFin").getValue().toString());
+                }
                 list.add(pomodoro);
 
                 adapter.notifyItemInserted(list.size()-1);
@@ -170,6 +173,48 @@ public class ProyectoPomodorosActivity extends MainToolbar {
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
+                showToast(false, R.string.error);
+            }
+        });
+    }
+
+    /**
+     * The user confirms they want to leave the project
+     */
+    @Override
+    public void yesLeaveProject() {
+        // TODO
+        String user = getActiveUsername();
+        user = "nombreUsuario";
+
+        Query query =
+                databaseReferenceUserProyectos.orderByChild("usuario").equalTo(user);
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot oneData : dataSnapshot.getChildren()){
+                    UserProyectos userProyecto = oneData.getValue(UserProyectos.class);
+                    String key = oneData.getKey();
+                    if (userProyecto.getProyecto().equals(projectKey)){
+                        databaseReferenceUserProyectos.child(key).removeValue(new DatabaseReference.CompletionListener() {
+                            @Override
+                            public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                                if (databaseError != null){
+                                    showToast(false, R.string.error);
+                                }else{
+                                    // El proyecto se ha abandonado correctamente
+                                    showToast(true, R.string.projectAbandoned);
+                                    finish();
+                                }
+                            }
+                        });
+                        break;
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
                 showToast(false, R.string.error);
             }
         });
