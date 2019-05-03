@@ -1,4 +1,4 @@
-package com.example.pomodoro;
+package com.example.pomodoro.utilities;
 
 import android.content.Context;
 

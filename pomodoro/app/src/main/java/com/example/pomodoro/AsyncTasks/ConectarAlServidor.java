@@ -1,8 +1,10 @@
-package com.example.pomodoro;
+package com.example.pomodoro.AsyncTasks;
 
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
+
+import com.example.pomodoro.utilities.GeneradorConexionesSeguras;
 
 import org.json.JSONObject;
 
