@@ -120,7 +120,7 @@ public class Common extends LanguageActivity {
 
                     return true;
                 }else if(item.getItemId() == R.id.settings && !item.isChecked()){
-                    
+
                     return true;
                 }
                 return false;

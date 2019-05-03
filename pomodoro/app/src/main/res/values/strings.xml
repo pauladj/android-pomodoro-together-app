@@ -27,5 +27,6 @@
     <string name="addUserToProject">Add user</string>
     <string name="userAddedToProject">The user has been added successfully to the project</string>
     <string name="username">Username</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>
