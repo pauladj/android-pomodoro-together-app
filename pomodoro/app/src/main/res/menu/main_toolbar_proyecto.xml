@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/menuAddUser"
+        android:icon="@drawable/ic_group"
+        android:title="@string/addUserToProject"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/menuLeaveProject"
+        android:icon="@drawable/ic_exit"
+        android:title="@string/leaveProject"
+        app:showAsAction="ifRoom" />
+</menu>

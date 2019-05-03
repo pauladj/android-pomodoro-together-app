@@ -1,9 +1,32 @@
 <resources>
-    <string name="app_name">Notes.</string>
+    <string name="app_name">this.Pomodoro</string>
     <string name="menuEdit">Edit</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
+    <string name="nuevoPomodoro">Pomodoro</string>
+    <string name="loadingData">Loading data...</string>
+    <string name="encurso">Online</string>
+    <string name="myProjects">My Projects</string>
+    <string name="activePomodoro">Active Pomodoro</string>
+    <string name="active">Active</string>
+    <string name="settings">Settings</string>
+    <string name="addProject">Project</string>
+    <string name="logout">Logout</string>
+    <string name="projectName">Proyect name</string>
+    <string name="newProject">New project</string>
+    <string name="create">Create</string>
+    <string name="cancel">Cancel</string>
+    <string name="continuar">Continue</string>
+    <string name="projectCreated">The project has been created</string>
+    <string name="error">There was an error</string>
+    <string name="pomodoroNotActive">The pomodoro is not active</string>
+    <string name="work">Work</string>
+    <string name="descansar">Relax</string>
+    <string name="leaveProject">Leave project</string>
+    <string name="confirmarAbandono">Leave project</string>
+    <string name="projectAbandoned">The project has been left</string>
+    <string name="confirmarAbandono_body">Are you sure you want to leave and delete this group?</string>
+    <string name="addUserToProject">Add user</string>
+    <string name="userAddedToProject">The user has been added successfully to the project</string>
+    <string name="username">Username</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
-
 
 </resources>

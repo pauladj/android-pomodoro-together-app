@@ -1,10 +1,14 @@
 package com.example.pomodoro.utilities;
 
+import android.support.v4.app.DialogFragment;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.pomodoro.R;
+import com.example.pomodoro.dialogs.AddUserToProject;
+import com.example.pomodoro.dialogs.ConfirmAbandonarProyecto;
+import com.example.pomodoro.dialogs.NuevoProyecto;
 
 public class MainToolbar extends Common {
 
@@ -17,6 +21,15 @@ public class MainToolbar extends Common {
      */
     public void loadToolbar(){
         Toolbar toolbar = (Toolbar)findViewById(R.id.labarra);
+        setSupportActionBar(toolbar);
+    }
+
+    /**
+     * Loads top toolbar
+     */
+    public void loadToolbar(String title){
+        Toolbar toolbar = (Toolbar)findViewById(R.id.labarra);
+        toolbar.setTitle(title);
         setSupportActionBar(toolbar);
     }
 
@@ -47,8 +60,16 @@ public class MainToolbar extends Common {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id=item.getItemId();
 
-        if (id == R.id.menuEdit){
-
+        if (id == R.id.menuLogout){
+            // TODO
+        }else if(id == R.id.menuLeaveProject){
+            // El usuario quiere abandonar un proyecto, pedir confirmación
+            DialogFragment dialog = new ConfirmAbandonarProyecto();
+            dialog.show(getSupportFragmentManager(), "abandonarProyecto");
+        }else if(id == R.id.menuAddUser){
+            // El usuario quiere añadir un usuario a un proyecto
+            DialogFragment dialog = new AddUserToProject();
+            dialog.show(getSupportFragmentManager(), "anadirUsuario");
         }
 
         return super.onOptionsItemSelected(item);

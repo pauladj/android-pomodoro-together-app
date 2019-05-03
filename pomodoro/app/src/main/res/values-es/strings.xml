@@ -1,5 +1,31 @@
 <resources>
-    <string name="app_name">Notes.</string>
+    <string name="app_name">this.Pomodoro</string>
     <string name="menuEdit">Editar</string>
+    <string name="nuevoPomodoro">Pomodoro</string>
+    <string name="loadingData">Cargando datos...</string>
+    <string name="encurso">Emitiendo</string>
+    <string name="myProjects">Mis Proyectos</string>
+    <string name="activePomodoro">Pomodoro Activo</string>
+    <string name="settings">Configuración</string>
+    <string name="active">Activo</string>
+    <string name="addProject">Proyecto</string>
+    <string name="logout">Cerrar sesión</string>
+    <string name="projectName">Nombre del Proyecto</string>
+    <string name="newProject">Nuevo proyecto</string>
+    <string name="create">Crear</string>
+    <string name="cancel">Cancelar</string>
+    <string name="continuar">Continuar</string>
+    <string name="projectCreated">El proyecto se ha creado</string>
+    <string name="error">Se ha producido un error</string>
+    <string name="pomodoroNotActive">El pomodoro no está activo</string>
+    <string name="work">Trabajar</string>
+    <string name="descansar">Descansar</string>
+    <string name="leaveProject">Abandonar proyecto</string>
+    <string name="projectAbandoned">El proyecto se ha abandonado</string>
+    <string name="confirmarAbandono">Abandonar proyecto</string>
+    <string name="confirmarAbandono_body">¿Estás seguro de que quieres abandonar y eliminar este proyecto?</string>
+    <string name="addUserToProject">Añadir usuario</string>
+    <string name="userAddedToProject">El usuario se ha añadido correctamente al proyecto</string>
+    <string name="username">Nombre de usuario</string>
 
 </resources>
