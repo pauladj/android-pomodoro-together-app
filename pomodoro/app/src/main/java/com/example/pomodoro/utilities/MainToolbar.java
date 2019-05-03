@@ -1,10 +1,12 @@
 package com.example.pomodoro.utilities;
 
+import android.content.Intent;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.example.pomodoro.LoginRegistroActivity;
 import com.example.pomodoro.R;
 import com.example.pomodoro.dialogs.AddUserToProject;
 import com.example.pomodoro.dialogs.ConfirmAbandonarProyecto;
@@ -60,7 +62,12 @@ public class MainToolbar extends Common {
         int id=item.getItemId();
 
         if (id == R.id.menuLogout){
-            // TODO
+            // El usuario quiere salir de su cuenta
+            setActiveUsername(null);
+
+            Intent i = new Intent(this, LoginRegistroActivity.class);
+            startActivity(i);
+            finish();
         }else if(id == R.id.menuLeaveProject){
             // El usuario quiere abandonar un proyecto, pedir confirmación
             DialogFragment dialog = new ConfirmAbandonarProyecto();
