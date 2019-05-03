@@ -38,4 +38,11 @@
     <string name="incorrectPassword">The password is not correct</string>
     <string name="userSuccessfullyRegistered">The user has been successfully registered</string>
     <string name="userAlreadyExists">This username already exists</string>
+    <string name="preferences_LanguageTitle">Select the language</string>
+    <string name="preferences_LanguageSummary">Change the app language</string>
+    <string name="preferences_languagesOptionSystem">System</string>
+    <string name="preferences_languagesOptionEnglish">English</string>
+    <string name="preferences_languagesOptionSpanish">Spanish</string>
+    <string name="preferences_basicConfiguration">Basic configuration</string>
+    <string name="preferences_saved">The new configuration has been saved</string>
 </resources>
