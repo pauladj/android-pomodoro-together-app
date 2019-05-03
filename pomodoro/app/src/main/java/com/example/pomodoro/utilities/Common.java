@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.example.pomodoro.AsyncTasks.ConectarAlServidor;
+import com.example.pomodoro.PreferencesActivity;
 import com.example.pomodoro.ProyectosActivity;
 import com.example.pomodoro.R;
 
@@ -111,7 +112,9 @@ public class Common extends LanguageActivity implements ConectarAlServidor.TaskC
 
                     return true;
                 }else if(item.getItemId() == R.id.settings && !item.isChecked()){
-
+                    Intent i = new Intent(Common.this, PreferencesActivity.class);
+                    startActivity(i);
+                    finish();
                     return true;
                 }
                 return false;
@@ -125,6 +128,14 @@ public class Common extends LanguageActivity implements ConectarAlServidor.TaskC
      */
     public void selectProjects(final BottomNavigationView bottomMenu){
         bottomMenu.setSelectedItemId(R.id.projects);
+    }
+
+    /**
+     * Change the UI of the bottom menu
+     * @param bottomMenu
+     */
+    public void selectConfiguration(final BottomNavigationView bottomMenu){
+        bottomMenu.setSelectedItemId(R.id.settings);
     }
 
     /**
