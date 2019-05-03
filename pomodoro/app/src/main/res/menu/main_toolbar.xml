@@ -5,20 +5,20 @@
     <item
         android:id="@+id/menuTags"
         android:icon="@drawable/ic_label"
-        android:title="@string/menuTag"
+        android:title="menuTag"
         app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/menuMaps"
         android:icon="@drawable/ic_maps"
-        android:title="@string/menuMaps"
+        android:title="menuMaps"
         app:showAsAction="ifRoom" />
 
     <!-- Only show in landscape mode -->
     <item
         android:id="@+id/menuCalendar"
         android:icon="@drawable/ic_calendar"
-        android:title="@string/menuCalendar"
+        android:title="menuCalendar"
         android:visible="false"
         app:showAsAction="ifRoom" />
 
@@ -32,21 +32,21 @@
     <item
         android:id="@+id/menuDelete"
         android:icon="@drawable/ic_delete"
-        android:title="@string/menuDelete"
+        android:title="menuDelete"
         android:visible="false"
         app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/menuSendEmail"
         android:icon="@drawable/ic_email"
-        android:title="@string/menuSendEmail"
+        android:title="menuSendEmail"
         android:visible="false"
         app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/menuUploadToDrive"
         android:icon="@drawable/ic_upload"
-        android:title="@string/menuUploadToDrive"
+        android:title="menuUploadToDrive"
         android:visible="false"
         app:showAsAction="ifRoom" />
     <!-- end -->
@@ -54,12 +54,12 @@
     <item
         android:id="@+id/menuSettings"
         android:icon="@drawable/ic_settings"
-        android:title="@string/menuSettings"
+        android:title="menuSettings"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/menuLogout"
-        android:title="@string/menuLogout"
+        android:title="/menuLogout"
         app:showAsAction="never" />
 
 </menu>
