@@ -14,14 +14,14 @@ import com.example.pomodoro.dialogs.ConfirmAbandonarProyecto;
 public class MainToolbar extends Common {
 
     Menu menu;
-
+    Toolbar toolbar;
 
 
     /**
      * Loads top toolbar
      */
     public void loadToolbar(){
-        Toolbar toolbar = (Toolbar)findViewById(R.id.labarra);
+        toolbar = (Toolbar)findViewById(R.id.labarra);
         setSupportActionBar(toolbar);
     }
 
@@ -29,7 +29,7 @@ public class MainToolbar extends Common {
      * Loads top toolbar
      */
     public void loadToolbar(String title){
-        Toolbar toolbar = (Toolbar)findViewById(R.id.labarra);
+        toolbar = (Toolbar)findViewById(R.id.labarra);
         toolbar.setTitle(title);
         setSupportActionBar(toolbar);
     }
@@ -39,6 +39,15 @@ public class MainToolbar extends Common {
         getMenuInflater().inflate(R.menu.main_toolbar, menu);
         this.menu = menu;
         return true;
+    }
+
+
+    /**
+     * Remove the elevation
+     */
+    public void removeElevation(){
+        toolbar.setElevation(0);
+        toolbar.bringToFront();
     }
 
     /**
@@ -76,10 +85,16 @@ public class MainToolbar extends Common {
             // El usuario quiere añadir un usuario a un proyecto
             DialogFragment dialog = new AddUserToProject();
             dialog.show(getSupportFragmentManager(), "anadirUsuario");
+        }else if(id== R.id.menuNext){
+            // El usuario está creando un pomodoro individual
+            creacionPomodoroIndividual();
         }
 
         return super.onOptionsItemSelected(item);
     }
+
+
+    public void creacionPomodoroIndividual(){}
 
 
 

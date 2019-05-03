@@ -192,6 +192,15 @@ public class ProyectosActivity extends MainToolbar implements NuevoProyecto.List
     }
 
     /**
+     * El usuario quiere crear un pomodoro individual
+     * @param view
+     */
+    public void nuevoPomodoro(View view){
+        Intent i = new Intent(this, NewIndividualPomodoro.class);
+        startActivity(i);
+    }
+
+    /**
      * El usuario ha introducido el nombre del proyecto que desea crear y no está vacío
      *
      * @param name

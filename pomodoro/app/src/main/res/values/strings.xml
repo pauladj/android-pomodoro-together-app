@@ -45,4 +45,9 @@
     <string name="preferences_languagesOptionSpanish">Spanish</string>
     <string name="preferences_basicConfiguration">Basic configuration</string>
     <string name="preferences_saved">The new configuration has been saved</string>
+    <string name="newPomodoro">New pomodoro</string>
+    <string name="minutes">Minutes</string>
+    <string name="tiempoTrabajo">Minutes to work</string>
+    <string name="tiempoDescanso">Minutes to relax</string>
+    <string name="pomodoroZero">Minutes have to be greater than zero</string>
 </resources>
