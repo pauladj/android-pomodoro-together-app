@@ -47,7 +47,7 @@ public class ProyectosActivity extends MainToolbar implements NuevoProyecto.List
         recyclerView = (RecyclerView) findViewById(R.id.elreciclerview);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL,
-         false));
+                false));
         adapter = new MyAdapter(ProyectosActivity.this, list);
         // Add listeners
         ((MyAdapter) adapter).setOnClickListener(new View.OnClickListener() {
@@ -65,7 +65,7 @@ public class ProyectosActivity extends MainToolbar implements NuevoProyecto.List
                     i.putExtra("projectKey", proyecto.getKey());
                     i.putExtra("projectName", proyecto.getNombre());
                     startActivity(i);
-                }catch (IndexOutOfBoundsException e){
+                } catch (IndexOutOfBoundsException e) {
                     showToast(false, R.string.error);
                 }
 
@@ -75,7 +75,6 @@ public class ProyectosActivity extends MainToolbar implements NuevoProyecto.List
         recyclerView.setAdapter(adapter);
 
         String actualUser = getActiveUsername();
-        actualUser = "nombreUsuario"; // TODO
 
         // Add listener to bottom menu
         BottomNavigationView bottomMenu = findViewById(R.id.bottomNavigationView);
@@ -102,7 +101,7 @@ public class ProyectosActivity extends MainToolbar implements NuevoProyecto.List
                         proyecto.setKey(dataSnapshot.getKey());
                         list.add(proyecto);
 
-                        adapter.notifyItemInserted(list.size()-1);
+                        adapter.notifyItemInserted(list.size() - 1);
 
                     }
 
@@ -184,15 +183,17 @@ public class ProyectosActivity extends MainToolbar implements NuevoProyecto.List
 
     /**
      * El usuario clicka en "nuevo proyecto"
+     *
      * @param view
      */
-    public void nuevoProyecto(View view){
+    public void nuevoProyecto(View view) {
         DialogFragment dialog = new NuevoProyecto();
         dialog.show(getSupportFragmentManager(), "nuevoProyecto");
     }
 
     /**
      * El usuario ha introducido el nombre del proyecto que desea crear y no está vacío
+     *
      * @param name
      */
     @Override
@@ -206,7 +207,7 @@ public class ProyectosActivity extends MainToolbar implements NuevoProyecto.List
         databaseReferenceProyectos.push().setValue(nuevoProyecto, new DatabaseReference.CompletionListener() {
             @Override
             public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
-                if (databaseError != null){
+                if (databaseError != null) {
                     // error
                     showToast(false, R.string.error);
                     return;
@@ -215,14 +216,13 @@ public class ProyectosActivity extends MainToolbar implements NuevoProyecto.List
                 UserProyectos userProyecto = new UserProyectos();
 
                 String actualUser = getActiveUsername();
-                actualUser = "nombreUsuario"; // TODO
 
                 userProyecto.setUsuario(actualUser);
                 userProyecto.setProyecto(key);
                 databaseReferenceUserProyectos.push().setValue(userProyecto, new DatabaseReference.CompletionListener() {
                     @Override
                     public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
-                        if (databaseError != null){
+                        if (databaseError != null) {
                             // error
                             showToast(false, R.string.error);
                             return;

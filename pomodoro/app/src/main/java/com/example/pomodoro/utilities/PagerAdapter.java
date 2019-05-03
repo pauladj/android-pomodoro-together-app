@@ -1,4 +1,5 @@
-package com.example.pomodoro;
+package com.example.pomodoro.utilities;
+
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;

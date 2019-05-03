@@ -1,44 +1,39 @@
 package com.example.pomodoro;
 
 import android.content.Context;
-import android.content.SharedPreferences;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
-import android.util.Patterns;
 import android.view.Menu;
-import android.widget.Toast;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import com.example.pomodoro.AsyncTasks.ConectarAlServidor;
 import com.example.pomodoro.fragments.loginfragment;
 import com.example.pomodoro.fragments.registro;
+import com.example.pomodoro.utilities.MainToolbar;
+import com.example.pomodoro.utilities.PagerAdapter;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.ParseException;
+public class LoginRegistroActivity extends MainToolbar implements
+        loginfragment.OnFragmentInteractionListener, registro.RegistroListener {
 
-public class LoginRegistroActivity extends AppCompatActivity implements ConectarAlServidor.AsyncResponse, loginfragment.OnFragmentInteractionListener , registro.RegistroListener {
-
-    private SharedPreferences prefs;
-    private Context contexto = this;
-    private  Boolean eslogin = false;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_registro);
-        Toolbar myToolbar = (Toolbar) findViewById(R.id.labarra);
-        setSupportActionBar(myToolbar);
 
-        prefs = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
+        // cargar barra
+        loadToolbar();
+
+        // Cargar pestañas login-registro
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabLayout);
-        tabLayout.addTab(tabLayout.newTab().setText("Iniciar sesión"));
-        tabLayout.addTab(tabLayout.newTab().setText("Registrarse"));
-
+        tabLayout.addTab(tabLayout.newTab().setText(R.string.login));
+        tabLayout.addTab(tabLayout.newTab().setText(R.string.signup));
 
         final ViewPager viewPager = (ViewPager) findViewById(R.id.viewPager);
+
         PagerAdapter adapter = new PagerAdapter(getSupportFragmentManager(), tabLayout.getTabCount());
 
         viewPager.setAdapter(adapter);
@@ -47,126 +42,133 @@ public class LoginRegistroActivity extends AppCompatActivity implements Conectar
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-             //   Toast.makeText(LoginRegistroActivity.this, "Selected -> "+tab.getText(), Toast.LENGTH_SHORT).show();
-               int position = tab.getPosition();
+                int position = tab.getPosition();
                 viewPager.setCurrentItem(position);
             }
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
-               // Toast.makeText(LoginRegistroActivity.this, "Unselected -> "+tab.getText(), Toast.LENGTH_SHORT).show();
+
             }
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
-               // Toast.makeText(LoginRegistroActivity.this, "Reselected -> "+tab.getText(), Toast.LENGTH_SHORT).show();
+
             }
         });
     }
 
-
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu, menu);
-        return super.onCreateOptionsMenu(menu);
+        return true;
     }
 
-    @Override
-    public void guardarpreferencias(String correo, String password) {
-        saveOnPreferences(correo,password);
-    }
 
+
+    /**
+     * El usuario ha introducido su username y password y quiere logearse
+     *
+     * @param username - nombre de usuario
+     * @param password - contraseña
+     */
     @Override
-    public void login(String correo, String password) {
-        if (logeo(correo,password)){
-            eslogin = true;
-            String php = "https://134.209.235.115/ebracamonte001/WEB/login.php";
+    public void login(String username, String password) {
+        if (validadoresIniciarSesion(username, password)) {
             JSONObject parametrosJSON = new JSONObject();
             try {
-                parametrosJSON.put("email",correo);
-                parametrosJSON.put("Password",password);
+                parametrosJSON.put("username", username);
+                parametrosJSON.put("password", password);
 
-                ConectarAlServidor bdremota = new ConectarAlServidor(contexto,parametrosJSON, php);
-                bdremota.execute();
-            } catch (JSONException e) {
-                e.printStackTrace();
+                String[] params = {username, password};
+                getmTaskFragment().setAction("login");
+                getmTaskFragment().setDireccion("https://134.209.235" +
+                        ".115/ebracamonte001/WEB/pomodoro/login.php");
+                getmTaskFragment().start(params);
+            } catch (Exception e) {
+                showToast(false, R.string.error);
             }
 
 
         }
     }
 
-    @Override
-    public String getemailprefrencias() {
-        return prefs.getString("email", "");
+    /**
+     * The login has been successfull
+     *
+     * @param username - the username
+     */
+    public void loginSuccess(String username) {
+        // guardar el usuario en preferencias
+        setActiveUsername(username);
+
+        // abrir actividad principal
+        Intent i = new Intent(this, ProyectosActivity.class);
+        startActivity(i);
+        finish();
     }
 
-    @Override
-    public String getcontraprefrencias() {
-        return prefs.getString("pass", "");
+    /**
+     * El registro ha sido satisfactorio
+     */
+    public void signUpSuccess() {
+        // limpiar campos
+        EditText username = (EditText) findViewById(R.id.Nombre);
+        username.setText("");
+        EditText email = (EditText) findViewById(R.id.editemail);
+        email.setText("");
+        EditText pass = (EditText) findViewById(R.id.editTpass);
+        pass.setText("");
+        // ir a log in
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabLayout);
+        TabLayout.Tab tab = tabLayout.getTabAt(0);
+        tab.select();
     }
 
+    /**
+     * El usuario ha introducido sus datos y quiere registrarse
+     *
+     * @param nombreusuario
+     * @param password
+     * @param email
+     */
     @Override
-    public void registrarenbdremota(String nombreusuarios, String password, String email, String phone, String direc){
-        String php = "https://134.209.235.115/ebracamonte001/WEB/usuarios.php";
+    public void registrarse(String nombreusuario, String password, String email) {
+        if (!validadoresIniciarSesion(nombreusuario, password) || email.trim().isEmpty()) {
+            return;
+        }
+
         JSONObject parametrosJSON1 = new JSONObject();
         try {
-            parametrosJSON1.put("Nombre",nombreusuarios);
-            parametrosJSON1.put("Password",password);
-            parametrosJSON1.put("email",email);
-            parametrosJSON1.put("telefono",phone);
-            parametrosJSON1.put("direc",direc);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        ConectarAlServidor bd = new ConectarAlServidor(contexto,parametrosJSON1, php);
-        bd.execute();
+            parametrosJSON1.put("username", nombreusuario);
+            parametrosJSON1.put("password", password);
+            parametrosJSON1.put("email", email);
 
-    }
-
-    @Override
-    public void processFinish(String output) throws ParseException {
-        if(eslogin){
-            Toast.makeText(LoginRegistroActivity.this, "Aqui va el intent hacia otra activity", Toast.LENGTH_SHORT).show();
+            String[] params = {nombreusuario, password, email};
+            getmTaskFragment().setAction("signup");
+            getmTaskFragment().setDireccion("https://134.209.235" +
+                    ".115/ebracamonte001/WEB/pomodoro/signup.php");
+            getmTaskFragment().start(params);
+        } catch (Exception e) {
+            showToast(false, R.string.error);
         }
-        Toast.makeText(LoginRegistroActivity.this, "Usuario Registrado", Toast.LENGTH_SHORT).show();
     }
 
 
-
-    private boolean logeo(String email, String password){
-
-        if(!emailvalido(email)){
-            Toast.makeText(this,"email no valido", Toast.LENGTH_LONG).show();
+    /**
+     * Validadores de iniciar sesión
+     *
+     * @param username
+     * @param password
+     * @return
+     */
+    private boolean validadoresIniciarSesion(String username, String password) {
+        if (username.trim().isEmpty() || password.trim().isEmpty()) {
+            showToast(false, R.string.valuesEmptyError);
             return false;
-        } else if (!passwordvalido(password)){
-            Toast.makeText(this,"contraseña no válida",Toast.LENGTH_LONG).show();
-            return false;
-        } else{
-            return true;
-
         }
+        return true;
     }
-    //validamos el email
-    private boolean  emailvalido(String email){
-        return !TextUtils.isEmpty(email) && Patterns.EMAIL_ADDRESS.matcher(email).matches();
-    }
-    // método para comprobar si el password tiene más de 4 caracteres
-    private boolean  passwordvalido(String password){
-        return (password.length() > 4);
-    }
-
-    private void saveOnPreferences(String email, String password){
-            SharedPreferences.Editor editor = prefs.edit();
-            editor.putString("email", email);
-            editor.putString("pass",password);
-            editor.commit();
-            editor.apply();
-
-    }
-
-
 
 
 }

@@ -1,9 +1,9 @@
 package com.example.pomodoro;
 
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
@@ -59,7 +59,7 @@ public class ProyectoPomodorosActivity extends MainToolbar implements ConfirmAba
 
 
         Bundle b = getIntent().getExtras();
-        if (b != null){
+        if (b != null) {
             // obtener los datos del proyecto
             projectName = b.getString("projectName", null);
             projectKey = b.getString("projectKey", null);
@@ -91,15 +91,15 @@ public class ProyectoPomodorosActivity extends MainToolbar implements ConfirmAba
                     // obtener el proyecto correspondiente a la posición
                     Pomodoro pomodoro = list.get(clickedPosition);
 
-                    if (pomodoro.getEmpezado()){
+                    if (pomodoro.getEmpezado()) {
                         // abrir actividad para ver pomodoro
                         // TODO
-                    }else{
+                    } else {
                         // mensaje de que el pomodoro no está activo
                         showToast(false, R.string.pomodoroNotActive);
                     }
 
-                }catch (IndexOutOfBoundsException e){
+                } catch (IndexOutOfBoundsException e) {
                     showToast(false, R.string.error);
                 }
 
@@ -120,7 +120,7 @@ public class ProyectoPomodorosActivity extends MainToolbar implements ConfirmAba
     /**
      * Actualizar los datos según firebase la primera vez y cada vez que se actualicen
      */
-    private void databaseSincronizacion(){
+    private void databaseSincronizacion() {
         // Sincronizar pomodoros
         databaseReferenceUserProyectos = FirebaseDatabase.getInstance().getReference(
                 "UserProyectos");
@@ -135,12 +135,12 @@ public class ProyectoPomodorosActivity extends MainToolbar implements ConfirmAba
                 Pomodoro pomodoro = dataSnapshot.getValue(Pomodoro.class);
 
                 pomodoro.setKey(dataSnapshot.getKey());
-                if (pomodoro.getEmpezado()){
+                if (pomodoro.getEmpezado()) {
                     pomodoro.setHoraFin(dataSnapshot.child("horaFin").getValue().toString());
                 }
                 list.add(pomodoro);
 
-                adapter.notifyItemInserted(list.size()-1);
+                adapter.notifyItemInserted(list.size() - 1);
             }
 
             @Override
@@ -183,26 +183,24 @@ public class ProyectoPomodorosActivity extends MainToolbar implements ConfirmAba
      */
     @Override
     public void yesLeaveProject() {
-        // TODO
         String user = getActiveUsername();
-        user = "nombreUsuario";
 
         Query query =
                 databaseReferenceUserProyectos.orderByChild("usuario").equalTo(user);
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot oneData : dataSnapshot.getChildren()){
+                for (DataSnapshot oneData : dataSnapshot.getChildren()) {
                     UserProyectos userProyecto = oneData.getValue(UserProyectos.class);
                     // la clave de la relación entre usuario y proyecto
                     String key = oneData.getKey();
-                    if (userProyecto.getProyecto().equals(projectKey)){
+                    if (userProyecto.getProyecto().equals(projectKey)) {
                         databaseReferenceUserProyectos.child(key).removeValue(new DatabaseReference.CompletionListener() {
                             @Override
                             public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
-                                if (databaseError != null){
+                                if (databaseError != null) {
                                     showToast(false, R.string.error);
-                                }else{
+                                } else {
                                     // El proyecto se ha abandonado correctamente
                                     showToast(true, R.string.projectAbandoned);
                                     finish();
@@ -223,14 +221,14 @@ public class ProyectoPomodorosActivity extends MainToolbar implements ConfirmAba
 
     /**
      * The user wants to add another user to the project knowing their username
+     *
      * @param username
      */
     @Override
     public void yesAddUser(final String username) {
         String activeUser = getActiveUsername();
-        activeUser = "nombreUsuario"; // TODO
 
-        if (activeUser.equals(username)){
+        if (activeUser.equals(username)) {
             // un usuario no puede invitarse a si mismo
             showToast(false, R.string.error);
         }
@@ -247,10 +245,10 @@ public class ProyectoPomodorosActivity extends MainToolbar implements ConfirmAba
             @NonNull
             @Override
             public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
-                for (MutableData child : mutableData.getChildren()){
+                for (MutableData child : mutableData.getChildren()) {
                     String proyecto = child.child("proyecto").getValue().toString();
                     String usuario = child.child("usuario").getValue().toString();
-                    if (proyecto.equals(projectKey) && usuario.equals(username)){
+                    if (proyecto.equals(projectKey) && usuario.equals(username)) {
                         // la relación existe
                         return Transaction.success(mutableData);
                     }
@@ -262,7 +260,7 @@ public class ProyectoPomodorosActivity extends MainToolbar implements ConfirmAba
 
             @Override
             public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
-                if (databaseError != null){
+                if (databaseError != null) {
                     showToast(false, R.string.error);
                     return;
                 }

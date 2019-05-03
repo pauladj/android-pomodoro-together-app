@@ -10,44 +10,32 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:layout_margin="5dp"
         android:orientation="vertical"
         >
         <EditText
-            android:id="@+id/editTextemail"
+            android:id="@+id/editUsername"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:autofillHints="correo"
             android:ems="10"
-            android:hint="correo"
-            android:inputType="textEmailAddress" />
+            android:hint="@string/username"
+            android:inputType="textPersonName"
+            android:autofillHints="@string/username" />
 
         <EditText
             android:id="@+id/textpassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:autofillHints="contraseña"
             android:ems="10"
-            android:hint="contraseña"
+            android:hint="@string/password"
+            android:autofillHints="@string/password"
             android:inputType="textPassword" />
-
-        <Switch
-            android:id="@+id/switch1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="recordarusuario" />
 
         <Button
             android:id="@+id/loginbutton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="iniciarsesion"
-             />
-
-        <Button
-            android:id="@+id/idioma"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="idioma"
+            android:text="@string/login"
              />
 
     </LinearLayout>

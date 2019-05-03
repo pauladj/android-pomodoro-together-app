@@ -6,22 +6,21 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.internal.BottomNavigationMenu;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.FragmentManager;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.example.pomodoro.AsyncTasks.ConectarAlServidor;
 import com.example.pomodoro.ProyectosActivity;
 import com.example.pomodoro.R;
 
-/*import com.example.pomodoro.fragments.AsyncTaskFragment;
 
-public class Common extends LanguageActivity  implements AsyncTaskFragment.TaskCallbacks  {
+public class Common extends LanguageActivity implements ConectarAlServidor.TaskCallbacks  {
 
     private static final String TAG_TASK_FRAGMENT = "task_fragment";
-    private AsyncTaskFragment mTaskFragment;
+    private ConectarAlServidor mTaskFragment;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -29,33 +28,15 @@ public class Common extends LanguageActivity  implements AsyncTaskFragment.TaskC
 
         // fragmento que contiene la tarea asíncrona
         FragmentManager fm = getSupportFragmentManager();
-        mTaskFragment = (AsyncTaskFragment) fm.findFragmentByTag(TAG_TASK_FRAGMENT);
+        mTaskFragment = (ConectarAlServidor) fm.findFragmentByTag(TAG_TASK_FRAGMENT);
 
         // El fragmento solo es null cuando la actividad se crea por primera vez, cuando se rota
         // el fragmento se mantiene
         if (mTaskFragment == null) {
-            mTaskFragment = new AsyncTaskFragment();
+            mTaskFragment = new ConectarAlServidor();
             fm.beginTransaction().add(mTaskFragment, TAG_TASK_FRAGMENT).commit();
         }
     }
-**/
-
-/**
- * Get the fragment containing the asynctask
- *
- * @return - The async task fragment
- */
-
-/**
- public AsyncTaskFragment getmTaskFragment(){
- return mTaskFragment;
- }
-
-
- }
- */
-
-public class Common extends LanguageActivity {
 
     /**
      * Show a toast in the view
@@ -74,6 +55,16 @@ public class Common extends LanguageActivity {
         Toast aviso = Toast.makeText(context, getResources().getString(messageId), tiempo);
         aviso.setGravity(Gravity.BOTTOM | Gravity.CENTER, 0, 100);
         aviso.show();
+    }
+
+    @Override
+    public void loginSuccess(String username) {
+
+    }
+
+    @Override
+    public void signUpSuccess() {
+
     }
 
     /**
@@ -135,4 +126,17 @@ public class Common extends LanguageActivity {
     public void selectProjects(final BottomNavigationView bottomMenu){
         bottomMenu.setSelectedItemId(R.id.projects);
     }
+
+    /**
+     * Get the fragment containing the asynctask
+     *
+     * @return - The async task fragment
+     */
+    public ConectarAlServidor getmTaskFragment(){
+        return mTaskFragment;
+    }
+
+
+
+
 }

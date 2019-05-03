@@ -32,14 +32,15 @@ public class LanguageActivity extends AppCompatActivity {
                 nuevaloc = new Locale("en");
             }
         }
-       changeLanguage(nuevaloc);
+        changeLanguage(nuevaloc);
     }
 
     /**
      * Change language
+     *
      * @param nuevaloc - the new locale
      */
-    private void changeLanguage(Locale nuevaloc){
+    private void changeLanguage(Locale nuevaloc) {
         Resources res = getResources();
         DisplayMetrics dm = res.getDisplayMetrics();
         Configuration conf = res.getConfiguration();

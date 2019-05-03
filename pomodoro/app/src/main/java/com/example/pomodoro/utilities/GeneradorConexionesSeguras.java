@@ -22,18 +22,19 @@ public class GeneradorConexionesSeguras {
 
     private static GeneradorConexionesSeguras instancia;
 
-    private GeneradorConexionesSeguras(){}
+    private GeneradorConexionesSeguras() {
+    }
 
 
-    public static GeneradorConexionesSeguras getInstance(){
-        if (instancia==null){
+    public static GeneradorConexionesSeguras getInstance() {
+        if (instancia == null) {
             instancia = new GeneradorConexionesSeguras();
         }
         return instancia;
     }
 
-    public HttpsURLConnection crearConexionSegura (Context contexto, String direccion) {
-        HttpsURLConnection conexion=null;
+    public HttpsURLConnection crearConexionSegura(Context contexto, String direccion) {
+        HttpsURLConnection conexion = null;
         try {
             CertificateFactory cf = CertificateFactory.getInstance("X.509");
             InputStream caInput = new BufferedInputStream(contexto.getAssets().open("das.cer"));

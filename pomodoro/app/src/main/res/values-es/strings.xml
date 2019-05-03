@@ -27,5 +27,17 @@
     <string name="addUserToProject">Añadir usuario</string>
     <string name="userAddedToProject">El usuario se ha añadido correctamente al proyecto</string>
     <string name="username">Nombre de usuario</string>
+    <string name="correo">Email</string>
+    <string name="password">Contraseña</string>
+    <string name="login">Iniciar sesión</string>
+    <string name="signup">Registrarse</string>
+    <string name="valuesEmptyError">Alguno de los campos está vacío</string>
+    <string name="loadingTitle">Cargando</string>
+    <string name="loadingBody">Espera un segundo..</string>
+    <string name="serverError">Error al intentar conectar con el servidor</string>
+    <string name="incorrectPassword">La contraseña no es correcta</string>
+    <string name="userSuccessfullyRegistered">El usuario se ha registrado correctamente</string>
+    <string name="userAlreadyExists">Este nombre de usuario ya existe</string>
+
 
 </resources>

@@ -8,7 +8,6 @@ import android.view.MenuItem;
 import com.example.pomodoro.R;
 import com.example.pomodoro.dialogs.AddUserToProject;
 import com.example.pomodoro.dialogs.ConfirmAbandonarProyecto;
-import com.example.pomodoro.dialogs.NuevoProyecto;
 
 public class MainToolbar extends Common {
 
