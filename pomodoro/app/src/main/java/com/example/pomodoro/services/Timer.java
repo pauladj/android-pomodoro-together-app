@@ -6,6 +6,11 @@ import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.media.MediaPlayer;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Binder;
 import android.os.Build;
 import android.os.CountDownTimer;
@@ -23,6 +28,8 @@ import org.greenrobot.eventbus.EventBus;
 public class Timer extends Service {
 
     private CountDownTimer cTimer = null;
+    private MediaPlayer player = null;
+
     private int minutosTrabajo;
     private int minutosDescanso;
 
@@ -49,6 +56,9 @@ public class Timer extends Service {
         if (extras.containsKey("stop")){
             // parar el servicio y el timer
             cTimer.cancel();
+            if (player != null) {
+                player.stop();
+            }
             stopSelf();
             return START_NOT_STICKY;
         }
@@ -122,6 +132,17 @@ public class Timer extends Service {
                 MessageEvent a = new MessageEvent("0:00", getStringToShow(),
                         100);
                 EventBus.getDefault().post(a);
+
+                // si está configurado activar sonido cuando el pomodoro termina
+                SharedPreferences prefs_especiales = getSharedPreferences(
+                        "preferencias_especiales",
+                        Context.MODE_PRIVATE);
+                boolean sound = prefs_especiales.getBoolean("sound", false);
+                if (sound){
+                    Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                    player = MediaPlayer.create(getApplicationContext(), notification);
+                    player.start();
+                }
 
                 // Start relax period
                 if (!isDescanso){

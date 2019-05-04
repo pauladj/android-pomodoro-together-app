@@ -52,9 +52,10 @@
     <string name="pomodoroZero">Los minutos de deben ser mayores de cero</string>
     <string name="noPomodoroActive">No hay ningún pomodoro activo</string>
     <string name="advancedSettings">Configuración avanzada</string>
-    <string name="keepScreenOn">Mantener pantalla encedida en los pomodoros</string>
+    <string name="keepScreenOn">Pantalla encedida en los pomodoros</string>
     <string name="pomodoroActive">Hay un pomodoro activo</string>
     <string name="detener">Detener</string>
     <string name="pomodoroStopped">El pomodoro se ha detenido</string>
+    <string name="sonido">Sonido tras el pomodoro</string>
 
 </resources>

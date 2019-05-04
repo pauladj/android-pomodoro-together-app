@@ -40,6 +40,16 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements
             SharedPreferences.Editor editor2 = prefs_especiales.edit();
             editor2.putBoolean(key, !keepOn);
             editor2.apply();
+        }else if(key.equals("sound")){
+            // sonido cuando el pomodoro acaba
+            SharedPreferences prefs_especiales = getActivity().getSharedPreferences(
+                    "preferencias_especiales",
+                    Context.MODE_PRIVATE);
+
+            boolean sound = prefs_especiales.getBoolean(key, false);
+            SharedPreferences.Editor editor2 = prefs_especiales.edit();
+            editor2.putBoolean(key, !sound);
+            editor2.apply();
         }
 
        // Notification saying that the preference has been changed

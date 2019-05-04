@@ -56,4 +56,5 @@
     <string name="keepScreenOn">Keep screen on for the pomodoros</string>
     <string name="detener">Stop</string>
     <string name="pomodoroStopped">Pomodoro stopped</string>
+    <string name="sonido">Music when pomodoro ends</string>
 </resources>
