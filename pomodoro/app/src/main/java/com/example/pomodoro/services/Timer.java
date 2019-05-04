@@ -6,6 +6,7 @@ import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Binder;
 import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.IBinder;
@@ -14,10 +15,17 @@ import android.os.Bundle;
 import android.widget.TextView;
 
 import com.example.pomodoro.R;
+import com.example.pomodoro.models.MessageEvent;
+
+import org.greenrobot.eventbus.EventBus;
 
 public class Timer extends Service {
 
     private CountDownTimer cTimer = null;
+    private int minutosTrabajo;
+    private int minutosDescanso;
+
+    private int currentSeconds;
 
     @Override
     public IBinder onBind(Intent i) {
@@ -48,24 +56,11 @@ public class Timer extends Service {
         }
 
         // recuperar valores
-        int minutosTrabajo = extras.getInt("minutosTrabajo");
-        int minutosDescanso = extras.getInt("minutosDescanso");
+        minutosTrabajo = extras.getInt("minutosTrabajo");
+        minutosDescanso = extras.getInt("minutosDescanso");
 
-        minutosLeft = -1;
-        ((TextView) findViewById(R.id.textView)).setText("minutes remaining: " + minutosTrabajo);
-        cTimer = new CountDownTimer(miliSeconds, 1000) {
-            public void onTick(long millisUntilFinished) {
-                int seconds = Integer.valueOf(String.valueOf(millisUntilFinished /1000));
-                minutosLeft = seconds/60;
-
-                ((TextView) findViewById(R.id.textView)).setText("minutes remaining: " + seconds);
-            }
-            public void onFinish() {
-                ((TextView) findViewById(R.id.textView)).setText("done!");
-                startTimer(minutesToMiliseconds(minutosDescanso));
-            }
-        };
-        cTimer.start();
+        // empezar
+        startTimer(minutosTrabajo);
 
         return START_NOT_STICKY;
     }
@@ -77,4 +72,39 @@ public class Timer extends Service {
     private int minutesToMiliseconds(int minutes){
         return minutes * 60000;
     }
+
+    /**
+     * Start timer
+     * @param minutos - los minutos del countdown
+     */
+    private void startTimer(int minutos){
+        currentSeconds = 60;
+        EventBus.getDefault().post(new MessageEvent(String.valueOf(minutos)));
+        cTimer = new CountDownTimer(minutesToMiliseconds(minutos), 1000) {
+            public void onTick(long millisUntilFinished) {
+                // Cada segundo
+                int seconds = Integer.valueOf(String.valueOf(millisUntilFinished /1000));
+                int minutosLeft = seconds/60;
+
+                currentSeconds--;
+
+                String zero= "";
+                if (currentSeconds < 10){
+                    zero = "0";
+                }
+                String a = minutosLeft + ":" + zero + currentSeconds;
+
+                // enviar a actividad para que actualice la UI
+                EventBus.getDefault().post(new MessageEvent(a));
+            }
+            public void onFinish() {
+                // Start relax period
+                startTimer(minutosDescanso);
+                // stop
+                stopSelf();
+            }
+        };
+        cTimer.start();
+    }
+
 }

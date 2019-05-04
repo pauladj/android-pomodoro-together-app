@@ -6,9 +6,15 @@ import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.pomodoro.models.MessageEvent;
 import com.example.pomodoro.services.Timer;
 import com.example.pomodoro.utilities.MainToolbar;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 public class CountDownTimerActivity extends MainToolbar {
 
@@ -19,21 +25,28 @@ public class CountDownTimerActivity extends MainToolbar {
         setContentView(R.layout.activity_count_down_timer);
 
         if (savedInstanceState == null){
+            // primera vez
             Intent i = getIntent();
 
-            int minutosTrabajo = i.getIntExtra("minutosTrabajo", 50);
-            int minutosDescanso = i.getIntExtra("minutosDescanso", 10);
+            boolean empezarNuevo = i.getBooleanExtra("nuevo", true);
 
-            // solo inicializarlo la primera vez
-            // inicializar timer servicio
-            Intent e = new Intent(this, Timer.class);
-            e.putExtra("minutosTrabajo", minutosTrabajo);
-            e.putExtra("minutosDescanso", minutosDescanso);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                startForegroundService(e);
-            } else {
-                startService(e);
+            if (empezarNuevo){
+                // si no hay ninguno empezado
+                int minutosTrabajo = i.getIntExtra("minutosTrabajo", 50);
+                int minutosDescanso = i.getIntExtra("minutosDescanso", 10);
+
+                // solo inicializarlo la primera vez
+                // inicializar timer servicio
+                Intent e = new Intent(this, Timer.class);
+                e.putExtra("minutosTrabajo", minutosTrabajo);
+                e.putExtra("minutosDescanso", minutosDescanso);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    startForegroundService(e);
+                } else {
+                    startService(e);
+                }
             }
+
         }
     }
 
@@ -42,6 +55,24 @@ public class CountDownTimerActivity extends MainToolbar {
         super.onBackPressed();
         Intent i = new Intent(this, ProyectosActivity.class);
         startActivity(i);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(MessageEvent event) {
+        ((TextView) findViewById(R.id.textView)).setText(event.message);
+
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        EventBus.getDefault().unregister(this);
+        super.onStop();
     }
 
 

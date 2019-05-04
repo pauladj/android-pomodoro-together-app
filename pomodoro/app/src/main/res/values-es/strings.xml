@@ -50,5 +50,6 @@
     <string name="tiempoTrabajo">Minutos de trabajo</string>
     <string name="tiempoDescanso">Minutos de descanso</string>
     <string name="pomodoroZero">Los minutos de deben ser mayores de cero</string>
+    <string name="noPomodoroActive">No hay ningún pomodoro activo</string>
 
 </resources>
