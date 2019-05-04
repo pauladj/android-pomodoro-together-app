@@ -10,6 +10,7 @@ import com.example.pomodoro.LoginRegistroActivity;
 import com.example.pomodoro.R;
 import com.example.pomodoro.dialogs.AddUserToProject;
 import com.example.pomodoro.dialogs.ConfirmAbandonarProyecto;
+import com.example.pomodoro.services.Timer;
 
 public class MainToolbar extends Common {
 
@@ -73,6 +74,11 @@ public class MainToolbar extends Common {
         if (id == R.id.menuLogout){
             // El usuario quiere salir de su cuenta
             setActiveUsername(null);
+
+            // Parar el pomodoro activo si tiene
+            if (servicioEnMarcha(Timer.class)){
+                stopService(new Intent(this, Timer.class));
+            }
 
             Intent i = new Intent(this, LoginRegistroActivity.class);
             startActivity(i);

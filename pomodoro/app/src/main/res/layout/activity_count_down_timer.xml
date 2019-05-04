@@ -65,6 +65,7 @@
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:layout_weight="1"
+        android:onClick="stopPomodoro"
         android:text="@string/detener"
         android:textAlignment="center"
         android:textSize="18sp" />

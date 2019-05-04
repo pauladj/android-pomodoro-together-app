@@ -5,6 +5,7 @@ import android.os.Build;
 import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -90,6 +91,25 @@ public class CountDownTimerActivity extends MainToolbar {
     public void onStop() {
         EventBus.getDefault().unregister(this);
         super.onStop();
+    }
+
+    /**
+     * Botón para parar el pomodoro
+     * @param v
+     */
+    public void stopPomodoro(View v){
+        if (!servicioEnMarcha(Timer.class)){
+            return;
+        }
+        // parar el servicio pomodoro
+        stopService(new Intent(this, Timer.class));
+        showToast(true, R.string.pomodoroStopped);
+
+        // ver los proyectos
+        Intent intent = new Intent(this, ProyectosActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+        finish();
     }
 
 

@@ -55,5 +55,6 @@
     <string name="keepScreenOn">Mantener pantalla encedida en los pomodoros</string>
     <string name="pomodoroActive">Hay un pomodoro activo</string>
     <string name="detener">Detener</string>
+    <string name="pomodoroStopped">El pomodoro se ha detenido</string>
 
 </resources>

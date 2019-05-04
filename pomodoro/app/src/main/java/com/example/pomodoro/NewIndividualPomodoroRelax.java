@@ -141,6 +141,7 @@ public class NewIndividualPomodoroRelax extends MainToolbar {
         i.putExtra("minutosTrabajo", minutosTrabajo);
         i.putExtra("minutosDescanso", minutes);
         startActivity(i);
+        finish();
     }
 
 
