@@ -30,6 +30,16 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements
             Intent i = new Intent(getActivity(), PreferencesActivity.class);
             startActivity(i);
             getActivity().finish();
+        }else if(key.equals("keepScreenOn")){
+            // mantener pantalla activa
+            SharedPreferences prefs_especiales = getActivity().getSharedPreferences(
+                    "preferencias_especiales",
+                    Context.MODE_PRIVATE);
+
+            boolean keepOn = prefs_especiales.getBoolean(key, false);
+            SharedPreferences.Editor editor2 = prefs_especiales.edit();
+            editor2.putBoolean(key, !keepOn);
+            editor2.apply();
         }
 
        // Notification saying that the preference has been changed

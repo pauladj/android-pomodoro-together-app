@@ -46,7 +46,11 @@ public class CountDownTimerActivity extends MainToolbar {
                     startService(e);
                 }
             }
+        }
 
+        if (getBooleanPreference("keepScreenOn")){
+            // si se quiere que la ventana se quede activada
+            getWindow().addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
     }
 
@@ -57,6 +61,10 @@ public class CountDownTimerActivity extends MainToolbar {
         startActivity(i);
     }
 
+    /**
+     * Se recibe un mensaje desde el servicio
+     * @param event
+     */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(MessageEvent event) {
         ((TextView) findViewById(R.id.textView)).setText(event.message);

@@ -72,15 +72,52 @@ public class Common extends LanguageActivity implements ConectarAlServidor.TaskC
     }
 
     /**
-     * Get the active username
-     * @param - the active username (token)
+     * Get the preference value
+     * @param key - the key of the preference
+     * @return - the value of the preference
      */
-    public String getActiveUsername() {
+    public String getStringPreference(String key){
         SharedPreferences prefs_especiales = getSharedPreferences(
                 "preferencias_especiales",
                 Context.MODE_PRIVATE);
 
-        return prefs_especiales.getString("activeUsername", null);
+        return prefs_especiales.getString(key, null);
+    }
+
+    /**
+     * Get the preference value
+     * @param key - the key of the preference
+     * @return - the value of the preference
+     */
+    public Boolean getBooleanPreference(String key){
+        SharedPreferences prefs_especiales = getSharedPreferences(
+                "preferencias_especiales",
+                Context.MODE_PRIVATE);
+
+        return prefs_especiales.getBoolean(key, false);
+    }
+
+    /**
+     * Get the preference value
+     * @param key - the key of the preference
+     * @param value - the value for that key
+     */
+    public void setBooleanPreference(String key, Boolean value){
+        SharedPreferences prefs_especiales = getSharedPreferences(
+                "preferencias_especiales",
+                Context.MODE_PRIVATE);
+
+        SharedPreferences.Editor editor2 = prefs_especiales.edit();
+        editor2.putBoolean(key, value);
+        editor2.apply();
+    }
+
+    /**
+     * Get the active username
+     * @param - the active username (token)
+     */
+    public String getActiveUsername() {
+        return getStringPreference("activeUsername");
     }
 
     /**

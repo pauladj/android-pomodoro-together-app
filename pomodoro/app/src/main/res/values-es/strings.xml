@@ -51,5 +51,7 @@
     <string name="tiempoDescanso">Minutos de descanso</string>
     <string name="pomodoroZero">Los minutos de deben ser mayores de cero</string>
     <string name="noPomodoroActive">No hay ningún pomodoro activo</string>
+    <string name="advancedSettings">Configuración avanzada</string>
+    <string name="keepScreenOn">Mantener pantalla encedida en los pomodoros</string>
 
 </resources>
