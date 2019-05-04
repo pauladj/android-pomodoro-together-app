@@ -14,6 +14,8 @@ import com.example.pomodoro.dialogs.NuevoProyecto;
 import com.example.pomodoro.models.Project;
 import com.example.pomodoro.models.UserProyectos;
 import com.example.pomodoro.recyclerView.MyAdapter;
+import com.example.pomodoro.services.Timer;
+import com.example.pomodoro.utilities.Common;
 import com.example.pomodoro.utilities.MainToolbar;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -189,6 +191,20 @@ public class ProyectosActivity extends MainToolbar implements NuevoProyecto.List
     public void nuevoProyecto(View view) {
         DialogFragment dialog = new NuevoProyecto();
         dialog.show(getSupportFragmentManager(), "nuevoProyecto");
+    }
+
+    /**
+     * El usuario quiere crear un pomodoro individual
+     * @param view
+     */
+    public void nuevoPomodoro(View view){
+        boolean servicioEnMarcha = servicioEnMarcha(Timer.class);
+        if (servicioEnMarcha){
+            showToast(false, R.string.pomodoroActive);
+            return;
+        }
+        Intent i = new Intent(this, NewIndividualPomodoro.class);
+        startActivity(i);
     }
 
     /**

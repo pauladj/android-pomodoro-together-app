@@ -10,4 +10,15 @@
             android:summary="@string/preferences_LanguageSummary"
             android:title="@string/preferences_LanguageTitle" />
     </PreferenceCategory>
+    <PreferenceCategory android:title="@string/advancedSettings">
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="keepScreenOn"
+            android:title="@string/keepScreenOn" />
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="sound"
+            android:title="@string/sonido" />
+    </PreferenceCategory>
 </PreferenceScreen>

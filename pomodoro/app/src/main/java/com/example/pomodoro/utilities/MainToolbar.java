@@ -1,6 +1,7 @@
 package com.example.pomodoro.utilities;
 
 import android.content.Intent;
+import android.os.Build;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -10,18 +11,19 @@ import com.example.pomodoro.LoginRegistroActivity;
 import com.example.pomodoro.R;
 import com.example.pomodoro.dialogs.AddUserToProject;
 import com.example.pomodoro.dialogs.ConfirmAbandonarProyecto;
+import com.example.pomodoro.services.Timer;
 
 public class MainToolbar extends Common {
 
     Menu menu;
-
+    Toolbar toolbar;
 
 
     /**
      * Loads top toolbar
      */
     public void loadToolbar(){
-        Toolbar toolbar = (Toolbar)findViewById(R.id.labarra);
+        toolbar = (Toolbar)findViewById(R.id.labarra);
         setSupportActionBar(toolbar);
     }
 
@@ -29,7 +31,7 @@ public class MainToolbar extends Common {
      * Loads top toolbar
      */
     public void loadToolbar(String title){
-        Toolbar toolbar = (Toolbar)findViewById(R.id.labarra);
+        toolbar = (Toolbar)findViewById(R.id.labarra);
         toolbar.setTitle(title);
         setSupportActionBar(toolbar);
     }
@@ -39,6 +41,15 @@ public class MainToolbar extends Common {
         getMenuInflater().inflate(R.menu.main_toolbar, menu);
         this.menu = menu;
         return true;
+    }
+
+
+    /**
+     * Remove the elevation
+     */
+    public void removeElevation(){
+        toolbar.setElevation(0);
+        toolbar.bringToFront();
     }
 
     /**
@@ -65,6 +76,18 @@ public class MainToolbar extends Common {
             // El usuario quiere salir de su cuenta
             setActiveUsername(null);
 
+            // Parar el pomodoro activo si tiene
+            if (servicioEnMarcha(Timer.class)){
+                // parar el servicio pomodoro
+                Intent e = new Intent(this, Timer.class);
+                e.putExtra("stop", true);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    startForegroundService(e);
+                } else {
+                    startService(e);
+                }
+            }
+
             Intent i = new Intent(this, LoginRegistroActivity.class);
             startActivity(i);
             finish();
@@ -76,10 +99,16 @@ public class MainToolbar extends Common {
             // El usuario quiere añadir un usuario a un proyecto
             DialogFragment dialog = new AddUserToProject();
             dialog.show(getSupportFragmentManager(), "anadirUsuario");
+        }else if(id== R.id.menuNext){
+            // El usuario está creando un pomodoro individual
+            creacionPomodoroIndividual();
         }
 
         return super.onOptionsItemSelected(item);
     }
+
+
+    public void creacionPomodoroIndividual(){}
 
 
 

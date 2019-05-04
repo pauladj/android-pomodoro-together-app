@@ -45,4 +45,17 @@
     <string name="preferences_languagesOptionSpanish">Español</string>
     <string name="preferences_basicConfiguration">Configuración básica</string>
     <string name="preferences_saved">La nueva configuración se ha guardado</string>
+    <string name="newPomodoro">Nuevo pomodoro</string>
+    <string name="minutes">Minutos</string>
+    <string name="tiempoTrabajo">Minutos de trabajo</string>
+    <string name="tiempoDescanso">Minutos de descanso</string>
+    <string name="pomodoroZero">Los minutos de deben ser mayores de cero</string>
+    <string name="noPomodoroActive">No hay ningún pomodoro activo</string>
+    <string name="advancedSettings">Configuración avanzada</string>
+    <string name="keepScreenOn">Pantalla encedida en los pomodoros</string>
+    <string name="pomodoroActive">Hay un pomodoro activo</string>
+    <string name="detener">Detener</string>
+    <string name="pomodoroStopped">El pomodoro se ha detenido</string>
+    <string name="sonido">Sonido tras el pomodoro</string>
+
 </resources>

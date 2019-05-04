@@ -1,5 +1,6 @@
 package com.example.pomodoro.utilities;
 
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -13,9 +14,11 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.example.pomodoro.AsyncTasks.ConectarAlServidor;
+import com.example.pomodoro.CountDownTimerActivity;
 import com.example.pomodoro.PreferencesActivity;
 import com.example.pomodoro.ProyectosActivity;
 import com.example.pomodoro.R;
+import com.example.pomodoro.services.Timer;
 
 
 public class Common extends LanguageActivity implements ConectarAlServidor.TaskCallbacks  {
@@ -69,15 +72,52 @@ public class Common extends LanguageActivity implements ConectarAlServidor.TaskC
     }
 
     /**
-     * Get the active username
-     * @param - the active username (token)
+     * Get the preference value
+     * @param key - the key of the preference
+     * @return - the value of the preference
      */
-    public String getActiveUsername() {
+    public String getStringPreference(String key){
         SharedPreferences prefs_especiales = getSharedPreferences(
                 "preferencias_especiales",
                 Context.MODE_PRIVATE);
 
-        return prefs_especiales.getString("activeUsername", null);
+        return prefs_especiales.getString(key, null);
+    }
+
+    /**
+     * Get the preference value
+     * @param key - the key of the preference
+     * @return - the value of the preference
+     */
+    public Boolean getBooleanPreference(String key){
+        SharedPreferences prefs_especiales = getSharedPreferences(
+                "preferencias_especiales",
+                Context.MODE_PRIVATE);
+
+        return prefs_especiales.getBoolean(key, false);
+    }
+
+    /**
+     * Get the preference value
+     * @param key - the key of the preference
+     * @param value - the value for that key
+     */
+    public void setBooleanPreference(String key, Boolean value){
+        SharedPreferences prefs_especiales = getSharedPreferences(
+                "preferencias_especiales",
+                Context.MODE_PRIVATE);
+
+        SharedPreferences.Editor editor2 = prefs_especiales.edit();
+        editor2.putBoolean(key, value);
+        editor2.apply();
+    }
+
+    /**
+     * Get the active username
+     * @param - the active username (token)
+     */
+    public String getActiveUsername() {
+        return getStringPreference("activeUsername");
     }
 
     /**
@@ -104,14 +144,26 @@ public class Common extends LanguageActivity implements ConectarAlServidor.TaskC
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 if (item.getItemId() == R.id.projects && !item.isChecked()) {
+                    // ver todos los proyectos
                     Intent i = new Intent(Common.this, ProyectosActivity.class);
                     startActivity(i);
                     finish();
                     return true;
                 }else if(item.getItemId() == R.id.active && !item.isChecked()){
-
-                    return true;
+                    // ver el pomodoro activo individual si hay
+                    boolean servicioEnMarcha = servicioEnMarcha(Timer.class);
+                    if (servicioEnMarcha){
+                        Intent i = new Intent(Common.this, CountDownTimerActivity.class);
+                        i.putExtra("nuevo", false);
+                        startActivity(i);
+                        finish();
+                        return true;
+                    }else{
+                        showToast(false, R.string.noPomodoroActive);
+                        return false;
+                    }
                 }else if(item.getItemId() == R.id.settings && !item.isChecked()){
+                    // ver la configuración
                     Intent i = new Intent(Common.this, PreferencesActivity.class);
                     startActivity(i);
                     finish();
@@ -147,7 +199,20 @@ public class Common extends LanguageActivity implements ConectarAlServidor.TaskC
         return mTaskFragment;
     }
 
-
+    /**
+     * Check if a service is running
+     * @param serviceClass
+     * @return
+     */
+    public boolean servicioEnMarcha(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
+    }
 
 
 }
