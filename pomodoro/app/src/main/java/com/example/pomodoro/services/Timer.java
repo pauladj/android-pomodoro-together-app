@@ -46,6 +46,13 @@ public class Timer extends Service {
             return START_NOT_STICKY;
         }
 
+        if (extras.containsKey("stop")){
+            // parar el servicio y el timer
+            cTimer.cancel();
+            stopSelf();
+            return START_NOT_STICKY;
+        }
+
         // generar notificación
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationManager elmanager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);

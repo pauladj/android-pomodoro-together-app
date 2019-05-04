@@ -102,7 +102,13 @@ public class CountDownTimerActivity extends MainToolbar {
             return;
         }
         // parar el servicio pomodoro
-        stopService(new Intent(this, Timer.class));
+        Intent e = new Intent(this, Timer.class);
+        e.putExtra("stop", true);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(e);
+        } else {
+            startService(e);
+        }
         showToast(true, R.string.pomodoroStopped);
 
         // ver los proyectos

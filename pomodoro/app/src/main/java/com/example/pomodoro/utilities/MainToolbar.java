@@ -1,6 +1,7 @@
 package com.example.pomodoro.utilities;
 
 import android.content.Intent;
+import android.os.Build;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -77,7 +78,14 @@ public class MainToolbar extends Common {
 
             // Parar el pomodoro activo si tiene
             if (servicioEnMarcha(Timer.class)){
-                stopService(new Intent(this, Timer.class));
+                // parar el servicio pomodoro
+                Intent e = new Intent(this, Timer.class);
+                e.putExtra("stop", true);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    startForegroundService(e);
+                } else {
+                    startService(e);
+                }
             }
 
             Intent i = new Intent(this, LoginRegistroActivity.class);

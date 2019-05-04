@@ -46,7 +46,6 @@
                 android:id="@+id/seekArcProgress"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="25"
                 android:textAlignment="center"
                 android:textSize="80sp" />
 
@@ -54,7 +53,6 @@
                 android:id="@+id/textMin"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="slkdf"
                 android:textAlignment="center"
                 android:textSize="20sp" />
         </LinearLayout>
