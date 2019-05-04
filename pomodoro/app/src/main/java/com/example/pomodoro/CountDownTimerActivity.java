@@ -11,6 +11,7 @@ import android.widget.Toast;
 import com.example.pomodoro.models.MessageEvent;
 import com.example.pomodoro.services.Timer;
 import com.example.pomodoro.utilities.MainToolbar;
+import com.triggertrap.seekarc.SeekArc;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -18,11 +19,15 @@ import org.greenrobot.eventbus.ThreadMode;
 
 public class CountDownTimerActivity extends MainToolbar {
 
+    private SeekArc seekArc;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_count_down_timer);
+
+        seekArc = findViewById(R.id.seekArc);
 
         if (savedInstanceState == null){
             // primera vez
@@ -67,8 +72,12 @@ public class CountDownTimerActivity extends MainToolbar {
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(MessageEvent event) {
-        ((TextView) findViewById(R.id.textView)).setText(event.message);
-
+        // actualizar texto: work / relax
+        ((TextView) findViewById(R.id.textMin)).setText(event.getText());
+        // actualizar remaining time
+        ((TextView) findViewById(R.id.seekArcProgress)).setText(event.getTime());
+        // seekarc
+        seekArc.setProgress(event.getPercentage());
     }
 
     @Override

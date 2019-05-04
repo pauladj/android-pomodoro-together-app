@@ -51,6 +51,8 @@
     <string name="tiempoDescanso">Minutes to relax</string>
     <string name="pomodoroZero">Minutes have to be greater than zero</string>
     <string name="noPomodoroActive">There is no active pomodoro</string>
+    <string name="pomodoroActive">There is an active pomodoro</string>
     <string name="advancedSettings">Advanced configuration</string>
     <string name="keepScreenOn">Keep screen on for the pomodoros</string>
+    <string name="detener">Stop</string>
 </resources>

@@ -53,5 +53,7 @@
     <string name="noPomodoroActive">No hay ningún pomodoro activo</string>
     <string name="advancedSettings">Configuración avanzada</string>
     <string name="keepScreenOn">Mantener pantalla encedida en los pomodoros</string>
+    <string name="pomodoroActive">Hay un pomodoro activo</string>
+    <string name="detener">Detener</string>
 
 </resources>

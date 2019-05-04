@@ -27,6 +27,7 @@ public class Timer extends Service {
     private int minutosDescanso;
 
     private int currentSeconds;
+    private int maxMiliseconds; // milisegundos totales del countdown
 
     private boolean isDescanso = false;
 
@@ -82,10 +83,10 @@ public class Timer extends Service {
      */
     private void startTimer(int minutos){
         currentSeconds = 60;
-        EventBus.getDefault().post(new MessageEvent(String.valueOf(minutos)));
+        EventBus.getDefault().post(new MessageEvent(String.valueOf(minutos), getStringToShow(), 0));
         int miliseconds = minutesToMiliseconds(minutos);
+        maxMiliseconds = miliseconds;
 
-        //miliseconds = 3000;
         cTimer = new CountDownTimer(miliseconds, 1000) {
             public void onTick(long millisUntilFinished) {
                 // Cada segundo
@@ -98,16 +99,23 @@ public class Timer extends Service {
                 if (currentSeconds < 10){
                     zero = "0";
                 }
-                String a = minutosLeft + ":" + zero + currentSeconds;
+                String texto = minutosLeft + ":" + zero + currentSeconds;
 
                 if (currentSeconds == 0){
                     currentSeconds = 60;
                 }
 
                 // enviar a actividad para que actualice la UI
-                EventBus.getDefault().post(new MessageEvent(a));
+                MessageEvent a = new MessageEvent(texto, getStringToShow(),
+                        getPercentage(Integer.valueOf(String.valueOf(millisUntilFinished))));
+                EventBus.getDefault().post(a);
             }
             public void onFinish() {
+                // enviar a actividad para que actualice la UI
+                MessageEvent a = new MessageEvent("0:00", getStringToShow(),
+                        100);
+                EventBus.getDefault().post(a);
+
                 // Start relax period
                 if (!isDescanso){
                     isDescanso = true;
@@ -118,6 +126,30 @@ public class Timer extends Service {
             }
         };
         cTimer.start();
+    }
+
+    /**
+     * Get id of the string to show
+     * @return - the id of the string to show
+     */
+    private int getStringToShow(){
+        int stringId;
+        if (isDescanso){
+            stringId = R.string.descansar;
+        }else{
+            stringId = R.string.work;
+        }
+        return stringId;
+    }
+
+    /**
+     * Transformar milisegundos en porcentaje
+     * @param milisecondsLeft
+     * @return
+     */
+    private int getPercentage(int milisecondsLeft){
+        int miliSegundosPasados = maxMiliseconds - milisecondsLeft;
+        return (miliSegundosPasados * 100) / maxMiliseconds;
     }
 
 }
