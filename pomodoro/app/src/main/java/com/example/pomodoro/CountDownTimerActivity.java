@@ -63,8 +63,10 @@ public class CountDownTimerActivity extends MainToolbar {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        Intent i = new Intent(this, ProyectosActivity.class);
-        startActivity(i);
+        Intent intent = new Intent(this, ProyectosActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+        finish();
     }
 
     /**

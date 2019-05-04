@@ -2,10 +2,18 @@ package com.example.pomodoro;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.view.Menu;
 import android.widget.TextView;
 
+import com.example.pomodoro.models.Pomodoro;
+import com.example.pomodoro.models.Project;
+import com.example.pomodoro.models.UserProyectos;
 import com.example.pomodoro.utilities.MainToolbar;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.triggertrap.seekarc.SeekArc;
 import com.triggertrap.seekarc.SeekArc.OnSeekArcChangeListener;
 
@@ -41,7 +49,7 @@ import com.triggertrap.seekarc.SeekArc.OnSeekArcChangeListener;
 
 
 
-public class NewIndividualPomodoroRelax extends MainToolbar {
+public class NewPomodoroRelax extends MainToolbar {
 
     private SeekArc mSeekArc;
     private TextView mSeekArcProgress;
@@ -51,13 +59,21 @@ public class NewIndividualPomodoroRelax extends MainToolbar {
     private int arco = 50;
     private int textoArco = 50;
 
-    private int minutosDescanso;
+    private int minutosDescanso = -1;
+    private String projectKey = null;
+    private String projectName = null;
+
+    private DatabaseReference databaseReference;
+
 
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt("minutosTrabajo", minutosTrabajo);
+        outState.putInt("minutosDescanso", minutosDescanso);
+        outState.putString("projectKey", projectKey);
+        outState.putString("projectName", projectName);
 
         outState.putInt("arco", mSeekArc.getProgress());
         outState.putInt("progress", Integer.valueOf(mSeekArcProgress.getText().toString()));
@@ -69,6 +85,8 @@ public class NewIndividualPomodoroRelax extends MainToolbar {
         if (savedInstanceState.containsKey("arco")) {
             arco = savedInstanceState.getInt("arco");
             textoArco = savedInstanceState.getInt("progress");
+            projectKey = savedInstanceState.getString("projectKey");
+            projectName = savedInstanceState.getString("projectName");
 
             // recuperar valores si hay un cambio de orientación
             mSeekArc.setProgress(arco);
@@ -95,9 +113,15 @@ public class NewIndividualPomodoroRelax extends MainToolbar {
         // recuperar minutos de trabajo
         if (savedInstanceState != null){
             minutosTrabajo = savedInstanceState.getInt("minutosTrabajo", 50);
+            minutosDescanso = savedInstanceState.getInt("minutosDescanso", 10);
         }else{
             Intent mIntent = getIntent();
             minutosTrabajo = mIntent.getIntExtra("minutosTrabajo", 50);
+            if (mIntent.hasExtra("projectKey")){
+                // si es un pomodoro grupal
+                projectKey = mIntent.getStringExtra("projectKey");
+                projectName = mIntent.getStringExtra("projectName");
+            }
         }
 
 
@@ -122,6 +146,9 @@ public class NewIndividualPomodoroRelax extends MainToolbar {
             }
         });
 
+        // firebase realtime database
+        databaseReference = FirebaseDatabase.getInstance().getReference("ProyectosPomodoro");
+
     }
 
 
@@ -130,19 +157,58 @@ public class NewIndividualPomodoroRelax extends MainToolbar {
      * El usuario quiere seguir al siguiente paso, finalizar e iniciar
      */
     public void creacionPomodoroIndividual(){
-        int minutes = Integer.valueOf(mSeekArcProgress.getText().toString());
-        if (minutes == 0){
+        minutosDescanso = Integer.valueOf(mSeekArcProgress.getText().toString());
+        if (minutosDescanso == 0){
             showToast(false, R.string.pomodoroZero);
             return;
         }
 
-        // Siguiente pantalla
-        Intent i = new Intent(this, CountDownTimerActivity.class);
-        i.putExtra("minutosTrabajo", minutosTrabajo);
-        i.putExtra("minutosDescanso", minutes);
-        startActivity(i);
-        finish();
+        if (projectKey != null){
+            // el pomodoro es de un proyecto, guardar datos en firebase
+            uploadDataToFirebase();
+        }else{
+            // Siguiente pantalla
+            Intent i = new Intent(this, CountDownTimerActivity.class);
+            i.putExtra("minutosTrabajo", minutosTrabajo);
+            i.putExtra("minutosDescanso", minutosDescanso);
+            startActivity(i);
+            finish();
+        }
     }
 
+    /**
+     * Upload pomodoro data to firebase
+     */
+    private void uploadDataToFirebase() {
+        // crear objeto pomodoro
+        Pomodoro nuevoPomodoro = new Pomodoro();
+        nuevoPomodoro.setEmpezado(false);
+        nuevoPomodoro.setEnDescanso(false);
+        nuevoPomodoro.setProyecto(projectKey);
+        nuevoPomodoro.setRelax(minutosDescanso);
+        nuevoPomodoro.setWork(minutosTrabajo);
+
+        databaseReference.push().setValue(nuevoPomodoro, new DatabaseReference.CompletionListener() {
+            @Override
+            public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                if (databaseError != null) {
+                    // error
+                    showToast(false, R.string.error);
+                    return;
+                }
+
+                showToast(true, R.string.pomodoroCreated);
+                
+                // go to the project
+                Intent intent = new Intent(NewPomodoroRelax.this, ProyectoPomodorosActivity.class);
+                intent.putExtra("projectKey", projectKey);
+                intent.putExtra("projectName", projectName);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                finish();
+
+            }
+        });
+    }
 
 }

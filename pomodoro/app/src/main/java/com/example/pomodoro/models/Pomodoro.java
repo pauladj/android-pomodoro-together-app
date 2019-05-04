@@ -8,7 +8,8 @@ public class Pomodoro {
 
     private Boolean empezado;
     private Boolean enDescanso;
-    private Timestamp horaFin_;
+    private Timestamp horaDescansoFin_;
+    private Timestamp horaWorkFin_;
     private String proyecto;
     private int relax;
     private int work;
@@ -16,7 +17,7 @@ public class Pomodoro {
 
     private String key;
 
-    public Pomodoro(){
+    public Pomodoro() {
 
     }
 
@@ -46,16 +47,26 @@ public class Pomodoro {
         this.empezado = empezado;
     }
 
-    public void setHoraFin(String horaFin) {
+    public void setHoraDescansoFin(String horaFin) {
         try {
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
             Date parsedDate = dateFormat.parse(horaFin);
             Timestamp timestamp = new java.sql.Timestamp(parsedDate.getTime());
-            this.horaFin_ = timestamp;
-        }catch(Exception e){
+            this.horaDescansoFin_ = timestamp;
+        } catch (Exception e) {
             //
         }
+    }
 
+    public void setHoraWorkFin(String horaFin) {
+        try {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
+            Date parsedDate = dateFormat.parse(horaFin);
+            Timestamp timestamp = new java.sql.Timestamp(parsedDate.getTime());
+            this.horaWorkFin_ = timestamp;
+        } catch (Exception e) {
+            //
+        }
     }
 
     public void setProyecto(String proyecto) {
@@ -74,8 +85,12 @@ public class Pomodoro {
         this.usuario = usuario;
     }
 
-    public Timestamp getHoraFin() {
-        return horaFin_;
+    public Timestamp getHoraDescansoFin() {
+        return horaDescansoFin_;
+    }
+
+    public Timestamp getHoraWorkFin() {
+        return horaWorkFin_;
     }
 
     public String getProyecto() {
@@ -96,11 +111,11 @@ public class Pomodoro {
 
     /**
      * Overwrite equals method
+     *
      * @param o - the object to compare
      * @return - true if equals
      */
-    public boolean equals(Object o)
-    {
+    public boolean equals(Object o) {
         if (o == null) return false;
         if (o == this) return true;
 
@@ -108,7 +123,7 @@ public class Pomodoro {
         String otherKey = a.getKey();
         if (key.equals(otherKey)) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }

@@ -57,5 +57,5 @@
     <string name="detener">Detener</string>
     <string name="pomodoroStopped">El pomodoro se ha detenido</string>
     <string name="sonido">Sonido tras el pomodoro</string>
-
+    <string name="pomodoroCreated">El pomodoro se ha creado</string>
 </resources>

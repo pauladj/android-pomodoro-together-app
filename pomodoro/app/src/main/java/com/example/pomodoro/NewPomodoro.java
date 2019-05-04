@@ -1,14 +1,12 @@
 package com.example.pomodoro;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.triggertrap.seekarc.SeekArc;
 import com.triggertrap.seekarc.SeekArc.OnSeekArcChangeListener;
 
 import android.view.Menu;
-import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
 import com.example.pomodoro.utilities.MainToolbar;
@@ -45,7 +43,7 @@ import com.example.pomodoro.utilities.MainToolbar;
 
 
 
-public class NewIndividualPomodoro extends MainToolbar {
+public class NewPomodoro extends MainToolbar {
 
     private SeekArc mSeekArc;
     private TextView mSeekArcProgress;
@@ -53,11 +51,16 @@ public class NewIndividualPomodoro extends MainToolbar {
     private int arco = 50;
     private int textoArco = 50;
 
+    private String projectKey = null; // la clave del proyecto si no es individual
+    private String projectName = null;
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt("arco", mSeekArc.getProgress());
         outState.putInt("progress", Integer.valueOf(mSeekArcProgress.getText().toString()));
+        outState.putString("projectKey", projectKey);
+        outState.putString("projectName", projectName);
     }
 
     @Override
@@ -66,6 +69,8 @@ public class NewIndividualPomodoro extends MainToolbar {
         if (savedInstanceState.containsKey("arco")) {
             arco = savedInstanceState.getInt("arco");
             textoArco = savedInstanceState.getInt("progress");
+            projectKey = savedInstanceState.getString("projectKey");
+            projectName = savedInstanceState.getString("projectName");
 
             // recuperar valores si hay un cambio de orientación
             mSeekArc.setProgress(arco);
@@ -88,6 +93,14 @@ public class NewIndividualPomodoro extends MainToolbar {
         loadToolbar(getResources().getString(R.string.tiempoTrabajo));
         showBackButtonOption();
         removeElevation();
+
+        // obtener atributos del intent si el pomodoro es grupal
+        Bundle extras = getIntent().getExtras();
+        if (extras != null && savedInstanceState == null){
+            // la primera vez que se carga la actividad
+            projectKey = extras.getString("projectKey");
+            projectName = extras.getString("projectName");
+        }
 
         // circular seek arc
         mSeekArc = (SeekArc) findViewById(R.id.seekArc);
@@ -114,12 +127,7 @@ public class NewIndividualPomodoro extends MainToolbar {
 
     @Override
     public void onBackPressed() {
-        // If the back button is pressed
-        Intent i = new Intent (this, ProyectosActivity.class);
-        // clear the activity stack, so the mainactivity view is recreated
-        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(i);
-        finish();
+       super.onBackPressed();
     }
 
     /**
@@ -133,8 +141,13 @@ public class NewIndividualPomodoro extends MainToolbar {
         }
 
         // Siguiente pantalla
-        Intent i = new Intent(this, NewIndividualPomodoroRelax.class);
+        Intent i = new Intent(this, NewPomodoroRelax.class);
         i.putExtra("minutosTrabajo", minutes);
+        if (projectKey != null){
+            // el pomodoro es de un proyecto
+            i.putExtra("projectKey", projectKey);
+            i.putExtra("projectName", projectName);
+        }
         startActivity(i);
     }
 

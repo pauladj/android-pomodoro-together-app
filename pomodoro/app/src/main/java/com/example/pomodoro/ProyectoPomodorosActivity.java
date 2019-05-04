@@ -1,5 +1,6 @@
 package com.example.pomodoro;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -50,6 +51,7 @@ public class ProyectoPomodorosActivity extends MainToolbar implements ConfirmAba
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString("projectKey", projectKey); // Se guarda
+        outState.putString("projectName", projectName); // Se guarda
     }
 
     @Override
@@ -57,19 +59,26 @@ public class ProyectoPomodorosActivity extends MainToolbar implements ConfirmAba
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_proyecto_pomodoros);
 
+        if (savedInstanceState == null){
+            // la primera vez que se carga
+            Bundle b = getIntent().getExtras();
+            if (b != null) {
+                // obtener los datos del proyecto
+                projectName = b.getString("projectName", null);
+                projectKey = b.getString("projectKey", null);
 
-        Bundle b = getIntent().getExtras();
-        if (b != null) {
-            // obtener los datos del proyecto
-            projectName = b.getString("projectName", null);
-            projectKey = b.getString("projectKey", null);
-
-            if (projectName == null || projectKey == null) {
-                // error
-                showToast(true, R.string.error);
-                finish();
+                if (projectName == null || projectKey == null) {
+                    // error
+                    showToast(true, R.string.error);
+                    finish();
+                }
             }
+        }else{
+            projectKey = savedInstanceState.getString("projectKey");
+            projectName = savedInstanceState.getString("projectName");
+
         }
+
 
         // load top toolbar
         loadToolbar(projectName);
@@ -136,7 +145,8 @@ public class ProyectoPomodorosActivity extends MainToolbar implements ConfirmAba
 
                 pomodoro.setKey(dataSnapshot.getKey());
                 if (pomodoro.getEmpezado()) {
-                    pomodoro.setHoraFin(dataSnapshot.child("horaFin").getValue().toString());
+                    pomodoro.setHoraDescansoFin(dataSnapshot.child("horaDescansoFin").getValue().toString());
+                    pomodoro.setHoraWorkFin(dataSnapshot.child("horaWorkFin").getValue().toString());
                 }
                 list.add(pomodoro);
 
@@ -149,6 +159,10 @@ public class ProyectoPomodorosActivity extends MainToolbar implements ConfirmAba
                 pomodoro.setKey(dataSnapshot.getKey());
                 int index = list.indexOf(pomodoro);
                 if (index != -1) {
+                    if (pomodoro.getEmpezado()) {
+                        pomodoro.setHoraDescansoFin(dataSnapshot.child("horaDescansoFin").getValue().toString());
+                        pomodoro.setHoraWorkFin(dataSnapshot.child("horaWorkFin").getValue().toString());
+                    }
                     list.set(index, pomodoro);
                     adapter.notifyItemChanged(index);
                 }
@@ -267,5 +281,25 @@ public class ProyectoPomodorosActivity extends MainToolbar implements ConfirmAba
                 showToast(false, R.string.userAddedToProject);
             }
         });
+    }
+
+
+    /**
+     * El usuario quiere crear un pomodoro grupal
+     * @param view
+     */
+    public void nuevoPomodoro(View view){
+        Intent i = new Intent(this, NewPomodoro.class);
+        i.putExtra("projectKey", projectKey);
+        i.putExtra("projectName", projectName);
+        startActivity(i);
+    }
+
+    @Override
+    public void onBackPressed() {
+        // Go to proyects
+        Intent i = new Intent(this, ProyectosActivity.class);
+        startActivity(i);
+        finish();
     }
 }
