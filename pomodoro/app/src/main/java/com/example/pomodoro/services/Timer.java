@@ -27,7 +27,9 @@ import org.greenrobot.eventbus.EventBus;
 
 public class Timer extends Service {
 
-    private CountDownTimer cTimer = null;
+    private CountDownTimer cTimerTrabajo = null;
+    private CountDownTimer cTimerDescanso = null;
+
     private MediaPlayer player = null;
 
     private int minutosTrabajo;
@@ -55,7 +57,13 @@ public class Timer extends Service {
 
         if (extras.containsKey("stop")){
             // parar el servicio y el timer
-            cTimer.cancel();
+            if (cTimerTrabajo != null){
+                cTimerTrabajo.cancel();
+            }
+            if (cTimerDescanso != null){
+                cTimerDescanso.cancel();
+            }
+
             if (player != null) {
                 player.stop();
             }
@@ -104,7 +112,7 @@ public class Timer extends Service {
         int miliseconds = minutesToMiliseconds(minutos);
         maxMiliseconds = miliseconds;
 
-        cTimer = new CountDownTimer(miliseconds, 1000) {
+        CountDownTimer cTimer = new CountDownTimer(miliseconds, 1000) {
             public void onTick(long millisUntilFinished) {
                 // Cada segundo
                 int seconds = Integer.valueOf(String.valueOf(millisUntilFinished /1000));
@@ -148,11 +156,18 @@ public class Timer extends Service {
                 if (!isDescanso){
                     isDescanso = true;
                     startTimer(minutosDescanso);
+                }else{
+                    // stop
+                    stopSelf();
                 }
-                // stop
-                stopSelf();
             }
         };
+
+        if(cTimerTrabajo == null){
+            cTimerTrabajo = cTimer;
+        }else{
+            cTimerDescanso = cTimer;
+        }
         cTimer.start();
     }
 

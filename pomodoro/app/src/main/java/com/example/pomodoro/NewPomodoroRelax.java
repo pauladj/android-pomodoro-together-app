@@ -198,7 +198,7 @@ public class NewPomodoroRelax extends MainToolbar {
                 }
 
                 showToast(true, R.string.pomodoroCreated);
-                
+
                 // go to the project
                 Intent intent = new Intent(NewPomodoroRelax.this, ProyectoPomodorosActivity.class);
                 intent.putExtra("projectKey", projectKey);
