@@ -10,6 +10,7 @@ import android.os.Binder;
 import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.IBinder;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
@@ -26,6 +27,8 @@ public class Timer extends Service {
     private int minutosDescanso;
 
     private int currentSeconds;
+
+    private boolean isDescanso = false;
 
     @Override
     public IBinder onBind(Intent i) {
@@ -80,7 +83,10 @@ public class Timer extends Service {
     private void startTimer(int minutos){
         currentSeconds = 60;
         EventBus.getDefault().post(new MessageEvent(String.valueOf(minutos)));
-        cTimer = new CountDownTimer(minutesToMiliseconds(minutos), 1000) {
+        int miliseconds = minutesToMiliseconds(minutos);
+
+        //miliseconds = 3000;
+        cTimer = new CountDownTimer(miliseconds, 1000) {
             public void onTick(long millisUntilFinished) {
                 // Cada segundo
                 int seconds = Integer.valueOf(String.valueOf(millisUntilFinished /1000));
@@ -94,12 +100,19 @@ public class Timer extends Service {
                 }
                 String a = minutosLeft + ":" + zero + currentSeconds;
 
+                if (currentSeconds == 0){
+                    currentSeconds = 60;
+                }
+
                 // enviar a actividad para que actualice la UI
                 EventBus.getDefault().post(new MessageEvent(a));
             }
             public void onFinish() {
                 // Start relax period
-                startTimer(minutosDescanso);
+                if (!isDescanso){
+                    isDescanso = true;
+                    startTimer(minutosDescanso);
+                }
                 // stop
                 stopSelf();
             }
