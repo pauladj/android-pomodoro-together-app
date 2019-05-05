@@ -183,7 +183,6 @@ public class NewPomodoroRelax extends MainToolbar {
         // crear objeto pomodoro
         Pomodoro nuevoPomodoro = new Pomodoro();
         nuevoPomodoro.setEmpezado(false);
-        nuevoPomodoro.setEnDescanso(false);
         nuevoPomodoro.setProyecto(projectKey);
         nuevoPomodoro.setRelax(minutosDescanso);
         nuevoPomodoro.setWork(minutosTrabajo);

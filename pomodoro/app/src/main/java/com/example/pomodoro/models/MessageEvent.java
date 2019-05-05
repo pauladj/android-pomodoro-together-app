@@ -6,6 +6,7 @@ public class MessageEvent {
     private final int text;
     private final int percentage;
 
+
     public MessageEvent(String time, int text, int percentage) {
         this.time = time;
         this.text = text;
@@ -35,4 +36,5 @@ public class MessageEvent {
     public int getPercentage(){
         return percentage;
     }
+
 }

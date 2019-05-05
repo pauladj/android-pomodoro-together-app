@@ -58,4 +58,7 @@
     <string name="pomodoroStopped">El pomodoro se ha detenido</string>
     <string name="sonido">Sonido tras el pomodoro</string>
     <string name="pomodoroCreated">El pomodoro se ha creado</string>
+    <string name="start">Empezar</string>
+    <string name="pomodoroAlreadyActive">El pomodoro ya ha sido activado</string>
+
 </resources>

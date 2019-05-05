@@ -1,15 +1,18 @@
 package com.example.pomodoro.models;
 
+import com.google.api.client.util.DateTime;
+
+import java.sql.Time;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 public class Pomodoro {
 
     private Boolean empezado;
-    private Boolean enDescanso;
-    private Timestamp horaDescansoFin_;
-    private Timestamp horaWorkFin_;
+    private String horaWorkFin;
+    private String horaDescansoFin;
     private String proyecto;
     private int relax;
     private int work;
@@ -22,14 +25,6 @@ public class Pomodoro {
     }
 
     // Getter and setters
-
-    public Boolean getEnDescanso() {
-        return enDescanso;
-    }
-
-    public void setEnDescanso(Boolean enDescanso) {
-        this.enDescanso = enDescanso;
-    }
 
     public String getKey() {
         return key;
@@ -45,28 +40,6 @@ public class Pomodoro {
 
     public void setEmpezado(Boolean empezado) {
         this.empezado = empezado;
-    }
-
-    public void setHoraDescansoFin(String horaFin) {
-        try {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
-            Date parsedDate = dateFormat.parse(horaFin);
-            Timestamp timestamp = new java.sql.Timestamp(parsedDate.getTime());
-            this.horaDescansoFin_ = timestamp;
-        } catch (Exception e) {
-            //
-        }
-    }
-
-    public void setHoraWorkFin(String horaFin) {
-        try {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
-            Date parsedDate = dateFormat.parse(horaFin);
-            Timestamp timestamp = new java.sql.Timestamp(parsedDate.getTime());
-            this.horaWorkFin_ = timestamp;
-        } catch (Exception e) {
-            //
-        }
     }
 
     public void setProyecto(String proyecto) {
@@ -85,12 +58,12 @@ public class Pomodoro {
         this.usuario = usuario;
     }
 
-    public Timestamp getHoraDescansoFin() {
-        return horaDescansoFin_;
+    public String getHoraDescansoFin() {
+        return horaDescansoFin;
     }
 
-    public Timestamp getHoraWorkFin() {
-        return horaWorkFin_;
+    public String getHoraWorkFin() {
+        return horaWorkFin;
     }
 
     public String getProyecto() {
@@ -107,6 +80,14 @@ public class Pomodoro {
 
     public String getUsuario() {
         return usuario;
+    }
+
+    public void setHoraDescansoFin(String horaDescansoFin) {
+        this.horaDescansoFin = horaDescansoFin;
+    }
+
+    public void setHoraWorkFin(String horaWorkFin) {
+        this.horaWorkFin = horaWorkFin;
     }
 
     /**

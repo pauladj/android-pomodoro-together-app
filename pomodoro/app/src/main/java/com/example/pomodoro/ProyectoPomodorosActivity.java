@@ -102,10 +102,22 @@ public class ProyectoPomodorosActivity extends MainToolbar implements ConfirmAba
 
                     if (pomodoro.getEmpezado()) {
                         // abrir actividad para ver pomodoro
-                        // TODO
+                        // ir a countdowntimer
+                        Intent i = new Intent(ProyectoPomodorosActivity.this,
+                                CountDownTimerActivity.class);
+                        if (pomodoro.getHoraDescansoFin() != null && pomodoro.getHoraWorkFin() != null){
+                            i.putExtra("horaTrabajoFin", pomodoro.getHoraWorkFin());
+                            i.putExtra("horaDescansoFin", pomodoro.getHoraDescansoFin());
+                            i.putExtra("key", pomodoro.getKey());
+                            startActivity(i);
+                        }
                     } else {
-                        // mensaje de que el pomodoro no está activo
-                        showToast(false, R.string.pomodoroNotActive);
+                        // el pomodoro no está activo
+                        Intent i = new Intent(ProyectoPomodorosActivity.this, PrevioAActivo.class);
+                        i.putExtra("pomodoroKey", pomodoro.getKey());
+                        i.putExtra("trabajar", pomodoro.getWork());
+                        i.putExtra("descansar", pomodoro.getRelax());
+                        startActivity(i);
                     }
 
                 } catch (IndexOutOfBoundsException e) {

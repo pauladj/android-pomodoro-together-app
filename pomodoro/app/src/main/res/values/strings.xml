@@ -58,5 +58,6 @@
     <string name="pomodoroStopped">Pomodoro stopped</string>
     <string name="sonido">Music when pomodoro ends</string>
     <string name="pomodoroCreated">The pomodoro has been created</string>
-
+    <string name="start">Start</string>
+    <string name="pomodoroAlreadyActive">The pomodoro is already active</string>
 </resources>

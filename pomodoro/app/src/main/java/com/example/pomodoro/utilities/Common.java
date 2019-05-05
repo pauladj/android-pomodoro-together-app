@@ -20,6 +20,11 @@ import com.example.pomodoro.ProyectosActivity;
 import com.example.pomodoro.R;
 import com.example.pomodoro.services.Timer;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+
 
 public class Common extends LanguageActivity implements ConectarAlServidor.TaskCallbacks  {
 
@@ -40,6 +45,7 @@ public class Common extends LanguageActivity implements ConectarAlServidor.TaskC
             mTaskFragment = new ConectarAlServidor();
             fm.beginTransaction().add(mTaskFragment, TAG_TASK_FRAGMENT).commit();
         }
+
     }
 
     /**
@@ -98,7 +104,7 @@ public class Common extends LanguageActivity implements ConectarAlServidor.TaskC
     }
 
     /**
-     * Get the preference value
+     * set the preference value
      * @param key - the key of the preference
      * @param value - the value for that key
      */
@@ -109,6 +115,21 @@ public class Common extends LanguageActivity implements ConectarAlServidor.TaskC
 
         SharedPreferences.Editor editor2 = prefs_especiales.edit();
         editor2.putBoolean(key, value);
+        editor2.apply();
+    }
+
+    /**
+     * set the preference value
+     * @param key - the key of the preference
+     * @param value - the value for that key
+     */
+    public void setStringPreference(String key, String value){
+        SharedPreferences prefs_especiales = getSharedPreferences(
+                "preferencias_especiales",
+                Context.MODE_PRIVATE);
+
+        SharedPreferences.Editor editor2 = prefs_especiales.edit();
+        editor2.putString(key, value);
         editor2.apply();
     }
 
@@ -126,13 +147,7 @@ public class Common extends LanguageActivity implements ConectarAlServidor.TaskC
      */
 
     public void setActiveUsername(String username) {
-        SharedPreferences prefs_especiales = getSharedPreferences(
-                "preferencias_especiales",
-                Context.MODE_PRIVATE);
-
-        SharedPreferences.Editor editor2 = prefs_especiales.edit();
-        editor2.putString("activeUsername", username);
-        editor2.apply();
+        setStringPreference("activeUsername", username);
     }
 
     /**
@@ -213,6 +228,7 @@ public class Common extends LanguageActivity implements ConectarAlServidor.TaskC
         }
         return false;
     }
+
 
 
 }
