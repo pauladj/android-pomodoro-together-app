@@ -213,6 +213,12 @@ public class ProyectosActivity extends MainToolbar implements NuevoProyecto.List
      */
     @Override
     public void yesAddProject(String name) {
+        if(!isNetworkAvailable()){
+            // se necesita internet
+            showToast(true, R.string.internetNeeded);
+            return;
+        }
+
         nameOfNewProject = name;
 
         Project nuevoProyecto = new Project();
@@ -248,7 +254,5 @@ public class ProyectosActivity extends MainToolbar implements NuevoProyecto.List
             }
         });
 
-
-        // TODO fallos, mirar que pasa si no hay internet
     }
 }

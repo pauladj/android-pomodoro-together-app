@@ -1,12 +1,15 @@
 package com.example.pomodoro;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -15,6 +18,8 @@ import com.example.pomodoro.models.MessageEvent;
 import com.example.pomodoro.models.Pomodoro;
 import com.example.pomodoro.services.Timer;
 import com.example.pomodoro.utilities.MainToolbar;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -63,6 +68,12 @@ public class CountDownTimerActivity extends MainToolbar {
         setContentView(R.layout.activity_count_down_timer);
 
         seekArc = findViewById(R.id.seekArc);
+
+        // actualizar texto: work / relax
+        // actualizar remaining time
+        ((TextView) findViewById(R.id.seekArcProgress)).setText("0:00");
+        // seekarc
+        seekArc.setProgress(100);
 
         if (savedInstanceState == null){
             // primera vez
@@ -220,25 +231,35 @@ public class CountDownTimerActivity extends MainToolbar {
         if (pomodoroKey != null){
             // no es un pomodoro individual, y este es el que lo ha creado
             DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("ProyectosPomodoro").child(pomodoroKey);
-            databaseReference.runTransaction(new Transaction.Handler() {
-                @NonNull
+            if (!isNetworkAvailable()){
+                // No hay internet
+                int tiempo = Toast.LENGTH_SHORT;
+                Context context = getApplicationContext();
+                Toast aviso = Toast.makeText(context, getResources().getString(R.string.internetNeeded),
+                        tiempo);
+                aviso.setGravity(Gravity.BOTTOM | Gravity.CENTER, 0, 100);
+                aviso.show();
+                return;
+            }
+            databaseReference.child("empezado").setValue(false).addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
-                public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
-                    mutableData.child("empezado").setValue(false);
-                    return Transaction.success(mutableData);
-                }
-
-                @Override
-                public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
-                    if (databaseError != null){
-                        showToast(false, R.string.error);
-                        return;
-                    }
+                public void onSuccess(Void aVoid) {
                     setStringPreference("pomodoroKey", null);
                     pararServicio();
                 }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    int tiempo = Toast.LENGTH_SHORT;
+                    Context context = getApplicationContext();
+                    Toast aviso = Toast.makeText(context, getResources().getString(R.string.error),
+                            tiempo);
+                    aviso.setGravity(Gravity.BOTTOM | Gravity.CENTER, 0, 100);
+                    aviso.show();
+                }
             });
         }else{
+            // si es de un grupo y no es el creador pararlo
             pararServicio();
         }
     }
@@ -264,12 +285,4 @@ public class CountDownTimerActivity extends MainToolbar {
         finish();
     }
 
-    @Override
-    protected void onDestroy() {
-        if (!servicioEnMarcha(Timer.class) && listener != null){
-            // quitar listener
-            databaseReference.removeEventListener(listener);
-        }
-        super.onDestroy();
-    }
 }

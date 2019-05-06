@@ -10,6 +10,8 @@ import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Binder;
 import android.os.Build;
@@ -20,12 +22,16 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.pomodoro.R;
 import com.example.pomodoro.models.MessageEvent;
+import com.google.android.gms.tasks.OnCanceledListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -60,6 +66,8 @@ public class Timer extends Service {
     private boolean isDescanso = false;
 
     private String pomodoroKey; // si es null no es el dueño del pomodoro y es uno grupal
+
+    private boolean internet; // si hay internet
 
     @Override
     public IBinder onBind(Intent i) {
@@ -363,26 +371,19 @@ public class Timer extends Service {
         if (pomodoroKey != null){
             // no es un pomodoro individual, y este es el que lo ha creado
             DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("ProyectosPomodoro").child(pomodoroKey);
-            databaseReference.runTransaction(new Transaction.Handler() {
-                @NonNull
+            if (!isNetworkAvailable()){
+                // No hay internet
+                int tiempo = Toast.LENGTH_SHORT;
+                Context context = getApplicationContext();
+                Toast aviso = Toast.makeText(context, getResources().getString(R.string.internetNeeded),
+                        tiempo);
+                aviso.setGravity(Gravity.BOTTOM | Gravity.CENTER, 0, 100);
+                aviso.show();
+                return;
+            }
+            databaseReference.child("empezado").setValue(false).addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
-                public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
-                    mutableData.child("empezado").setValue(false);
-                    return Transaction.success(mutableData);
-                }
-
-                @Override
-                public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
-                    if (databaseError != null){
-                        int tiempo = Toast.LENGTH_SHORT;
-                        Context context = getApplicationContext();
-                        Toast aviso = Toast.makeText(context, getResources().getString(R.string.error),
-                                tiempo);
-                        aviso.setGravity(Gravity.BOTTOM | Gravity.CENTER, 0, 100);
-                        aviso.show();
-                        return;
-                    }
-
+                public void onSuccess(Void aVoid) {
                     SharedPreferences prefs_especiales = getSharedPreferences(
                             "preferencias_especiales",
                             Context.MODE_PRIVATE);
@@ -400,7 +401,49 @@ public class Timer extends Service {
 
                     stopSelf();
                 }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    int tiempo = Toast.LENGTH_SHORT;
+                    Context context = getApplicationContext();
+                    Toast aviso = Toast.makeText(context, getResources().getString(R.string.error),
+                            tiempo);
+                    aviso.setGravity(Gravity.BOTTOM | Gravity.CENTER, 0, 100);
+                    aviso.show();
+                }
             });
+        }else{
+            // si es un pomodoro de un proyecto y no es el dueño pararlo
+            stopSelf();
         }
+    }
+
+    /**
+     * Comprueba si está conectado a internet
+     * @return
+     *
+     * Extraído de Stack Overflow
+     * Pregunta: https://stackoverflow.com/q/32547006/11002531
+     * Autor: https://stackoverflow.com/users/546717/kyleed
+     */
+    public boolean isNetworkAvailable() {
+        Context context = this;
+        ConnectivityManager cm =
+                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        if (activeNetwork != null) {
+            // connected to the internet
+            if (activeNetwork.getType() == ConnectivityManager.TYPE_WIFI) {
+                // connected to wifi
+                return true;
+            } else if (activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE) {
+                // connected to mobile data
+                return true;
+            }
+        } else {
+            // not connected to the internet
+            return false;
+        }
+        return false;
     }
 }

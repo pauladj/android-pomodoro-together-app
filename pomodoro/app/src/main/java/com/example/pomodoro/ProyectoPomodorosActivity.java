@@ -211,6 +211,12 @@ public class ProyectoPomodorosActivity extends MainToolbar implements ConfirmAba
     public void yesLeaveProject() {
         String user = getActiveUsername();
 
+        if(!isNetworkAvailable()){
+            // se necesita internet
+            showToast(true, R.string.internetNeeded);
+            return;
+        }
+
         Query query =
                 databaseReferenceUserProyectos.orderByChild("usuario").equalTo(user);
         query.addValueEventListener(new ValueEventListener() {
@@ -253,6 +259,12 @@ public class ProyectoPomodorosActivity extends MainToolbar implements ConfirmAba
     @Override
     public void yesAddUser(final String username) {
         String activeUser = getActiveUsername();
+
+        if(!isNetworkAvailable()){
+            // se necesita internet
+            showToast(true, R.string.internetNeeded);
+            return;
+        }
 
         if (activeUser.equals(username)) {
             // un usuario no puede invitarse a si mismo

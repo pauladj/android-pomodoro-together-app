@@ -137,6 +137,7 @@ public class PrevioAActivo extends Common {
                     showToast(true, R.string.internetNeeded);
                     return;
                 }else if(alreadyActive){
+                    // TODO probar que funcione
                     showToast(true, R.string.pomodoroAlreadyActive);
                     return;
                 }
