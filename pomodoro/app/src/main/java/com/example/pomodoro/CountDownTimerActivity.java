@@ -2,13 +2,10 @@ package com.example.pomodoro;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Build;
-import android.os.CountDownTimer;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
@@ -16,7 +13,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.pomodoro.models.MessageEvent;
-import com.example.pomodoro.models.Pomodoro;
 import com.example.pomodoro.services.Timer;
 import com.example.pomodoro.utilities.MainToolbar;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -26,9 +22,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.MutableData;
-import com.google.firebase.database.Transaction;
-import com.google.firebase.database.ValueEventListener;
 import com.triggertrap.seekarc.SeekArc;
 
 import org.greenrobot.eventbus.EventBus;
@@ -45,11 +38,19 @@ public class CountDownTimerActivity extends MainToolbar {
 
     private String key; // si es de un proyecto y no es el creador
 
+    private boolean empezarNuevo;
+    private boolean individual; // es individual y no de un proyecto
+
+    private boolean finish; // si es true solo cerrar esta actividad
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString("pomodoroKey", pomodoroKey);
         outState.putString("key", key);
+        outState.putBoolean("empezarNuevo", empezarNuevo);
+        outState.putBoolean("individual", individual);
+        outState.putBoolean("finish", finish);
     }
 
     @Override
@@ -61,6 +62,9 @@ public class CountDownTimerActivity extends MainToolbar {
         if (savedInstanceState.containsKey("key")) {
             pomodoroKey = savedInstanceState.getString("key", null);
         }
+        empezarNuevo = savedInstanceState.getBoolean("empezarNuevo");
+        individual = savedInstanceState.getBoolean("individual");
+        finish = savedInstanceState.getBoolean("finish", false);
     }
 
     @Override
@@ -80,6 +84,8 @@ public class CountDownTimerActivity extends MainToolbar {
 
             pomodoroKey = getStringPreference("pomodoroKey"); // es null si el pomodoro no es de
             // un proyecto y si no lo ha puesto en marcha el usuario
+            empezarNuevo = i.getBooleanExtra("nuevo", true);
+            finish = i.getBooleanExtra("finish", false);
 
             if (i.hasExtra("key")) {
                 // si no es null el pomodoro es de un proyecto pero no lo ha puesto en marcha
@@ -87,11 +93,10 @@ public class CountDownTimerActivity extends MainToolbar {
                 key = i.getStringExtra("key");
             }
 
-            boolean empezarNuevo = i.getBooleanExtra("nuevo", true);
-
             if (empezarNuevo && !servicioEnMarcha(Timer.class)) {
                 if (i.hasExtra("horaTrabajoFin")) {
                     // Si se está iniciando un pomodoro de un proyecto, inicializar timer servicio
+                    setBooleanPreference("individual", false);
                     Intent e = new Intent(this, Timer.class);
                     e.putExtra("horaTrabajoFin", i.getStringExtra("horaTrabajoFin"));
                     e.putExtra("horaDescansoFin", i.getStringExtra("horaDescansoFin"));
@@ -124,75 +129,85 @@ public class CountDownTimerActivity extends MainToolbar {
 
         }
 
+        individual = getBooleanPreference("individual");
+
         if (getBooleanPreference("keepScreenOn")) {
             // si se quiere que la ventana se quede activada
             getWindow().addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
 
-        if (pomodoroKey == null && key != null) {
+        if ((pomodoroKey == null && key != null) || (!empezarNuevo && pomodoroKey == null && !individual)) {
             // si es de un proyecto y no lo ha creado él
 
             // cambiar texto botón
             ((Button) findViewById(R.id.buttonDetener)).setText(R.string.abandonar);
         }
 
-        // si el dueño cancela el pomodoro aqui también se cancela
-        String finalKey;
-        if (pomodoroKey == null){
-            finalKey = key;
-        }else{
-            finalKey = pomodoroKey;
-        }
-        databaseReference = FirebaseDatabase.getInstance().getReference(
-                "ProyectosPomodoro").child(finalKey);
-        ChildEventListener listener = new ChildEventListener() {
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
+        // si el dueño cancela el pomodoro grupal aqui también se cancela
+        if (empezarNuevo && !individual) {
+            // no ejecutar esto si se accede desde el menú de abajo o es un pomodoro individual
+            String finalKey;
+            if (pomodoroKey == null) {
+                finalKey = key;
+            } else {
+                finalKey = pomodoroKey;
             }
+            databaseReference = FirebaseDatabase.getInstance().getReference(
+                    "ProyectosPomodoro").child(finalKey);
+            ChildEventListener listener = new ChildEventListener() {
+                @Override
+                public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                // el dato "empezado" ha cambiado, por lo que el dueño ha detenido el pomodoro
-                // o se ha detenido solo
-                try {
-                    boolean empezado = dataSnapshot.getValue(Boolean.class);
-
-                    if (!empezado && servicioEnMarcha(Timer.class)) {
-                        // si no está empezado es que se ha cancelado
-                        pararServicio();
-                    }
-                } catch (Exception e) {
-                    //
                 }
-            }
 
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+                @Override
+                public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                    // el dato "empezado" ha cambiado, por lo que el dueño ha detenido el pomodoro
+                    // o se ha detenido solo
+                    try {
+                        boolean empezado = dataSnapshot.getValue(Boolean.class);
 
-            }
+                        if (!empezado && servicioEnMarcha(Timer.class)) {
+                            // si no está empezado es que se ha cancelado
+                            pararServicio();
+                        }
+                    } catch (Exception e) {
+                        //
+                    }
+                }
 
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                @Override
+                public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
 
-            }
+                }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+                @Override
+                public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
-            }
-        };
-        databaseReference.addChildEventListener(listener);
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            };
+            databaseReference.addChildEventListener(listener);
+        }
+
 
     }
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
-        Intent intent = new Intent(this, ProyectosActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
-        finish();
+        if (finish){
+            // solo cerrar
+            finish();
+        }else{
+            Intent intent = new Intent(this, ProyectosActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            finish();
+        }
     }
 
     /**
@@ -272,6 +287,7 @@ public class CountDownTimerActivity extends MainToolbar {
             });
         } else {
             // si es de un grupo y no es el creador pararlo
+            setBooleanPreference("individual", false);
             pararServicio();
         }
     }

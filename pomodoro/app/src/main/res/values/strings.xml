@@ -62,4 +62,5 @@
     <string name="pomodoroAlreadyActive">The pomodoro is already active</string>
     <string name="internetNeeded">You need internet connection for this</string>
     <string name="abandonar">Leave</string>
+    <string name="finishPomodoro">First stop the pomodoro you started</string>
 </resources>

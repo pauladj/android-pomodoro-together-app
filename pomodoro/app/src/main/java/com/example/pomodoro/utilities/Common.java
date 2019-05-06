@@ -167,7 +167,7 @@ public class Common extends LanguageActivity implements ConectarAlServidor.TaskC
                     finish();
                     return true;
                 }else if(item.getItemId() == R.id.active && !item.isChecked()){
-                    // ver el pomodoro activo individual si hay
+                    // ver el pomodoro activo si hay
                     boolean servicioEnMarcha = servicioEnMarcha(Timer.class);
                     if (servicioEnMarcha){
                         Intent i = new Intent(Common.this, CountDownTimerActivity.class);

@@ -1,10 +1,12 @@
 package com.example.pomodoro;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.widget.ImageView;
 
+import com.example.pomodoro.services.Timer;
 import com.example.pomodoro.utilities.Common;
 
 
@@ -27,6 +29,19 @@ public class MainActivity extends Common {
                 Intent intent = new Intent(MainActivity.this, LoginRegistroActivity.class);
                 if (getActiveUsername() != null) {
                     // el usuario ha iniciado sesión previamente
+
+                    // parar el servicio si estaba activo
+                    if (servicioEnMarcha(Timer.class)){
+                        Intent e = new Intent(MainActivity.this, Timer.class);
+                        e.putExtra("stop", true);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            startForegroundService(e);
+                        } else {
+                            startService(e);
+                        }
+                    }
+                    setStringPreference("pomodoroKey", null);
+
                     intent = new Intent(MainActivity.this, ProyectosActivity.class);
                 }
                 startActivity(intent);

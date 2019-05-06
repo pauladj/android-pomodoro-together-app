@@ -8,36 +8,24 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
-import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
-import android.os.Binder;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.IBinder;
-import android.os.Message;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.util.Log;
 import android.view.Gravity;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.pomodoro.R;
 import com.example.pomodoro.models.MessageEvent;
-import com.google.android.gms.tasks.OnCanceledListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.MutableData;
-import com.google.firebase.database.Transaction;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -78,18 +66,18 @@ public class Timer extends Service {
     @Override
     public int onStartCommand(Intent i, int flags, int startId) {
         Bundle extras = i.getExtras();
-        if (extras == null){
+        if (extras == null) {
             // si no hay parámetros
             stopSelf();
             return START_NOT_STICKY;
         }
 
-        if (extras.containsKey("stop")){
+        if (extras.containsKey("stop")) {
             // parar el servicio y el timer
-            if (cTimerTrabajo != null){
+            if (cTimerTrabajo != null) {
                 cTimerTrabajo.cancel();
             }
-            if (cTimerDescanso != null){
+            if (cTimerDescanso != null) {
                 cTimerDescanso.cancel();
             }
 
@@ -104,7 +92,7 @@ public class Timer extends Service {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationManager elmanager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             NotificationChannel canalservicio = new NotificationChannel("IdCanal",
-                    "NombreCanal",NotificationManager.IMPORTANCE_DEFAULT);
+                    "NombreCanal", NotificationManager.IMPORTANCE_DEFAULT);
             elmanager.createNotificationChannel(canalservicio);
             Notification.Builder builder = new Notification.Builder(this, "IdCanal")
                     .setContentTitle(getString(R.string.app_name))
@@ -114,7 +102,7 @@ public class Timer extends Service {
         }
 
         // recuperar valores
-        if (extras.containsKey("horaTrabajoFin")){
+        if (extras.containsKey("horaTrabajoFin")) {
             // viene de un proyecto
             pomodoroKey = extras.getString("pomodoroKey");
 
@@ -135,26 +123,26 @@ public class Timer extends Service {
 
             milisecondsDescansoFin = milisecondsDescanso - milisecondsTrabajoFin;
             milisecondsTrabajoFin = milisecondsTrabajoFin - milisecondsNow;
-            if (milisecondsTrabajoFin < 0){
+            if (milisecondsTrabajoFin < 0) {
                 // si el trabajo ha terminado
-                if ((milisecondsDescanso - milisecondsNow) < 0){
+                if ((milisecondsDescanso - milisecondsNow) < 0) {
                     // el descanso ha terminado, el pomodoro ya no está activo, enviar mensaje
                     MessageEvent a = new MessageEvent("0:00", getStringToShow(),
                             100);
                     EventBus.getDefault().post(a);
-                }else{
+                } else {
                     // el trabajo ha terminado, el descanso sigue
                     // TODO hacer, que no sea recursivo y el texto
                     isDescanso = true;
                     long mili = milisecondsDescanso - milisecondsNow;
                     startTimer(mili);
                 }
-            }else{
+            } else {
                 // el trabajo no ha terminado
                 isDescanso = false;
                 startTimer(milisecondsTrabajoFin);
             }
-        }else {
+        } else {
             // es individual
             minutosTrabajo = extras.getInt("minutosTrabajo");
             minutosDescanso = extras.getInt("minutosDescanso");
@@ -168,26 +156,29 @@ public class Timer extends Service {
 
     /**
      * Minutes to miliseconds converter
+     *
      * @return
      */
-    private int minutesToMiliseconds(int minutes){
+    private int minutesToMiliseconds(int minutes) {
         return minutes * 60000;
     }
 
     /**
      * Miliseconds to minutes
+     *
      * @param miliseconds
      * @return
      */
-    private int milisecondsToMinutes(long miliseconds){
-        return Integer.valueOf(String.valueOf(miliseconds/60000));
+    private int milisecondsToMinutes(long miliseconds) {
+        return Integer.valueOf(String.valueOf(miliseconds / 60000));
     }
 
     /**
      * Start timer individual
+     *
      * @param minutos - los minutos del countdown
      */
-    private void startTimer(int minutos){
+    private void startTimer(int minutos) {
         currentSeconds = 60;
         EventBus.getDefault().post(new MessageEvent(String.valueOf(minutos), getStringToShow(), 0));
         int miliseconds = minutesToMiliseconds(minutos);
@@ -196,18 +187,18 @@ public class Timer extends Service {
         CountDownTimer cTimer = new CountDownTimer(miliseconds, 1000) {
             public void onTick(long millisUntilFinished) {
                 // Cada segundo
-                int seconds = Integer.valueOf(String.valueOf(millisUntilFinished /1000));
-                int minutosLeft = seconds/60;
+                int seconds = Integer.valueOf(String.valueOf(millisUntilFinished / 1000));
+                int minutosLeft = seconds / 60;
 
                 currentSeconds--;
 
-                String zero= "";
-                if (currentSeconds < 10){
+                String zero = "";
+                if (currentSeconds < 10) {
                     zero = "0";
                 }
                 String texto = minutosLeft + ":" + zero + currentSeconds;
 
-                if (currentSeconds == 0){
+                if (currentSeconds == 0) {
                     currentSeconds = 60;
                 }
 
@@ -216,6 +207,7 @@ public class Timer extends Service {
                         getPercentage(Integer.valueOf(String.valueOf(millisUntilFinished))));
                 EventBus.getDefault().post(a);
             }
+
             public void onFinish() {
                 // enviar a actividad para que actualice la UI
                 MessageEvent a = new MessageEvent("0:00", getStringToShow(),
@@ -227,26 +219,34 @@ public class Timer extends Service {
                         "preferencias_especiales",
                         Context.MODE_PRIVATE);
                 boolean sound = prefs_especiales.getBoolean("sound", false);
-                if (sound){
+                if (sound) {
                     Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
                     player = MediaPlayer.create(getApplicationContext(), notification);
                     player.start();
                 }
 
                 // Start relax period
-                if (!isDescanso){
+                if (!isDescanso) {
                     isDescanso = true;
                     startTimer(minutosDescanso);
-                }else{
+                } else {
                     // stop
+                    prefs_especiales = getSharedPreferences(
+                            "preferencias_especiales",
+                            Context.MODE_PRIVATE);
+
+                    SharedPreferences.Editor editor2 = prefs_especiales.edit();
+                    editor2.putBoolean("individual", false);
+                    editor2.apply();
+
                     stopSelf();
                 }
             }
         };
 
-        if(cTimerTrabajo == null){
+        if (cTimerTrabajo == null) {
             cTimerTrabajo = cTimer;
-        }else{
+        } else {
             cTimerDescanso = cTimer;
         }
         cTimer.start();
@@ -254,9 +254,10 @@ public class Timer extends Service {
 
     /**
      * Start timer de proyecto
+     *
      * @param miliseconds - los milisegundos del countdown
      */
-    private void startTimer(long miliseconds){
+    private void startTimer(long miliseconds) {
         EventBus.getDefault().post(new MessageEvent(String.valueOf(milisecondsToMinutes(miliseconds)),
                 getStringToShow(), 0));
         maxMiliseconds = Integer.valueOf(String.valueOf(miliseconds));
@@ -268,25 +269,24 @@ public class Timer extends Service {
                 long seconds = (millisUntilFinished / 1000) % 60;
 
                 String texto;
-                if (minutes == 0){
-                    texto = String.valueOf(seconds);
-                }else{
-                    String zero = "";
-                    if (seconds < 10){
-                        zero = "0";
-                    }
-                    texto = minutes + ":" + zero + seconds;
+
+                String zero = "";
+                if (seconds < 10) {
+                    zero = "0";
                 }
+                texto = minutes + ":" + zero + seconds;
+
 
                 // enviar a actividad para que actualice la UI
                 MessageEvent a = new MessageEvent(texto, getStringToShow(),
                         getPercentage(Integer.valueOf(String.valueOf(millisUntilFinished))));
                 EventBus.getDefault().post(a);
             }
+
             public void onFinish() {
                 // enviar a actividad para que actualice la UI
                 boolean finished = false;
-                if (isDescanso){
+                if (isDescanso) {
                     finished = true;
                 }
                 MessageEvent a = new MessageEvent("0:00", getStringToShow(),
@@ -298,26 +298,26 @@ public class Timer extends Service {
                         "preferencias_especiales",
                         Context.MODE_PRIVATE);
                 boolean sound = prefs_especiales.getBoolean("sound", false);
-                if (sound){
+                if (sound) {
                     Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
                     player = MediaPlayer.create(getApplicationContext(), notification);
                     player.start();
                 }
 
                 // Start relax period
-                if (!isDescanso){
+                if (!isDescanso) {
                     isDescanso = true;
                     startTimer(milisecondsDescansoFin);
-                }else{
+                } else {
                     // stop
                     pomodoroIsFinished();
                 }
             }
         };
 
-        if(cTimerTrabajo == null){
+        if (cTimerTrabajo == null) {
             cTimerTrabajo = cTimer;
-        }else{
+        } else {
             cTimerDescanso = cTimer;
         }
         cTimer.start();
@@ -325,13 +325,14 @@ public class Timer extends Service {
 
     /**
      * Get id of the string to show
+     *
      * @return - the id of the string to show
      */
-    private int getStringToShow(){
+    private int getStringToShow() {
         int stringId;
-        if (isDescanso){
+        if (isDescanso) {
             stringId = R.string.descansar;
-        }else{
+        } else {
             stringId = R.string.work;
         }
         return stringId;
@@ -339,10 +340,11 @@ public class Timer extends Service {
 
     /**
      * Transformar milisegundos en porcentaje
+     *
      * @param milisecondsLeft
      * @return
      */
-    private int getPercentage(int milisecondsLeft){
+    private int getPercentage(int milisecondsLeft) {
         int miliSegundosPasados = maxMiliseconds - milisecondsLeft;
         return (miliSegundosPasados * 100) / maxMiliseconds;
     }
@@ -350,16 +352,17 @@ public class Timer extends Service {
 
     /**
      * COnvertir string a date
+     *
      * @param time
      * @return
      */
-    private Date stringToDate(String time){
+    private Date stringToDate(String time) {
         try {
             Calendar cal = Calendar.getInstance();
             SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", Locale.ENGLISH);
             cal.setTime(sdf.parse(time));// all done
             return cal.getTime();
-        }catch (Exception e){
+        } catch (Exception e) {
             return null;
         }
     }
@@ -367,11 +370,11 @@ public class Timer extends Service {
     /**
      * El pomodoro grupal ha terminado, actualizar datos firebase
      */
-    private void pomodoroIsFinished(){
-        if (pomodoroKey != null){
+    private void pomodoroIsFinished() {
+        if (pomodoroKey != null) {
             // no es un pomodoro individual, y este es el que lo ha creado
             DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("ProyectosPomodoro").child(pomodoroKey);
-            if (!isNetworkAvailable()){
+            if (!isNetworkAvailable()) {
                 // No hay internet
                 int tiempo = Toast.LENGTH_SHORT;
                 Context context = getApplicationContext();
@@ -412,7 +415,7 @@ public class Timer extends Service {
                     aviso.show();
                 }
             });
-        }else{
+        } else {
             // si es un pomodoro de un proyecto y no es el dueño pararlo
             stopSelf();
         }
@@ -420,9 +423,8 @@ public class Timer extends Service {
 
     /**
      * Comprueba si está conectado a internet
-     * @return
      *
-     * Extraído de Stack Overflow
+     * @return Extraído de Stack Overflow
      * Pregunta: https://stackoverflow.com/q/32547006/11002531
      * Autor: https://stackoverflow.com/users/546717/kyleed
      */

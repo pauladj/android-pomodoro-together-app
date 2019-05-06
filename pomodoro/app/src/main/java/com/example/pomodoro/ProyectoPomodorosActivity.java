@@ -1,6 +1,7 @@
 package com.example.pomodoro;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
@@ -16,6 +17,7 @@ import com.example.pomodoro.dialogs.ConfirmAbandonarProyecto;
 import com.example.pomodoro.models.Pomodoro;
 import com.example.pomodoro.models.UserProyectos;
 import com.example.pomodoro.recyclerViewProjectPomodoros.MyAdapterPomodoros;
+import com.example.pomodoro.services.Timer;
 import com.example.pomodoro.utilities.MainToolbar;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -101,8 +103,8 @@ public class ProyectoPomodorosActivity extends MainToolbar implements ConfirmAba
                     // obtener el proyecto correspondiente a la posición
                     Pomodoro pomodoro = list.get(clickedPosition);
 
-                    if (pomodoro.getEmpezado()) {
-                        // el pomodoro ya ha sido iniciado
+                    if ((pomodoro.getEmpezado() & getStringPreference("pomodoroKey") == null) || (pomodoro.getEmpezado() && getStringPreference("pomodoroKey").equals(pomodoro.getKey()))){
+                        // el pomodoro ya ha sido iniciado, o no se ha cerrado correctamente
                         // mirar si este usuario es el dueño
                         if (!isNetworkAvailable()) {
                             showToast(false, R.string.internetNeeded);
@@ -128,6 +130,8 @@ public class ProyectoPomodorosActivity extends MainToolbar implements ConfirmAba
                                         i.putExtra("horaTrabajoFin", pomodoro.getHoraWorkFin());
                                         i.putExtra("horaDescansoFin", pomodoro.getHoraDescansoFin());
                                         i.putExtra("key", pomodoro.getKey());
+                                        i.putExtra("finish", true);
+
                                         startActivity(i);
                                     }
 
@@ -142,12 +146,21 @@ public class ProyectoPomodorosActivity extends MainToolbar implements ConfirmAba
                             }
                         });
                     } else {
-                        // el pomodoro no está activo
+                        // si el usuario no tiene otro pomodoro que esté empezado
+                        if (servicioEnMarcha(Timer.class)){
+                            showToast(false, R.string.pomodoroActive);
+                            return;
+                        }
+                        if (getStringPreference("pomodoroKey") != null){
+                            showToast(false, R.string.finishPomodoro);
+                            return;
+                        }
                         Intent i = new Intent(ProyectoPomodorosActivity.this, PrevioAActivo.class);
                         i.putExtra("pomodoroKey", pomodoro.getKey());
                         i.putExtra("trabajar", pomodoro.getWork());
                         i.putExtra("descansar", pomodoro.getRelax());
                         startActivity(i);
+                        return;
                     }
 
                 } catch (IndexOutOfBoundsException e) {
@@ -172,6 +185,7 @@ public class ProyectoPomodorosActivity extends MainToolbar implements ConfirmAba
      * Actualizar los datos según firebase la primera vez y cada vez que se actualicen
      */
     private void databaseSincronizacion() {
+
         // Sincronizar pomodoros
         databaseReferenceUserProyectos = FirebaseDatabase.getInstance().getReference(
                 "UserProyectos");
@@ -357,4 +371,5 @@ public class ProyectoPomodorosActivity extends MainToolbar implements ConfirmAba
         startActivity(i);
         finish();
     }
+
 }

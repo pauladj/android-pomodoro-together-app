@@ -8,8 +8,6 @@ import android.view.Menu;
 import android.widget.TextView;
 
 import com.example.pomodoro.models.Pomodoro;
-import com.example.pomodoro.models.Project;
-import com.example.pomodoro.models.UserProyectos;
 import com.example.pomodoro.utilities.MainToolbar;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -21,32 +19,30 @@ import com.triggertrap.seekarc.SeekArc.OnSeekArcChangeListener;
  * Usada la librería SeekArc de neild001
  * proyecto: https://github.com/neild001/SeekArc
  * usuario: https://github.com/neild001
- *
- *
- The MIT License (MIT)
-
- Copyright (c) 2013 Triggertrap Ltd
- Author Neil Davies
-
- Permission is hereby granted, free of charge, to any person obtaining a copy of
- this software and associated documentation files (the "Software"), to deal in
- the Software without restriction, including without limitation the rights to
- use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
- the Software, and to permit persons to whom the Software is furnished to do so,
- subject to the following conditions:
-
- The above copyright notice and this permission notice shall be included in all
- copies or substantial portions of the Software.
-
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
- FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
- COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
- IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
- CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
+ * <p>
+ * <p>
+ * The MIT License (MIT)
+ * <p>
+ * Copyright (c) 2013 Triggertrap Ltd
+ * Author Neil Davies
+ * <p>
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+ * the Software, and to permit persons to whom the Software is furnished to do so,
+ * subject to the following conditions:
+ * <p>
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * <p>
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+ * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+ * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+ * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+ * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-
 
 
 public class NewPomodoroRelax extends MainToolbar {
@@ -64,7 +60,6 @@ public class NewPomodoroRelax extends MainToolbar {
     private String projectName = null;
 
     private DatabaseReference databaseReference;
-
 
 
     @Override
@@ -111,13 +106,13 @@ public class NewPomodoroRelax extends MainToolbar {
         removeElevation();
 
         // recuperar minutos de trabajo
-        if (savedInstanceState != null){
+        if (savedInstanceState != null) {
             minutosTrabajo = savedInstanceState.getInt("minutosTrabajo", 50);
             minutosDescanso = savedInstanceState.getInt("minutosDescanso", 10);
-        }else{
+        } else {
             Intent mIntent = getIntent();
             minutosTrabajo = mIntent.getIntExtra("minutosTrabajo", 50);
-            if (mIntent.hasExtra("projectKey")){
+            if (mIntent.hasExtra("projectKey")) {
                 // si es un pomodoro grupal
                 projectKey = mIntent.getStringExtra("projectKey");
                 projectName = mIntent.getStringExtra("projectName");
@@ -152,25 +147,25 @@ public class NewPomodoroRelax extends MainToolbar {
     }
 
 
-
     /**
      * El usuario quiere seguir al siguiente paso, finalizar e iniciar
      */
-    public void creacionPomodoroIndividual(){
+    public void creacionPomodoroIndividual() {
         minutosDescanso = Integer.valueOf(mSeekArcProgress.getText().toString());
-        if (minutosDescanso == 0){
+        if (minutosDescanso == 0) {
             showToast(false, R.string.pomodoroZero);
             return;
         }
 
-        if (projectKey != null){
+        if (projectKey != null) {
             // el pomodoro es de un proyecto, guardar datos en firebase
             uploadDataToFirebase();
-        }else{
+        } else {
             // Siguiente pantalla
             Intent i = new Intent(this, CountDownTimerActivity.class);
             i.putExtra("minutosTrabajo", minutosTrabajo);
             i.putExtra("minutosDescanso", minutosDescanso);
+            setBooleanPreference("individual", true);
             startActivity(i);
             finish();
         }
@@ -180,6 +175,12 @@ public class NewPomodoroRelax extends MainToolbar {
      * Upload pomodoro data to firebase
      */
     private void uploadDataToFirebase() {
+        if (!isNetworkAvailable()) {
+            // no hay internet
+            showToast(false, R.string.internetNeeded);
+            return;
+        }
+
         // crear objeto pomodoro
         Pomodoro nuevoPomodoro = new Pomodoro();
         nuevoPomodoro.setEmpezado(false);

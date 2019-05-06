@@ -148,6 +148,7 @@ public class PrevioAActivo extends Common {
                 i.putExtra("horaTrabajoFin", workFin);
                 i.putExtra("horaDescansoFin", relaxFin);
                 setStringPreference("pomodoroKey", pomodoroKey);
+                i.putExtra("finish", true);
                 startActivity(i);
                 finish();
             }
