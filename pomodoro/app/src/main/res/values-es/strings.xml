@@ -62,5 +62,4 @@
     <string name="pomodoroAlreadyActive">El pomodoro ya ha sido activado</string>
     <string name="internetNeeded">Necesitas conexión a internet</string>
     <string name="abandonar">Abandonar</string>
-
 </resources>

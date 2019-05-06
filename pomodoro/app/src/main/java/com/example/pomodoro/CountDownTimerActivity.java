@@ -55,10 +55,10 @@ public class CountDownTimerActivity extends MainToolbar {
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        if (savedInstanceState.containsKey("pomodoroKey")){
+        if (savedInstanceState.containsKey("pomodoroKey")) {
             pomodoroKey = savedInstanceState.getString("pomodoroKey", null);
         }
-        if (savedInstanceState.containsKey("key")){
+        if (savedInstanceState.containsKey("key")) {
             pomodoroKey = savedInstanceState.getString("key", null);
         }
     }
@@ -74,14 +74,14 @@ public class CountDownTimerActivity extends MainToolbar {
         ((TextView) findViewById(R.id.seekArcProgress)).setText("0:00");
         seekArc.setProgress(100);
 
-        if (savedInstanceState == null){
+        if (savedInstanceState == null) {
             // primera vez
             Intent i = getIntent();
 
             pomodoroKey = getStringPreference("pomodoroKey"); // es null si el pomodoro no es de
             // un proyecto y si no lo ha puesto en marcha el usuario
 
-            if (i.hasExtra("key")){
+            if (i.hasExtra("key")) {
                 // si no es null el pomodoro es de un proyecto pero no lo ha puesto en marcha
                 // este usuario
                 key = i.getStringExtra("key");
@@ -89,8 +89,8 @@ public class CountDownTimerActivity extends MainToolbar {
 
             boolean empezarNuevo = i.getBooleanExtra("nuevo", true);
 
-            if (empezarNuevo && !servicioEnMarcha(Timer.class)){
-                if (i.hasExtra("horaTrabajoFin")){
+            if (empezarNuevo && !servicioEnMarcha(Timer.class)) {
+                if (i.hasExtra("horaTrabajoFin")) {
                     // Si se está iniciando un pomodoro de un proyecto, inicializar timer servicio
                     Intent e = new Intent(this, Timer.class);
                     e.putExtra("horaTrabajoFin", i.getStringExtra("horaTrabajoFin"));
@@ -101,7 +101,7 @@ public class CountDownTimerActivity extends MainToolbar {
                     } else {
                         startService(e);
                     }
-                }else{
+                } else {
                     // es un pomodoro individual
                     // si no hay ninguno empezado
                     int minutosTrabajo = i.getIntExtra("minutosTrabajo", 50);
@@ -124,59 +124,66 @@ public class CountDownTimerActivity extends MainToolbar {
 
         }
 
-        if (getBooleanPreference("keepScreenOn")){
+        if (getBooleanPreference("keepScreenOn")) {
             // si se quiere que la ventana se quede activada
             getWindow().addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
 
-        if (pomodoroKey == null && key != null){
+        if (pomodoroKey == null && key != null) {
             // si es de un proyecto y no lo ha creado él
 
             // cambiar texto botón
             ((Button) findViewById(R.id.buttonDetener)).setText(R.string.abandonar);
-            // si el dueño cancela el pomodoro aqui también se cancela
-
-            databaseReference = FirebaseDatabase.getInstance().getReference(
-                    "ProyectosPomodoro").child(key);
-            ChildEventListener listener = new ChildEventListener() {
-                @Override
-                public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-                }
-
-                @Override
-                public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                    // el dato "empezado" ha cambiado, por lo que el dueño ha detenido el pomodoro
-                    // o se ha detenido solo
-                    try{
-                        boolean empezado = dataSnapshot.getValue(Boolean.class);
-
-                        if (!empezado && servicioEnMarcha(Timer.class)){
-                            // si no está empezado es que se ha cancelado
-                            pararServicio();
-                        }
-                    }catch(Exception e){
-                        //
-                    }
-                }
-
-                @Override
-                public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
-                }
-
-                @Override
-                public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                }
-            };
-            databaseReference.addChildEventListener(listener);
         }
+
+        // si el dueño cancela el pomodoro aqui también se cancela
+        String finalKey;
+        if (pomodoroKey == null){
+            finalKey = key;
+        }else{
+            finalKey = pomodoroKey;
+        }
+        databaseReference = FirebaseDatabase.getInstance().getReference(
+                "ProyectosPomodoro").child(finalKey);
+        ChildEventListener listener = new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                // el dato "empezado" ha cambiado, por lo que el dueño ha detenido el pomodoro
+                // o se ha detenido solo
+                try {
+                    boolean empezado = dataSnapshot.getValue(Boolean.class);
+
+                    if (!empezado && servicioEnMarcha(Timer.class)) {
+                        // si no está empezado es que se ha cancelado
+                        pararServicio();
+                    }
+                } catch (Exception e) {
+                    //
+                }
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        };
+        databaseReference.addChildEventListener(listener);
+
     }
 
     @Override
@@ -190,6 +197,7 @@ public class CountDownTimerActivity extends MainToolbar {
 
     /**
      * Se recibe un mensaje desde el servicio
+     *
      * @param event
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -216,10 +224,11 @@ public class CountDownTimerActivity extends MainToolbar {
 
     /**
      * Botón para parar el pomodoro
+     *
      * @param v
      */
-    public void stopPomodoro(View v){
-        if (!servicioEnMarcha(Timer.class)){
+    public void stopPomodoro(View v) {
+        if (!servicioEnMarcha(Timer.class)) {
             return;
         }
 
@@ -230,11 +239,11 @@ public class CountDownTimerActivity extends MainToolbar {
     /**
      * Parar un pomodoro de un proyecto
      */
-    private void stopProjectPomodoro(){
-        if (pomodoroKey != null){
+    private void stopProjectPomodoro() {
+        if (pomodoroKey != null) {
             // no es un pomodoro individual, y este es el que lo ha creado
             DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("ProyectosPomodoro").child(pomodoroKey);
-            if (!isNetworkAvailable()){
+            if (!isNetworkAvailable()) {
                 // No hay internet
                 int tiempo = Toast.LENGTH_SHORT;
                 Context context = getApplicationContext();
@@ -261,7 +270,7 @@ public class CountDownTimerActivity extends MainToolbar {
                     aviso.show();
                 }
             });
-        }else{
+        } else {
             // si es de un grupo y no es el creador pararlo
             pararServicio();
         }
@@ -270,7 +279,7 @@ public class CountDownTimerActivity extends MainToolbar {
     /**
      * Parar servicio pomodoro
      */
-    private void pararServicio(){
+    private void pararServicio() {
         // parar el servicio pomodoro
         Intent e = new Intent(this, Timer.class);
         e.putExtra("stop", true);
@@ -280,12 +289,8 @@ public class CountDownTimerActivity extends MainToolbar {
             startService(e);
         }
         showToast(true, R.string.pomodoroStopped);
-
-        // ver los proyectos
-        Intent intent = new Intent(this, ProyectosActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
-        finish();
+        ((TextView) findViewById(R.id.seekArcProgress)).setText("0:00");
+        seekArc.setProgress(100);
     }
 
 }

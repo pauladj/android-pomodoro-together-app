@@ -118,6 +118,7 @@ public class PrevioAActivo extends Common {
                     relaxFin = calendar.getTime().toString();
                     mutableData.child("horaDescansoFin").setValue(relaxFin);
 
+                    mutableData.child("usuario").setValue(getActiveUsername());
                     mutableData.child("empezado").setValue(true);
 
                     return Transaction.success(mutableData);
