@@ -4,6 +4,8 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -225,6 +227,35 @@ public class Common extends LanguageActivity implements ConectarAlServidor.TaskC
             if (serviceClass.getName().equals(service.service.getClassName())) {
                 return true;
             }
+        }
+        return false;
+    }
+
+    /**
+     * Comprueba si está conectado a internet
+     * @return
+     *
+     * Extraído de Stack Overflow
+     * Pregunta: https://stackoverflow.com/q/32547006/11002531
+     * Autor: https://stackoverflow.com/users/546717/kyleed
+     */
+    public boolean isNetworkAvailable() {
+        Context context = this;
+        ConnectivityManager cm =
+                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        if (activeNetwork != null) {
+            // connected to the internet
+            if (activeNetwork.getType() == ConnectivityManager.TYPE_WIFI) {
+                // connected to wifi
+                return true;
+            } else if (activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE) {
+                // connected to mobile data
+                return true;
+            }
+        } else {
+            // not connected to the internet
+            return false;
         }
         return false;
     }

@@ -36,6 +36,8 @@ public class PrevioAActivo extends Common {
 
     private DatabaseReference databaseReference;
 
+    private boolean internet; // si no hay internet
+    private boolean alreadyActive; // this pomodoro is already active
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -46,6 +48,9 @@ public class PrevioAActivo extends Common {
 
         outState.putString("workFin", workFin);
         outState.putString("relaxFin", relaxFin);
+
+        outState.putBoolean("internet", internet);
+        outState.putBoolean("alreadyActive", alreadyActive);
     }
 
     @Override
@@ -67,6 +72,9 @@ public class PrevioAActivo extends Common {
 
             workFin = savedInstanceState.getString("workFin", null);
             relaxFin = savedInstanceState.getString("relaxFin", null);
+
+            internet = savedInstanceState.getBoolean("internet", false);
+            alreadyActive = savedInstanceState.getBoolean("alreadyActive", false);
         }
 
         // Definir los valores descansar/trabajar
@@ -87,29 +95,36 @@ public class PrevioAActivo extends Common {
             @Override
             public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
                 // actualizar pomodoro
-                if ((boolean) mutableData.child("empezado").getValue()){
-                    // si ya ha sido empezado justo antes
-                    // TODO probar
-                    showToast(false, R.string.pomodoroAlreadyActive);
+                internet = false;
+                alreadyActive = false;
+                if (isNetworkAvailable()){
+                    internet = true;
+                    if ((boolean) mutableData.child("empezado").getValue()){
+                        // si ya ha sido empezado justo antes
+                        alreadyActive = true;
+                        return Transaction.abort();
+                    }
+                    java.util.Date fechaActual = new java.util.Date();
+                    Calendar calendar = Calendar.getInstance(Locale.ENGLISH);
+                    calendar.setTime(fechaActual);
+                    calendar.add(Calendar.MINUTE, trabajar);
+                    Date a = calendar.getTime();
+                    workFin = a.toString();
+                    mutableData.child("horaWorkFin").setValue(workFin);
+
+                    calendar = Calendar.getInstance();
+                    calendar.setTime(a);
+                    calendar.add(Calendar.MINUTE, descansar);
+                    relaxFin = calendar.getTime().toString();
+                    mutableData.child("horaDescansoFin").setValue(relaxFin);
+
+                    mutableData.child("empezado").setValue(true);
+
+                    return Transaction.success(mutableData);
+                }else{
+                    internet = false;
                     return Transaction.abort();
                 }
-                java.util.Date fechaActual = new java.util.Date();
-                Calendar calendar = Calendar.getInstance(Locale.ENGLISH);
-                calendar.setTime(fechaActual);
-                calendar.add(Calendar.MINUTE, trabajar);
-                Date a = calendar.getTime();
-                workFin = a.toString();
-                mutableData.child("horaWorkFin").setValue(workFin);
-
-                calendar = Calendar.getInstance();
-                calendar.setTime(a);
-                calendar.add(Calendar.MINUTE, descansar);
-                relaxFin = calendar.getTime().toString();
-                mutableData.child("horaDescansoFin").setValue(relaxFin);
-
-                mutableData.child("empezado").setValue(true);
-
-                return Transaction.success(mutableData);
             }
 
             @Override
@@ -117,7 +132,15 @@ public class PrevioAActivo extends Common {
                 if (databaseError != null){
                     showToast(false, R.string.error);
                     return;
+                }else if(!internet){
+                    // Si no hay internet
+                    showToast(true, R.string.internetNeeded);
+                    return;
+                }else if(alreadyActive){
+                    showToast(true, R.string.pomodoroAlreadyActive);
+                    return;
                 }
+
                 // ENVIAR MINUTOS Y SI ES O NO EL QUE LO HA INICIADO
                 Intent i = new Intent(PrevioAActivo.this, CountDownTimerActivity.class);
                 i.putExtra("horaTrabajoFin", workFin);

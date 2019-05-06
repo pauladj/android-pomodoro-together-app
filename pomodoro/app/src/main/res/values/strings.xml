@@ -60,4 +60,5 @@
     <string name="pomodoroCreated">The pomodoro has been created</string>
     <string name="start">Start</string>
     <string name="pomodoroAlreadyActive">The pomodoro is already active</string>
+    <string name="internetNeeded">You need internet connection for this</string>
 </resources>
