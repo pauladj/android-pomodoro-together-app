@@ -59,6 +59,7 @@
     </RelativeLayout>
 
     <Button
+        android:id="@+id/buttonDetener"
         style="@style/Widget.AppCompat.Button.Borderless"
         android:layout_width="wrap_content"
         android:layout_height="0dp"

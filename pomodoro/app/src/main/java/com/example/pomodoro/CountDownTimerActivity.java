@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -69,10 +70,8 @@ public class CountDownTimerActivity extends MainToolbar {
 
         seekArc = findViewById(R.id.seekArc);
 
-        // actualizar texto: work / relax
-        // actualizar remaining time
+        // valores por defecto
         ((TextView) findViewById(R.id.seekArcProgress)).setText("0:00");
-        // seekarc
         seekArc.setProgress(100);
 
         if (savedInstanceState == null){
@@ -132,7 +131,11 @@ public class CountDownTimerActivity extends MainToolbar {
 
         if (pomodoroKey == null && key != null){
             // si es de un proyecto y no lo ha creado él
+
+            // cambiar texto botón
+            ((Button) findViewById(R.id.buttonDetener)).setText(R.string.abandonar);
             // si el dueño cancela el pomodoro aqui también se cancela
+
             databaseReference = FirebaseDatabase.getInstance().getReference(
                     "ProyectosPomodoro").child(key);
             ChildEventListener listener = new ChildEventListener() {
