@@ -57,4 +57,10 @@
     <string name="detener">Stop</string>
     <string name="pomodoroStopped">Pomodoro stopped</string>
     <string name="sonido">Music when pomodoro ends</string>
+    <string name="pomodoroCreated">The pomodoro has been created</string>
+    <string name="start">Start</string>
+    <string name="pomodoroAlreadyActive">The pomodoro is already active</string>
+    <string name="internetNeeded">You need internet connection for this</string>
+    <string name="abandonar">Leave</string>
+    <string name="finishPomodoro">First stop the pomodoro you started</string>
 </resources>

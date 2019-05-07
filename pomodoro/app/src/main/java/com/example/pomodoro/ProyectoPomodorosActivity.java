@@ -1,12 +1,16 @@
 package com.example.pomodoro;
 
+import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 
 import com.example.pomodoro.dialogs.AddUserToProject;
@@ -14,6 +18,8 @@ import com.example.pomodoro.dialogs.ConfirmAbandonarProyecto;
 import com.example.pomodoro.models.Pomodoro;
 import com.example.pomodoro.models.UserProyectos;
 import com.example.pomodoro.recyclerViewProjectPomodoros.MyAdapterPomodoros;
+import com.example.pomodoro.services.Timer;
+import com.example.pomodoro.utilities.Common;
 import com.example.pomodoro.utilities.MainToolbar;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -50,6 +56,7 @@ public class ProyectoPomodorosActivity extends MainToolbar implements ConfirmAba
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString("projectKey", projectKey); // Se guarda
+        outState.putString("projectName", projectName); // Se guarda
     }
 
     @Override
@@ -57,18 +64,24 @@ public class ProyectoPomodorosActivity extends MainToolbar implements ConfirmAba
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_proyecto_pomodoros);
 
+        if (savedInstanceState == null) {
+            // la primera vez que se carga
+            Bundle b = getIntent().getExtras();
+            if (b != null) {
+                // obtener los datos del proyecto
+                projectName = b.getString("projectName", null);
+                projectKey = b.getString("projectKey", null);
 
-        Bundle b = getIntent().getExtras();
-        if (b != null) {
-            // obtener los datos del proyecto
-            projectName = b.getString("projectName", null);
-            projectKey = b.getString("projectKey", null);
-
-            if (projectName == null || projectKey == null) {
-                // error
-                showToast(true, R.string.error);
-                finish();
+                if (projectName == null || projectKey == null) {
+                    // error
+                    showToast(true, R.string.error);
+                    finish();
+                }
             }
+        } else {
+            projectKey = savedInstanceState.getString("projectKey");
+            projectName = savedInstanceState.getString("projectName");
+
         }
 
         // load top toolbar
@@ -80,6 +93,8 @@ public class ProyectoPomodorosActivity extends MainToolbar implements ConfirmAba
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL,
                 false));
         adapter = new MyAdapterPomodoros(ProyectoPomodorosActivity.this, list);
+
+
         // Add listeners
         ((MyAdapterPomodoros) adapter).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -88,15 +103,63 @@ public class ProyectoPomodorosActivity extends MainToolbar implements ConfirmAba
                 int clickedPosition = recyclerView.getChildAdapterPosition(v);
 
                 try {
-                    // obtener el proyecto correspondiente a la posición
+                    // obtener el pomodoro correspondiente a la posición
                     Pomodoro pomodoro = list.get(clickedPosition);
 
-                    if (pomodoro.getEmpezado()) {
-                        // abrir actividad para ver pomodoro
-                        // TODO
+                    if ((pomodoro.getEmpezado() & getStringPreference("pomodoroKey") != null) && !getBooleanPreference("individual")  && servicioEnMarcha(Timer.class)) {
+                        // ya hay un pomodoro iniciado
+                        showToast(false, R.string.pomodoroActive);
+                        return;
                     } else {
-                        // mensaje de que el pomodoro no está activo
-                        showToast(false, R.string.pomodoroNotActive);
+                        // si el usuario no tiene otro pomodoro que esté empezado
+                        if (servicioEnMarcha(Timer.class)) {
+                            showToast(false, R.string.pomodoroActive);
+                            return;
+                        }
+
+                        if (pomodoro.getEmpezado()) {
+                            databaseReferenceProyectosPomodoro.child(pomodoro.getKey()).child(
+                                    "usuario").addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    try {
+                                        String usuario = dataSnapshot.getValue(String.class);
+                                        String actualUser = getActiveUsername();
+                                        if (usuario.equals(actualUser)) {
+                                            // es el que ha creado el pomodoro
+                                            setStringPreference("pomodoroKey", pomodoro.getKey());
+                                        }
+                                        // abrir actividad para ver pomodoro
+                                        // ir a countdowntimer
+                                        Intent i = new Intent(ProyectoPomodorosActivity.this,
+                                                CountDownTimerActivity.class);
+                                        if (pomodoro.getHoraDescansoFin() != null && pomodoro.getHoraWorkFin() != null) {
+                                            i.putExtra("horaTrabajoFin", pomodoro.getHoraWorkFin());
+                                            i.putExtra("horaDescansoFin", pomodoro.getHoraDescansoFin());
+                                            i.putExtra("key", pomodoro.getKey());
+                                            i.putExtra("finish", true);
+
+                                            startActivity(i);
+                                        }
+
+                                    } catch (Exception e) {
+                                        //
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+                                    showToast(false, R.string.error);
+                                }
+                            });
+                        }else{
+                            Intent i = new Intent(ProyectoPomodorosActivity.this, PrevioAActivo.class);
+                            i.putExtra("pomodoroKey", pomodoro.getKey());
+                            i.putExtra("trabajar", pomodoro.getWork());
+                            i.putExtra("descansar", pomodoro.getRelax());
+                            startActivity(i);
+                            return;
+                        }
                     }
 
                 } catch (IndexOutOfBoundsException e) {
@@ -117,10 +180,20 @@ public class ProyectoPomodorosActivity extends MainToolbar implements ConfirmAba
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Add listener to bottom menu
+        BottomNavigationView bottomMenu = findViewById(R.id.bottomNavigationView);
+        selectProjects(bottomMenu);
+        addListenerToBottomMenu(bottomMenu);
+    }
+
     /**
      * Actualizar los datos según firebase la primera vez y cada vez que se actualicen
      */
     private void databaseSincronizacion() {
+
         // Sincronizar pomodoros
         databaseReferenceUserProyectos = FirebaseDatabase.getInstance().getReference(
                 "UserProyectos");
@@ -136,7 +209,8 @@ public class ProyectoPomodorosActivity extends MainToolbar implements ConfirmAba
 
                 pomodoro.setKey(dataSnapshot.getKey());
                 if (pomodoro.getEmpezado()) {
-                    pomodoro.setHoraFin(dataSnapshot.child("horaFin").getValue().toString());
+                    pomodoro.setHoraDescansoFin(dataSnapshot.child("horaDescansoFin").getValue().toString());
+                    pomodoro.setHoraWorkFin(dataSnapshot.child("horaWorkFin").getValue().toString());
                 }
                 list.add(pomodoro);
 
@@ -149,6 +223,10 @@ public class ProyectoPomodorosActivity extends MainToolbar implements ConfirmAba
                 pomodoro.setKey(dataSnapshot.getKey());
                 int index = list.indexOf(pomodoro);
                 if (index != -1) {
+                    if (pomodoro.getEmpezado()) {
+                        pomodoro.setHoraDescansoFin(dataSnapshot.child("horaDescansoFin").getValue().toString());
+                        pomodoro.setHoraWorkFin(dataSnapshot.child("horaWorkFin").getValue().toString());
+                    }
                     list.set(index, pomodoro);
                     adapter.notifyItemChanged(index);
                 }
@@ -185,9 +263,15 @@ public class ProyectoPomodorosActivity extends MainToolbar implements ConfirmAba
     public void yesLeaveProject() {
         String user = getActiveUsername();
 
+        if (!isNetworkAvailable()) {
+            // se necesita internet
+            showToast(true, R.string.internetNeeded);
+            return;
+        }
+
         Query query =
                 databaseReferenceUserProyectos.orderByChild("usuario").equalTo(user);
-        query.addValueEventListener(new ValueEventListener() {
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot oneData : dataSnapshot.getChildren()) {
@@ -227,6 +311,12 @@ public class ProyectoPomodorosActivity extends MainToolbar implements ConfirmAba
     @Override
     public void yesAddUser(final String username) {
         String activeUser = getActiveUsername();
+
+        if (!isNetworkAvailable()) {
+            // se necesita internet
+            showToast(true, R.string.internetNeeded);
+            return;
+        }
 
         if (activeUser.equals(username)) {
             // un usuario no puede invitarse a si mismo
@@ -268,4 +358,29 @@ public class ProyectoPomodorosActivity extends MainToolbar implements ConfirmAba
             }
         });
     }
+
+
+    /**
+     * El usuario quiere crear un pomodoro grupal
+     *
+     * @param view
+     */
+    public void nuevoPomodoro(View view) {
+        Intent i = new Intent(this, NewPomodoro.class);
+        i.putExtra("projectKey", projectKey);
+        i.putExtra("projectName", projectName);
+        startActivity(i);
+    }
+
+    @Override
+    public void onBackPressed() {
+        // Go to projects
+        // If the back button is pressed
+        Intent i = new Intent(this, ProyectosActivity.class);
+        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(i);
+        finish();
+    }
+
+
 }

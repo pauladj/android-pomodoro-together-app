@@ -4,6 +4,8 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -19,6 +21,11 @@ import com.example.pomodoro.PreferencesActivity;
 import com.example.pomodoro.ProyectosActivity;
 import com.example.pomodoro.R;
 import com.example.pomodoro.services.Timer;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 
 public class Common extends LanguageActivity implements ConectarAlServidor.TaskCallbacks  {
@@ -40,6 +47,7 @@ public class Common extends LanguageActivity implements ConectarAlServidor.TaskC
             mTaskFragment = new ConectarAlServidor();
             fm.beginTransaction().add(mTaskFragment, TAG_TASK_FRAGMENT).commit();
         }
+
     }
 
     /**
@@ -98,7 +106,7 @@ public class Common extends LanguageActivity implements ConectarAlServidor.TaskC
     }
 
     /**
-     * Get the preference value
+     * set the preference value
      * @param key - the key of the preference
      * @param value - the value for that key
      */
@@ -109,6 +117,21 @@ public class Common extends LanguageActivity implements ConectarAlServidor.TaskC
 
         SharedPreferences.Editor editor2 = prefs_especiales.edit();
         editor2.putBoolean(key, value);
+        editor2.apply();
+    }
+
+    /**
+     * set the preference value
+     * @param key - the key of the preference
+     * @param value - the value for that key
+     */
+    public void setStringPreference(String key, String value){
+        SharedPreferences prefs_especiales = getSharedPreferences(
+                "preferencias_especiales",
+                Context.MODE_PRIVATE);
+
+        SharedPreferences.Editor editor2 = prefs_especiales.edit();
+        editor2.putString(key, value);
         editor2.apply();
     }
 
@@ -126,13 +149,7 @@ public class Common extends LanguageActivity implements ConectarAlServidor.TaskC
      */
 
     public void setActiveUsername(String username) {
-        SharedPreferences prefs_especiales = getSharedPreferences(
-                "preferencias_especiales",
-                Context.MODE_PRIVATE);
-
-        SharedPreferences.Editor editor2 = prefs_especiales.edit();
-        editor2.putString("activeUsername", username);
-        editor2.apply();
+        setStringPreference("activeUsername", username);
     }
 
     /**
@@ -150,7 +167,7 @@ public class Common extends LanguageActivity implements ConectarAlServidor.TaskC
                     finish();
                     return true;
                 }else if(item.getItemId() == R.id.active && !item.isChecked()){
-                    // ver el pomodoro activo individual si hay
+                    // ver el pomodoro activo si hay
                     boolean servicioEnMarcha = servicioEnMarcha(Timer.class);
                     if (servicioEnMarcha){
                         Intent i = new Intent(Common.this, CountDownTimerActivity.class);
@@ -213,6 +230,53 @@ public class Common extends LanguageActivity implements ConectarAlServidor.TaskC
         }
         return false;
     }
+
+    /**
+     * Comprueba si está conectado a internet
+     * @return
+     *
+     * Extraído de Stack Overflow
+     * Pregunta: https://stackoverflow.com/q/32547006/11002531
+     * Autor: https://stackoverflow.com/users/546717/kyleed
+     */
+    public boolean isNetworkAvailable() {
+        Context context = this;
+        ConnectivityManager cm =
+                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        if (activeNetwork != null) {
+            // connected to the internet
+            if (activeNetwork.getType() == ConnectivityManager.TYPE_WIFI) {
+                // connected to wifi
+                return true;
+            } else if (activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE) {
+                // connected to mobile data
+                return true;
+            }
+        } else {
+            // not connected to the internet
+            return false;
+        }
+        return false;
+    }
+
+    /**
+     * COnvertir string a date
+     *
+     * @param time
+     * @return
+     */
+    public Date stringToDate(String time) {
+        try {
+            Calendar cal = Calendar.getInstance();
+            SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", Locale.ENGLISH);
+            cal.setTime(sdf.parse(time));// all done
+            return cal.getTime();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
 
 
 }

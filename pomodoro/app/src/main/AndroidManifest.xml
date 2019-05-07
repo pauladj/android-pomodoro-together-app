@@ -19,13 +19,14 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:icon">
-        <activity android:name=".services.TimerReceiver"></activity>
+        <activity android:name=".PrevioAActivo"></activity>
+        <activity android:name=".services.TimerReceiver" />
         <activity android:name=".services.CustomResultReceiver" />
 
         <service android:name=".services.Timer" />
 
         <activity android:name=".CountDownTimerActivity" />
-        <activity android:name=".NewIndividualPomodoro" />
+        <activity android:name=".NewPomodoro" />
         <activity android:name=".ProyectoPomodorosActivity" />
         <activity android:name=".utilities.MainToolbar" />
         <activity android:name=".ProyectosActivity" />
@@ -39,7 +40,7 @@
         </activity>
         <activity android:name=".utilities.Common" />
         <activity android:name=".PreferencesActivity" />
-        <activity android:name=".NewIndividualPomodoroRelax" />
+        <activity android:name=".NewPomodoroRelax" />
     </application>
 
 </manifest>

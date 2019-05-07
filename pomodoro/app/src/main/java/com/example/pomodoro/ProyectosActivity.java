@@ -1,6 +1,9 @@
 package com.example.pomodoro;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -8,15 +11,19 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Gravity;
 import android.view.View;
+import android.widget.Toast;
 
 import com.example.pomodoro.dialogs.NuevoProyecto;
+import com.example.pomodoro.models.Pomodoro;
 import com.example.pomodoro.models.Project;
 import com.example.pomodoro.models.UserProyectos;
 import com.example.pomodoro.recyclerView.MyAdapter;
 import com.example.pomodoro.services.Timer;
-import com.example.pomodoro.utilities.Common;
 import com.example.pomodoro.utilities.MainToolbar;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -26,6 +33,9 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 public class ProyectosActivity extends MainToolbar implements NuevoProyecto.ListenerDelDialogo {
 
@@ -46,33 +56,153 @@ public class ProyectosActivity extends MainToolbar implements NuevoProyecto.List
         // load top toolbar
         loadToolbar();
 
-        recyclerView = (RecyclerView) findViewById(R.id.elreciclerview);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL,
-                false));
-        adapter = new MyAdapter(ProyectosActivity.this, list);
-        // Add listeners
-        ((MyAdapter) adapter).setOnClickListener(new View.OnClickListener() {
+        // listener, recuperar valores si la aplicación se ha cerrado y había un pomodoro en marcha
+        DatabaseReference databaseReferenceProyectosPomodoro =
+                FirebaseDatabase.getInstance().getReference(
+                        "ProyectosPomodoro");
+
+        databaseReferenceProyectosPomodoro.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onClick(View v) {
-                // Se clicka en un proyecto
-                int clickedPosition = recyclerView.getChildAdapterPosition(v);
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                boolean empezado = false;
+                for (DataSnapshot oneData : dataSnapshot.getChildren()) {
+                    Pomodoro pomodoro = oneData.getValue(Pomodoro.class);
 
-                try {
-                    // obtener el proyecto correspondiente a la posición
-                    Project proyecto = list.get(clickedPosition);
+                    if (pomodoro.getEmpezado()) {
+                        if (pomodoro.getUsuario().equals(getActiveUsername())) {
+                            empezado = true;
+                        }
 
-                    // abrir actividad para ver los pomodoros dentro del proyecto
-                    Intent i = new Intent(ProyectosActivity.this, ProyectoPomodorosActivity.class);
-                    i.putExtra("projectKey", proyecto.getKey());
-                    i.putExtra("projectName", proyecto.getNombre());
-                    startActivity(i);
-                } catch (IndexOutOfBoundsException e) {
-                    showToast(false, R.string.error);
+                        // fecha ahora
+                        java.util.Date fechaActual = new java.util.Date();
+                        Calendar calendar = Calendar.getInstance(Locale.ENGLISH);
+                        calendar.setTime(fechaActual);
+                        long milisecondsNow = calendar.getTimeInMillis();
+
+                        Date fin = stringToDate(pomodoro.getHoraDescansoFin());
+                        calendar = Calendar.getInstance(Locale.ENGLISH);
+                        calendar.setTime(fin);
+                        long milisecondsFin = calendar.getTimeInMillis();
+
+                        if (milisecondsFin - milisecondsNow <= 0) {
+                            // el pomodoro ya ha terminado, pero pone empezado, cambiar
+                            if (getStringPreference("pomodoroKey") != null && getStringPreference(
+                                    "pomodoroKey").equals(oneData.getKey())) {
+                                // se ha quitado internet antes de actualizar el fin del pomodoro,
+                                // y este era el dueño
+
+                                // ya ha terminado
+                                setStringPreference("pomodoroKey", null);
+                                // parar servicio
+                                if (servicioEnMarcha(Timer.class) && !getBooleanPreference("individual")) {
+                                    Intent e = new Intent(ProyectosActivity.this,
+                                            Timer.class);
+                                    e.putExtra("stop", true);
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                        startForegroundService(e);
+                                    } else {
+                                        startService(e);
+                                    }
+                                }
+                            }
+                            // actualizar datos firebase
+                            databaseReference = FirebaseDatabase.getInstance().getReference(
+                                    "ProyectosPomodoro").child(oneData.getKey());
+                            databaseReference.child("empezado").setValue(false).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    //
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    int tiempo = Toast.LENGTH_SHORT;
+                                    Context context = getApplicationContext();
+                                    Toast aviso = Toast.makeText(context, getResources().getString(R.string.error),
+                                            tiempo);
+                                    aviso.setGravity(Gravity.BOTTOM | Gravity.CENTER, 0, 100);
+                                    aviso.show();
+                                }
+                            });
+                        } else if (pomodoro.getUsuario().equals(getActiveUsername()) && getStringPreference("pomodoroKey") == null && !getBooleanPreference("individual") && !servicioEnMarcha(Timer.class)) {
+                            // si está empezado y esto es null, es que se ha salido de la aplicación
+                            setStringPreference("pomodoroKey", oneData.getKey());
+                            // iniciar otra vez servicio
+                            setBooleanPreference("individual", false);
+                            Intent e = new Intent(ProyectosActivity.this, Timer.class);
+                            e.putExtra("horaTrabajoFin", pomodoro.getHoraWorkFin());
+                            e.putExtra("horaDescansoFin", pomodoro.getHoraDescansoFin());
+                            e.putExtra("pomodoroKey", oneData.getKey());
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                startForegroundService(e);
+                            } else {
+                                startService(e);
+                            }
+                        }
+                    }
                 }
+                if (!empezado) {
+                    if (getStringPreference("pomodoroKey") != null) {
+                        // hay un servicio todavía activo
+                        // dos dispositivos con la misma cuenta de usuario, uno de ellos con
+                        // internet y el otro sin internet, son dueños de un pomodoro grupal, y
+                        // el segundo como no tiene internet si acaba el servicio no se termina,
+                        // por eso esta condición
+                        Intent e = new Intent(ProyectosActivity.this,
+                                Timer.class);
+                        e.putExtra("stop", true);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            startForegroundService(e);
+                        } else {
+                            startService(e);
+                        }
+                    }
+                    setStringPreference("pomodoroKey", null);
+                }
+            }
 
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                showToast(false, R.string.error);
             }
         });
+
+
+        recyclerView = (RecyclerView)
+
+                findViewById(R.id.elreciclerview);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new
+
+                LinearLayoutManager(this, LinearLayoutManager.VERTICAL,
+                false));
+        adapter = new
+
+                MyAdapter(ProyectosActivity.this, list);
+        // Add listeners
+        ((MyAdapter) adapter).
+
+                setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        // Se clicka en un proyecto
+                        int clickedPosition = recyclerView.getChildAdapterPosition(v);
+
+                        try {
+                            // obtener el proyecto correspondiente a la posición
+                            Project proyecto = list.get(clickedPosition);
+
+                            // abrir actividad para ver los pomodoros dentro del proyecto
+                            Intent i = new Intent(ProyectosActivity.this, ProyectoPomodorosActivity.class);
+                            i.putExtra("projectKey", proyecto.getKey());
+                            i.putExtra("projectName", proyecto.getNombre());
+                            startActivity(i);
+                        } catch (IndexOutOfBoundsException e) {
+                            showToast(false, R.string.error);
+                        }
+
+                    }
+                });
 
         recyclerView.setAdapter(adapter);
 
@@ -80,19 +210,17 @@ public class ProyectosActivity extends MainToolbar implements NuevoProyecto.List
 
         // Add listener to bottom menu
         BottomNavigationView bottomMenu = findViewById(R.id.bottomNavigationView);
+
         selectProjects(bottomMenu);
+
         addListenerToBottomMenu(bottomMenu);
 
         // Sincronizar proyectos
         databaseReference = FirebaseDatabase.getInstance().getReference();
-
-        databaseReferenceUserProyectos =
-                FirebaseDatabase.getInstance().getReference("UserProyectos");
+        databaseReferenceUserProyectos = FirebaseDatabase.getInstance().getReference("UserProyectos");
         Query query = databaseReferenceUserProyectos.orderByChild("usuario").equalTo(actualUser);
-
         databaseReferenceProyectos = FirebaseDatabase.getInstance().getReference("Proyectos");
-
-        query.addChildEventListener(new ChildEventListener() {
+        query.addChildEventListener(new  ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 UserProyectos userProyecto = dataSnapshot.getValue(UserProyectos.class);
@@ -195,15 +323,16 @@ public class ProyectosActivity extends MainToolbar implements NuevoProyecto.List
 
     /**
      * El usuario quiere crear un pomodoro individual
+     *
      * @param view
      */
-    public void nuevoPomodoro(View view){
+    public void nuevoPomodoro(View view) {
         boolean servicioEnMarcha = servicioEnMarcha(Timer.class);
-        if (servicioEnMarcha){
+        if (servicioEnMarcha) {
             showToast(false, R.string.pomodoroActive);
             return;
         }
-        Intent i = new Intent(this, NewIndividualPomodoro.class);
+        Intent i = new Intent(this, NewPomodoro.class);
         startActivity(i);
     }
 
@@ -214,6 +343,12 @@ public class ProyectosActivity extends MainToolbar implements NuevoProyecto.List
      */
     @Override
     public void yesAddProject(String name) {
+        if (!isNetworkAvailable()) {
+            // se necesita internet
+            showToast(true, R.string.internetNeeded);
+            return;
+        }
+
         nameOfNewProject = name;
 
         Project nuevoProyecto = new Project();
@@ -249,7 +384,5 @@ public class ProyectosActivity extends MainToolbar implements NuevoProyecto.List
             }
         });
 
-
-        // TODO fallos, mirar que pasa si no hay internet
     }
 }

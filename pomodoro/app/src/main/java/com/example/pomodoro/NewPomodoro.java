@@ -2,12 +2,14 @@ package com.example.pomodoro;
 
 import android.content.Intent;
 import android.os.Bundle;
+
+import com.triggertrap.seekarc.SeekArc;
+import com.triggertrap.seekarc.SeekArc.OnSeekArcChangeListener;
+
 import android.view.Menu;
 import android.widget.TextView;
 
 import com.example.pomodoro.utilities.MainToolbar;
-import com.triggertrap.seekarc.SeekArc;
-import com.triggertrap.seekarc.SeekArc.OnSeekArcChangeListener;
 
 /**
  * Usada la librería SeekArc de neild001
@@ -41,26 +43,24 @@ import com.triggertrap.seekarc.SeekArc.OnSeekArcChangeListener;
 
 
 
-public class NewIndividualPomodoroRelax extends MainToolbar {
+public class NewPomodoro extends MainToolbar {
 
     private SeekArc mSeekArc;
     private TextView mSeekArcProgress;
 
-    private int minutosTrabajo; // los minutos de trabajo decididos en la pantalla anterior
-
     private int arco = 50;
     private int textoArco = 50;
 
-    private int minutosDescanso;
-
+    private String projectKey = null; // la clave del proyecto si no es individual
+    private String projectName = null;
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt("minutosTrabajo", minutosTrabajo);
-
         outState.putInt("arco", mSeekArc.getProgress());
         outState.putInt("progress", Integer.valueOf(mSeekArcProgress.getText().toString()));
+        outState.putString("projectKey", projectKey);
+        outState.putString("projectName", projectName);
     }
 
     @Override
@@ -69,6 +69,8 @@ public class NewIndividualPomodoroRelax extends MainToolbar {
         if (savedInstanceState.containsKey("arco")) {
             arco = savedInstanceState.getInt("arco");
             textoArco = savedInstanceState.getInt("progress");
+            projectKey = savedInstanceState.getString("projectKey");
+            projectName = savedInstanceState.getString("projectName");
 
             // recuperar valores si hay un cambio de orientación
             mSeekArc.setProgress(arco);
@@ -78,28 +80,27 @@ public class NewIndividualPomodoroRelax extends MainToolbar {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.new_pomodoro_last, menu);
+        getMenuInflater().inflate(R.menu.new_pomodoro, menu);
         return true;
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_new_individual_pomodoro_next);
+        setContentView(R.layout.activity_new_individual_pomodoro);
 
         // cargar barra
-        loadToolbar(getResources().getString(R.string.tiempoDescanso));
+        loadToolbar(getResources().getString(R.string.tiempoTrabajo));
         showBackButtonOption();
         removeElevation();
 
-        // recuperar minutos de trabajo
-        if (savedInstanceState != null){
-            minutosTrabajo = savedInstanceState.getInt("minutosTrabajo", 50);
-        }else{
-            Intent mIntent = getIntent();
-            minutosTrabajo = mIntent.getIntExtra("minutosTrabajo", 50);
+        // obtener atributos del intent si el pomodoro es grupal
+        Bundle extras = getIntent().getExtras();
+        if (extras != null && savedInstanceState == null){
+            // la primera vez que se carga la actividad
+            projectKey = extras.getString("projectKey");
+            projectName = extras.getString("projectName");
         }
-
 
         // circular seek arc
         mSeekArc = (SeekArc) findViewById(R.id.seekArc);
@@ -124,10 +125,13 @@ public class NewIndividualPomodoroRelax extends MainToolbar {
 
     }
 
-
+    @Override
+    public void onBackPressed() {
+       super.onBackPressed();
+    }
 
     /**
-     * El usuario quiere seguir al siguiente paso, finalizar e iniciar
+     * El usuario quiere seguir al siguiente paso, elegir los minutos de descanso
      */
     public void creacionPomodoroIndividual(){
         int minutes = Integer.valueOf(mSeekArcProgress.getText().toString());
@@ -137,11 +141,14 @@ public class NewIndividualPomodoroRelax extends MainToolbar {
         }
 
         // Siguiente pantalla
-        Intent i = new Intent(this, CountDownTimerActivity.class);
-        i.putExtra("minutosTrabajo", minutosTrabajo);
-        i.putExtra("minutosDescanso", minutes);
+        Intent i = new Intent(this, NewPomodoroRelax.class);
+        i.putExtra("minutosTrabajo", minutes);
+        if (projectKey != null){
+            // el pomodoro es de un proyecto
+            i.putExtra("projectKey", projectKey);
+            i.putExtra("projectName", projectName);
+        }
         startActivity(i);
-        finish();
     }
 
 
