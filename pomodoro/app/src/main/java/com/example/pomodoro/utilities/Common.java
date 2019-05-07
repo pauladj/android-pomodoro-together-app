@@ -261,7 +261,7 @@ public class Common extends LanguageActivity implements ConectarAlServidor.TaskC
     }
 
     /**
-     * COnvertir string a date
+     * Convertir string a date
      *
      * @param time
      * @return

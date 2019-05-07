@@ -383,9 +383,9 @@ public class ProyectoPomodorosActivity extends MainToolbar implements ConfirmAba
         if (activeUser.equals(username)) {
             // un usuario no puede invitarse a si mismo
             showToast(false, R.string.error);
+            return;
         }
 
-        // TODO mirar si funciona a la vez, es decir, a la otra persona le sale automáticamente,
         // mirar que pasa si dos personas distintas intentan añadir al mismo user al mismo tiempo
         final UserProyectos userProyecto = new UserProyectos();
         userProyecto.setUsuario(username);
