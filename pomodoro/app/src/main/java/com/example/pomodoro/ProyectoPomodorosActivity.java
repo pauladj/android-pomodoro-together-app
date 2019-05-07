@@ -10,6 +10,7 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 
 import com.example.pomodoro.dialogs.AddUserToProject;
@@ -18,6 +19,7 @@ import com.example.pomodoro.models.Pomodoro;
 import com.example.pomodoro.models.UserProyectos;
 import com.example.pomodoro.recyclerViewProjectPomodoros.MyAdapterPomodoros;
 import com.example.pomodoro.services.Timer;
+import com.example.pomodoro.utilities.Common;
 import com.example.pomodoro.utilities.MainToolbar;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -82,7 +84,6 @@ public class ProyectoPomodorosActivity extends MainToolbar implements ConfirmAba
 
         }
 
-
         // load top toolbar
         loadToolbar(projectName);
         showBackButtonOption();
@@ -92,6 +93,8 @@ public class ProyectoPomodorosActivity extends MainToolbar implements ConfirmAba
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL,
                 false));
         adapter = new MyAdapterPomodoros(ProyectoPomodorosActivity.this, list);
+
+
         // Add listeners
         ((MyAdapterPomodoros) adapter).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -100,10 +103,10 @@ public class ProyectoPomodorosActivity extends MainToolbar implements ConfirmAba
                 int clickedPosition = recyclerView.getChildAdapterPosition(v);
 
                 try {
-                    // obtener el proyecto correspondiente a la posición
+                    // obtener el pomodoro correspondiente a la posición
                     Pomodoro pomodoro = list.get(clickedPosition);
 
-                    if ((pomodoro.getEmpezado() & getStringPreference("pomodoroKey") == null) || (pomodoro.getEmpezado() && getStringPreference("pomodoroKey").equals(pomodoro.getKey()))){
+                    if (((pomodoro.getEmpezado() & getStringPreference("pomodoroKey") == null) || (pomodoro.getEmpezado() && getStringPreference("pomodoroKey").equals(pomodoro.getKey()))) && !getBooleanPreference("individual")) {
                         // el pomodoro ya ha sido iniciado, o no se ha cerrado correctamente
                         // mirar si este usuario es el dueño
                         if (!isNetworkAvailable()) {
@@ -147,14 +150,11 @@ public class ProyectoPomodorosActivity extends MainToolbar implements ConfirmAba
                         });
                     } else {
                         // si el usuario no tiene otro pomodoro que esté empezado
-                        if (servicioEnMarcha(Timer.class)){
+                        if (servicioEnMarcha(Timer.class)) {
                             showToast(false, R.string.pomodoroActive);
                             return;
                         }
-                        if (getStringPreference("pomodoroKey") != null){
-                            showToast(false, R.string.finishPomodoro);
-                            return;
-                        }
+
                         Intent i = new Intent(ProyectoPomodorosActivity.this, PrevioAActivo.class);
                         i.putExtra("pomodoroKey", pomodoro.getKey());
                         i.putExtra("trabajar", pomodoro.getWork());
@@ -179,6 +179,15 @@ public class ProyectoPomodorosActivity extends MainToolbar implements ConfirmAba
 
         databaseSincronizacion();
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Add listener to bottom menu
+        BottomNavigationView bottomMenu = findViewById(R.id.bottomNavigationView);
+        selectProjects(bottomMenu);
+        addListenerToBottomMenu(bottomMenu);
     }
 
     /**
@@ -366,10 +375,14 @@ public class ProyectoPomodorosActivity extends MainToolbar implements ConfirmAba
 
     @Override
     public void onBackPressed() {
-        // Go to proyects
-        Intent i = new Intent(this, ProyectosActivity.class);
+        // Go to projects
+        // If the back button is pressed
+        Intent i = new Intent (this, ProyectosActivity.class);
+        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(i);
         finish();
     }
+
+
 
 }

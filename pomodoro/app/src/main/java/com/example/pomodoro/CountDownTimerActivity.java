@@ -201,7 +201,7 @@ public class CountDownTimerActivity extends MainToolbar {
     public void onBackPressed() {
         if (finish){
             // solo cerrar
-            finish();
+            super.onBackPressed();
         }else{
             Intent intent = new Intent(this, ProyectosActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);

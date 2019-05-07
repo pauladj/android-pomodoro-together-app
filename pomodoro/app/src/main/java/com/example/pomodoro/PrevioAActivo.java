@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
+import com.example.pomodoro.services.Timer;
 import com.example.pomodoro.utilities.Common;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -88,6 +89,11 @@ public class PrevioAActivo extends Common {
      */
     public void empezarPomodoroProyecto(View v){
         // definir referencia a la bd
+        if (servicioEnMarcha(Timer.class) || getStringPreference("pomodoroKey") != null || getBooleanPreference("individual")){
+            // TODO probar que esto funcione
+            showToast(false, R.string.finishPomodoro);
+            return;
+        }
         databaseReference =
                 FirebaseDatabase.getInstance().getReference("ProyectosPomodoro").child(pomodoroKey);
         databaseReference.runTransaction(new Transaction.Handler() {
@@ -138,7 +144,6 @@ public class PrevioAActivo extends Common {
                     showToast(true, R.string.internetNeeded);
                     return;
                 }else if(alreadyActive){
-                    // TODO probar que funcione
                     showToast(true, R.string.pomodoroAlreadyActive);
                     return;
                 }

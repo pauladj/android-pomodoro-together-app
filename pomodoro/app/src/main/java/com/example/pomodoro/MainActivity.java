@@ -41,6 +41,8 @@ public class MainActivity extends Common {
                         }
                     }
                     setStringPreference("pomodoroKey", null);
+                    setBooleanPreference("individual", false);
+                    setStringPreference("key", null);
 
                     intent = new Intent(MainActivity.this, ProyectosActivity.class);
                 }

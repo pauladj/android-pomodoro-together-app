@@ -132,7 +132,6 @@ public class Timer extends Service {
                     EventBus.getDefault().post(a);
                 } else {
                     // el trabajo ha terminado, el descanso sigue
-                    // TODO hacer, que no sea recursivo y el texto
                     isDescanso = true;
                     long mili = milisecondsDescanso - milisecondsNow;
                     startTimer(mili);
