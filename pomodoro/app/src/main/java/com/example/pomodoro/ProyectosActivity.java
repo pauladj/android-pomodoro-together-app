@@ -60,9 +60,8 @@ public class ProyectosActivity extends MainToolbar implements NuevoProyecto.List
         DatabaseReference databaseReferenceProyectosPomodoro =
                 FirebaseDatabase.getInstance().getReference(
                         "ProyectosPomodoro");
-        Query q =
-                databaseReferenceProyectosPomodoro.orderByChild("usuario").equalTo(getActiveUsername());
-        ValueEventListener listener = new ValueEventListener() {
+
+        databaseReferenceProyectosPomodoro.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 boolean empezado = false;
@@ -70,7 +69,9 @@ public class ProyectosActivity extends MainToolbar implements NuevoProyecto.List
                     Pomodoro pomodoro = oneData.getValue(Pomodoro.class);
 
                     if (pomodoro.getEmpezado()) {
-                        empezado = true;
+                        if (pomodoro.getUsuario().equals(getActiveUsername())) {
+                            empezado = true;
+                        }
 
                         // fecha ahora
                         java.util.Date fechaActual = new java.util.Date();
@@ -123,7 +124,7 @@ public class ProyectosActivity extends MainToolbar implements NuevoProyecto.List
                                     aviso.show();
                                 }
                             });
-                        } else if (getStringPreference("pomodoroKey") == null && !getBooleanPreference("individual")) {
+                        } else if (pomodoro.getUsuario().equals(getActiveUsername()) && getStringPreference("pomodoroKey") == null && !getBooleanPreference("individual") && !servicioEnMarcha(Timer.class)) {
                             // si está empezado y esto es null, es que se ha salido de la aplicación
                             setStringPreference("pomodoroKey", oneData.getKey());
                             // iniciar otra vez servicio
@@ -138,20 +139,33 @@ public class ProyectosActivity extends MainToolbar implements NuevoProyecto.List
                                 startService(e);
                             }
                         }
-                        break;
                     }
                 }
-               if (!empezado) {
+                if (!empezado) {
+                    if (getStringPreference("pomodoroKey") != null) {
+                        // hay un servicio todavía activo
+                        // dos dispositivos con la misma cuenta de usuario, uno de ellos con
+                        // internet y el otro sin internet, son dueños de un pomodoro grupal, y
+                        // el segundo como no tiene internet si acaba el servicio no se termina,
+                        // por eso esta condición
+                        Intent e = new Intent(ProyectosActivity.this,
+                                Timer.class);
+                        e.putExtra("stop", true);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            startForegroundService(e);
+                        } else {
+                            startService(e);
+                        }
+                    }
                     setStringPreference("pomodoroKey", null);
-               }
+                }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 showToast(false, R.string.error);
             }
-        };
-        q.addValueEventListener(listener);
+        });
 
 
         recyclerView = (RecyclerView)
@@ -202,111 +216,98 @@ public class ProyectosActivity extends MainToolbar implements NuevoProyecto.List
         addListenerToBottomMenu(bottomMenu);
 
         // Sincronizar proyectos
-        databaseReference = FirebaseDatabase.getInstance().
-
-                getReference();
-
-        databaseReferenceUserProyectos =
-                FirebaseDatabase.getInstance().
-
-                        getReference("UserProyectos");
-
+        databaseReference = FirebaseDatabase.getInstance().getReference();
+        databaseReferenceUserProyectos = FirebaseDatabase.getInstance().getReference("UserProyectos");
         Query query = databaseReferenceUserProyectos.orderByChild("usuario").equalTo(actualUser);
+        databaseReferenceProyectos = FirebaseDatabase.getInstance().getReference("Proyectos");
+        query.addChildEventListener(new  ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                UserProyectos userProyecto = dataSnapshot.getValue(UserProyectos.class);
+                databaseReferenceProyectos.child(userProyecto.getProyecto()).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        Project proyecto = dataSnapshot.getValue(Project.class);
+                        proyecto.setKey(dataSnapshot.getKey());
+                        list.add(proyecto);
 
-        databaseReferenceProyectos = FirebaseDatabase.getInstance().
+                        adapter.notifyItemInserted(list.size() - 1);
 
-                getReference("Proyectos");
+                    }
 
-        query.addChildEventListener(new
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                                            ChildEventListener() {
-                                                @Override
-                                                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                                                    UserProyectos userProyecto = dataSnapshot.getValue(UserProyectos.class);
-                                                    databaseReferenceProyectos.child(userProyecto.getProyecto()).addListenerForSingleValueEvent(new ValueEventListener() {
-                                                        @Override
-                                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                                            Project proyecto = dataSnapshot.getValue(Project.class);
-                                                            proyecto.setKey(dataSnapshot.getKey());
-                                                            list.add(proyecto);
+                    }
+                });
 
-                                                            adapter.notifyItemInserted(list.size() - 1);
+                databaseReferenceProyectos.addChildEventListener(new ChildEventListener() {
+                    @Override
+                    public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
-                                                        }
+                    }
 
-                                                        @Override
-                                                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                    @Override
+                    public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                        Project proyecto = dataSnapshot.getValue(Project.class);
+                        proyecto.setKey(dataSnapshot.getKey());
+                        int index = list.indexOf(proyecto);
+                        if (index != -1) {
+                            list.set(index, proyecto);
 
-                                                        }
-                                                    });
+                            adapter.notifyItemChanged(index);
 
-                                                    databaseReferenceProyectos.addChildEventListener(new ChildEventListener() {
-                                                        @Override
-                                                        public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                        }
+                    }
 
-                                                        }
+                    @Override
+                    public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
 
-                                                        @Override
-                                                        public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                                                            Project proyecto = dataSnapshot.getValue(Project.class);
-                                                            proyecto.setKey(dataSnapshot.getKey());
-                                                            int index = list.indexOf(proyecto);
-                                                            if (index != -1) {
-                                                                list.set(index, proyecto);
+                    }
 
-                                                                adapter.notifyItemChanged(index);
+                    @Override
+                    public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
-                                                            }
-                                                        }
+                    }
 
-                                                        @Override
-                                                        public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                                                        }
-
-                                                        @Override
-                                                        public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-                                                        }
-
-                                                        @Override
-                                                        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                                                        }
+                    }
 
 
-                                                    });
-                                                }
+                });
+            }
 
-                                                @Override
-                                                public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
-                                                }
-
-
-                                                @Override
-                                                public void onChildRemoved(DataSnapshot dataSnapshot) {
-                                                    UserProyectos userProyecto = dataSnapshot.getValue(UserProyectos.class);
-                                                    String proyectoKey = userProyecto.getProyecto();
-                                                    Project proyecto = new Project();
-                                                    proyecto.setKey(proyectoKey);
-                                                    int index = list.indexOf(proyecto);
-                                                    list.remove(index);
-
-                                                    adapter.notifyItemRemoved(index);
-                                                }
-
-                                                @Override
-                                                public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-                                                }
+            }
 
 
-                                                @Override
-                                                public void onCancelled(DatabaseError databaseError) {
-                                                    showToast(false, R.string.error);
-                                                }
-                                            });
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                UserProyectos userProyecto = dataSnapshot.getValue(UserProyectos.class);
+                String proyectoKey = userProyecto.getProyecto();
+                Project proyecto = new Project();
+                proyecto.setKey(proyectoKey);
+                int index = list.indexOf(proyecto);
+                list.remove(index);
+
+                adapter.notifyItemRemoved(index);
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                showToast(false, R.string.error);
+            }
+        });
 
     }
 
