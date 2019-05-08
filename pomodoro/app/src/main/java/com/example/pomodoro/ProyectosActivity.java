@@ -220,7 +220,7 @@ public class ProyectosActivity extends MainToolbar implements NuevoProyecto.List
         databaseReferenceUserProyectos = FirebaseDatabase.getInstance().getReference("UserProyectos");
         Query query = databaseReferenceUserProyectos.orderByChild("usuario").equalTo(actualUser);
         databaseReferenceProyectos = FirebaseDatabase.getInstance().getReference("Proyectos");
-        query.addChildEventListener(new  ChildEventListener() {
+        query.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 UserProyectos userProyecto = dataSnapshot.getValue(UserProyectos.class);
