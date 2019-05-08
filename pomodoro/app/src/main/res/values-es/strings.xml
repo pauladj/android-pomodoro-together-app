@@ -63,5 +63,6 @@
     <string name="internetNeeded">Necesitas conexión a internet</string>
     <string name="abandonar">Abandonar</string>
     <string name="finishPomodoro">Primero finaliza el pomodoro que has iniciado</string>
+    <string name="cannotLeave">Debes de parar el pomodoro activo antes de abandonar el grupo</string>
 
 </resources>

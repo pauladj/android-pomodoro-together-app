@@ -195,9 +195,61 @@ public class ProyectoPomodorosActivity extends MainToolbar implements ConfirmAba
     private void databaseSincronizacion() {
 
         // Sincronizar pomodoros
+
+        // listener salir del grupo, se supone que no hay ningún pomodoro activo
         databaseReferenceUserProyectos = FirebaseDatabase.getInstance().getReference(
                 "UserProyectos");
+        ChildEventListener listener = new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+                UserProyectos a = dataSnapshot.getValue(UserProyectos.class);
+                if (a.getProyecto().equals(projectKey)){
+                    // es este proyecto
+                    showToast(true, R.string.projectAbandoned);
+
+                    // parar el servicio si estaba activo
+                    if (servicioEnMarcha(Timer.class)){
+                        Intent e = new Intent(ProyectoPomodorosActivity.this, Timer.class);
+                        e.putExtra("stop", true);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            startForegroundService(e);
+                        } else {
+                            startService(e);
+                        }
+                    }
+                    setStringPreference("pomodoroKey", null);
+                    setBooleanPreference("individual", false);
+
+                    Intent i = new Intent (ProyectoPomodorosActivity.this, ProyectosActivity.class);
+                    i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(i);
+                    finish();
+                }
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        };
+        databaseReferenceUserProyectos.orderByChild("usuario").equalTo(getActiveUsername()).addChildEventListener(listener);
+
+        // listener pomodoros
         databaseReferenceProyectosPomodoro =
                 FirebaseDatabase.getInstance().getReference("ProyectosPomodoro");
         Query query = databaseReferenceProyectosPomodoro.orderByChild("proyecto").equalTo(projectKey);
@@ -263,6 +315,12 @@ public class ProyectoPomodorosActivity extends MainToolbar implements ConfirmAba
     public void yesLeaveProject() {
         String user = getActiveUsername();
 
+        if (servicioEnMarcha(Timer.class)){
+            // hay un pomodoro en marcha
+            showToast(true, R.string.cannotLeave);
+            return;
+        }
+
         if (!isNetworkAvailable()) {
             // se necesita internet
             showToast(true, R.string.internetNeeded);
@@ -287,6 +345,10 @@ public class ProyectoPomodorosActivity extends MainToolbar implements ConfirmAba
                                 } else {
                                     // El proyecto se ha abandonado correctamente
                                     showToast(true, R.string.projectAbandoned);
+
+                                    setStringPreference("pomodoroKey", null);
+                                    setBooleanPreference("individual", false);
+
                                     finish();
                                 }
                             }
@@ -321,9 +383,9 @@ public class ProyectoPomodorosActivity extends MainToolbar implements ConfirmAba
         if (activeUser.equals(username)) {
             // un usuario no puede invitarse a si mismo
             showToast(false, R.string.error);
+            return;
         }
 
-        // TODO mirar si funciona a la vez, es decir, a la otra persona le sale automáticamente,
         // mirar que pasa si dos personas distintas intentan añadir al mismo user al mismo tiempo
         final UserProyectos userProyecto = new UserProyectos();
         userProyecto.setUsuario(username);
