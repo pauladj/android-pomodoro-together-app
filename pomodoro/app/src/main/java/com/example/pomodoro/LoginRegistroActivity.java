@@ -1,25 +1,19 @@
 package com.example.pomodoro;
 
-import android.app.ActivityManager;
-import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
-import android.view.Gravity;
 import android.view.Menu;
 import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import com.example.pomodoro.AsyncTasks.ConectarAlServidor;
 import com.example.pomodoro.fragments.loginfragment;
 import com.example.pomodoro.fragments.registro;
 import com.example.pomodoro.utilities.MainToolbar;
 import com.example.pomodoro.utilities.PagerAdapter;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import org.json.JSONObject;
 
@@ -102,21 +96,28 @@ public class LoginRegistroActivity extends MainToolbar implements
     @Override
     public void login(String username, String password) {
         if (validadoresIniciarSesion(username, password)) {
-            JSONObject parametrosJSON = new JSONObject();
             try {
-                parametrosJSON.put("username", username);
-                parametrosJSON.put("password", password);
+                FirebaseInstanceId.getInstance().getInstanceId()
+                    .addOnCompleteListener(task -> {
+                        if (!task.isSuccessful()) {
+                            showToast(false, R.string.serverError);
+                            return;
+                        }
 
-                String[] params = {username, password};
-                getmTaskFragment().setAction("login");
-                getmTaskFragment().setDireccion("https://134.209.235" +
-                        ".115/ebracamonte001/WEB/pomodoro/login.php");
-                getmTaskFragment().start(params);
+                        // Get new Instance ID token
+                        String firebaseToken = task.getResult().getToken();
+                        String[] params = {username, password, firebaseToken};
+                        getmTaskFragment().setAction("login");
+                        getmTaskFragment().setDireccion("https://134.209.235" +
+                                ".115/ebracamonte001/WEB/pomodoro/login.php");
+                        getmTaskFragment().start(params);
+                    })
+                    .addOnFailureListener(exception -> {
+                        showToast(false, R.string.serverError);
+                    });
             } catch (Exception e) {
                 showToast(false, R.string.error);
             }
-
-
         }
     }
 

@@ -18,7 +18,6 @@ import android.widget.Toast;
 
 import com.example.pomodoro.AsyncTasks.ConectarAlServidor;
 import com.example.pomodoro.CountDownTimerActivity;
-import com.example.pomodoro.LoginRegistroActivity;
 import com.example.pomodoro.PreferencesActivity;
 import com.example.pomodoro.ProyectosActivity;
 import com.example.pomodoro.R;
