@@ -54,6 +54,10 @@ public class ProyectosActivity extends MainToolbar implements NuevoProyecto.List
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        if (!checkFCMAvailable()){
+            return;
+        }
+
         // load main activity with fragment(s)
         setContentView(R.layout.activity_proyectos);
         // load top toolbar

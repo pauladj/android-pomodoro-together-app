@@ -1,13 +1,17 @@
 package com.example.pomodoro;
 
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
+import android.view.Gravity;
 import android.view.Menu;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.pomodoro.AsyncTasks.ConectarAlServidor;
 import com.example.pomodoro.fragments.loginfragment;
@@ -24,23 +28,29 @@ public class LoginRegistroActivity extends MainToolbar implements
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login_registro);
 
         // comprobar si el usuario tiene google play
         GoogleApiAvailability api = GoogleApiAvailability.getInstance();
         int code = api.isGooglePlayServicesAvailable(this);
         if (code == ConnectionResult.SUCCESS) {
             // nothing
-        }
-        else {
+        } else {
             // si no tiene google play se carga una plantilla en blanco
             setContentView(R.layout.blank);
             showToast(true, R.string.googlePlayNeeded);
-            if (api.isUserResolvableError(code)){
+            if (api.isUserResolvableError(code)) {
                 api.getErrorDialog(this, code, 58).show();
             }
             return;
         }
+
+        // comprobar si los mensajes fcm han sido deshabilitados
+        if (!checkFCMAvailable()) {
+            return;
+        }
+
+        setContentView(R.layout.activity_login_registro);
+
 
         // cargar barra
         loadToolbar();
@@ -81,7 +91,6 @@ public class LoginRegistroActivity extends MainToolbar implements
         getMenuInflater().inflate(R.menu.menu, menu);
         return true;
     }
-
 
 
     /**

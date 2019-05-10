@@ -12,6 +12,11 @@ public class PreferencesActivity extends MainToolbar {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (!checkFCMAvailable()){
+            return;
+        }
+
         setContentView(R.layout.preferences_activity);
         // load the top bar
         loadToolbar();

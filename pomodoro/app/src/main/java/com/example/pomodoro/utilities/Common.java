@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -17,6 +18,7 @@ import android.widget.Toast;
 
 import com.example.pomodoro.AsyncTasks.ConectarAlServidor;
 import com.example.pomodoro.CountDownTimerActivity;
+import com.example.pomodoro.LoginRegistroActivity;
 import com.example.pomodoro.PreferencesActivity;
 import com.example.pomodoro.ProyectosActivity;
 import com.example.pomodoro.R;
@@ -48,6 +50,42 @@ public class Common extends LanguageActivity implements ConectarAlServidor.TaskC
             fm.beginTransaction().add(mTaskFragment, TAG_TASK_FRAGMENT).commit();
         }
 
+    }
+
+    /**
+     * Comprueba si la aplicación tiene permisos para poder ejecutarse en segundo plano
+     * @return
+     */
+    public boolean checkFCMAvailable(){
+        // comprobar si los mensajes fcm han sido deshabilitados
+        ActivityManager am= (ActivityManager) this.getSystemService(Context.ACTIVITY_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            if (am.isBackgroundRestricted()) {
+                // no se permiten mensajes fcm
+                showToast(true, R.string.backgroundNeeded);
+
+                // plantilla en blanco
+                setContentView(R.layout.blank);
+
+                // logout forzoso
+                // El usuario quiere salir de su cuenta
+                setActiveUsername(null);
+
+                // TODO Probar que esto funcione
+                // Parar el pomodoro activo si tiene
+                if (servicioEnMarcha(Timer.class)){
+                    // parar el servicio pomodoro
+                    Intent e = new Intent(this, Timer.class);
+                    e.putExtra("stop", true);
+                    startForegroundService(e);
+                }
+
+                setStringPreference("pomodoroKey", null);
+                setBooleanPreference("individual", false);
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
