@@ -106,6 +106,7 @@ public class LoginRegistroActivity extends MainToolbar implements
 
                         // Get new Instance ID token
                         String firebaseToken = task.getResult().getToken();
+
                         String[] params = {username, password, firebaseToken};
                         getmTaskFragment().setAction("login");
                         getmTaskFragment().setDireccion("https://134.209.235" +
