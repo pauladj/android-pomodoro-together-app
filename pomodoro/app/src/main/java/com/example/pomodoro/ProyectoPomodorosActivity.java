@@ -9,9 +9,12 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ImageButton;
 
 import com.example.pomodoro.dialogs.AddUserToProject;
 import com.example.pomodoro.dialogs.ConfirmAbandonarProyecto;
@@ -65,6 +68,8 @@ public class ProyectoPomodorosActivity extends MainToolbar implements ConfirmAba
         setContentView(R.layout.activity_proyecto_pomodoros);
 
         databaseReferenceUserProyectos = FirebaseDatabase.getInstance().getReference("UserProyectos");
+        databaseReferenceProyectosPomodoro = FirebaseDatabase.getInstance().getReference(
+                "ProyectosPomodoro");
 
         if (savedInstanceState == null) {
             // la primera vez que se carga
@@ -94,24 +99,77 @@ public class ProyectoPomodorosActivity extends MainToolbar implements ConfirmAba
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL,
                 false));
-        adapter = new MyAdapterPomodoros(ProyectoPomodorosActivity.this, list);
-
-
-        // Add listeners
-        ((MyAdapterPomodoros) adapter).setOnClickListener(new View.OnClickListener() {
+        adapter = new MyAdapterPomodoros(ProyectoPomodorosActivity.this, list, new MyAdapterPomodoros.ClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onDeleteClicked(int position, View v) {
+                ImageButton deletePomodoro = (ImageButton) v;
+                if (deletePomodoro != null && deletePomodoro.getVisibility() == View.VISIBLE) {
+                    // se quiere eliminar el pomodoro
+                    // para estar seguros se comprueba que el pomodoro no existe de verdad
+
+                    if (!isNetworkAvailable()) {
+                        // se necesita internet
+                        showToast(true, R.string.internetNeeded);
+                        return;
+                    }
+
+                    try {
+                        // obtener el pomodoro correspondiente a la posición
+                        Pomodoro pomodoro = list.get(position);
+                        databaseReferenceProyectosPomodoro.runTransaction(new Transaction.Handler() {
+                            @NonNull
+                            @Override
+                            public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
+                                if (mutableData.hasChild(pomodoro.getKey())) {
+                                    // si el pomodoro existe
+                                    Pomodoro pomodoroObtenido =
+                                            mutableData.child(pomodoro.getKey()).getValue(Pomodoro.class);
+                                    if (!pomodoroObtenido.getEmpezado()) {
+                                        // si no está empezado borrar
+                                        databaseReferenceProyectosPomodoro.child(pomodoro.getKey()).removeValue(new DatabaseReference.CompletionListener() {
+                                            @Override
+                                            public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                                                if (databaseError != null) {
+                                                    showToast(true, R.string.error);
+                                                }
+                                            }
+                                        });
+                                    }
+                                }
+                                return Transaction.success(mutableData);
+                            }
+
+                            @Override
+                            public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
+                                if (databaseError != null) {
+                                    showToast(false, R.string.error);
+                                    return;
+                                }
+                                showToast(false, R.string.pomodoroDeleted);
+                            }
+                        });
+                    } catch (Exception e) {
+                        showToast(false, R.string.error);
+                    }
+                }
+            }
+
+            @Override
+            public void onStartClicked(int position) {
                 // Se clicka en un pomodoro
-                int clickedPosition = recyclerView.getChildAdapterPosition(v);
+                if (!isNetworkAvailable()) {
+                    // se necesita internet
+                    showToast(true, R.string.internetNeeded);
+                    return;
+                }
 
                 try {
                     // obtener el pomodoro correspondiente a la posición
-                    Pomodoro pomodoro = list.get(clickedPosition);
+                    Pomodoro pomodoro = list.get(position);
 
                     if ((pomodoro.getEmpezado() & getStringPreference("pomodoroKey") != null) && !getBooleanPreference("individual") && servicioEnMarcha(Timer.class)) {
                         // ya hay un pomodoro iniciado
                         showToast(false, R.string.pomodoroActive);
-                        return;
                     } else {
                         // si el usuario no tiene otro pomodoro que esté empezado
                         if (servicioEnMarcha(Timer.class)) {
@@ -160,16 +218,15 @@ public class ProyectoPomodorosActivity extends MainToolbar implements ConfirmAba
                             i.putExtra("trabajar", pomodoro.getWork());
                             i.putExtra("descansar", pomodoro.getRelax());
                             startActivity(i);
-                            return;
                         }
                     }
-
                 } catch (IndexOutOfBoundsException e) {
                     showToast(false, R.string.error);
                 }
 
             }
         });
+
 
         recyclerView.setAdapter(adapter);
 

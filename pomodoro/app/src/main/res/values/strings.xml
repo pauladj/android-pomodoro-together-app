@@ -64,4 +64,6 @@
     <string name="abandonar">Leave</string>
     <string name="finishPomodoro">First stop the pomodoro you started</string>
     <string name="cannotLeave">You cannot leave the group until you stop the active pomodoro</string>
+    <string name="pomodoroDeleted">The pomodoro has been successfully deleted</string>
+    <string name="pomodoroNotExists">The pomodoro does not exist anymore</string>
 </resources>

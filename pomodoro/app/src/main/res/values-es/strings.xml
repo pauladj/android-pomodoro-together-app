@@ -7,7 +7,7 @@
     <string name="myProjects">Mis Proyectos</string>
     <string name="activePomodoro">Pomodoro Activo</string>
     <string name="settings">Configuración</string>
-    <string name="active">Activo</string>
+    <string name="active">Unirse</string>
     <string name="addProject">Proyecto</string>
     <string name="logout">Cerrar sesión</string>
     <string name="projectName">Nombre del Proyecto</string>
@@ -64,5 +64,7 @@
     <string name="abandonar">Abandonar</string>
     <string name="finishPomodoro">Primero finaliza el pomodoro que has iniciado</string>
     <string name="cannotLeave">Debes de parar el pomodoro activo antes de abandonar el grupo</string>
+    <string name="pomodoroDeleted">El pomodoro se ha borrado correctamente</string>
+    <string name="pomodoroNotExists">Este pomodoro ya no existe</string>
 
 </resources>
