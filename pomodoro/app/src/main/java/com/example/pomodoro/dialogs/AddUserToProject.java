@@ -35,7 +35,7 @@ public class AddUserToProject extends DialogFragment {
         body.setText(R.string.username);
         builder.setView(elaspecto);
 
-        final String positiveButton = getResources().getString(R.string.create);
+        final String positiveButton = getResources().getString(R.string.add);
         String negativeButton = getResources().getString(R.string.cancel);
 
         builder.setPositiveButton(positiveButton, new DialogInterface.OnClickListener() {
