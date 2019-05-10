@@ -5,7 +5,7 @@
     xmlns:seekarc="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/darkGrey"
+    android:background="@color/lightGrey"
     tools:context=".NewPomodoro">
 
     <include android:id="@+id/labarra"
@@ -30,7 +30,7 @@
             android:layout_height="match_parent"
             android:layout_gravity="center"
             android:padding="30dp"
-            seekarc:arcColor="@color/darkGrey"
+            seekarc:arcColor="@color/lightGrey"
             seekarc:arcWidth="4dp"
             seekarc:clockwise="true"
             seekarc:max="30"
