@@ -8,6 +8,8 @@ import android.widget.TextView;
 
 import com.example.pomodoro.R;
 
+import org.w3c.dom.Text;
+
 
 public class ViewHolderPomodoros extends RecyclerView.ViewHolder  {
 
@@ -24,7 +26,6 @@ public class ViewHolderPomodoros extends RecyclerView.ViewHolder  {
         minutosTrabajo=(TextView) itemView.findViewById(R.id.minutosTrabajo);
         estado = (TextView) itemView.findViewById(R.id.estado);
         removePomodoro = (ImageButton) itemView.findViewById(R.id.buttonDeletePomodoro);
-
 
     }
 }
