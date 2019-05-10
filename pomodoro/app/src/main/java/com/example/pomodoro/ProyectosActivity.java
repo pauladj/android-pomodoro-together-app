@@ -133,6 +133,8 @@ public class ProyectosActivity extends MainToolbar implements NuevoProyecto.List
                             e.putExtra("horaTrabajoFin", pomodoro.getHoraWorkFin());
                             e.putExtra("horaDescansoFin", pomodoro.getHoraDescansoFin());
                             e.putExtra("pomodoroKey", oneData.getKey());
+                            setStringPreference("timerKey", oneData.getKey());
+
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                                 startForegroundService(e);
                             } else {

@@ -13,19 +13,25 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.View;
+import android.widget.EditText;
 
 import com.example.pomodoro.models.Chat;
 import com.example.pomodoro.models.Pomodoro;
 import com.example.pomodoro.recyclerView_chat.MyAdapterChat;
 import com.example.pomodoro.services.Timer;
 import com.example.pomodoro.utilities.MainToolbar;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 public class ChatPomodoro extends MainToolbar {
 
@@ -144,6 +150,32 @@ public class ChatPomodoro extends MainToolbar {
             return;
         }
         // hay internet
+        EditText noteMessageContainer = findViewById(R.id.edittext_chat);
+        String noteMessage = noteMessageContainer.getText().toString();
+        if (noteMessage.isEmpty()){
+            // si el mensaje está vacío mostrar toast y no enviar
+            showToast(false, R.string.messageEmpty);
+            return;
+        }
+        // el mensaje no está vacío, enviar
+        Chat mensajeNuevo = new Chat();
+        mensajeNuevo.setText(noteMessage);
+        mensajeNuevo.setUsuario(getActiveUsername());
+
+        java.util.Date fechaActual = new java.util.Date();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(fechaActual);
+        SimpleDateFormat format1 = new SimpleDateFormat("HH:mm:ss");
+        String formatted = format1.format(calendar.getTime());
+        mensajeNuevo.setTimestamp(formatted);
+
+        databaseReference.push().setValue(mensajeNuevo).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                // si se ha producido un error mostrar mensaje
+                showToast(true, R.string.error);
+            }
+        });
 
     }
 }

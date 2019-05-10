@@ -69,5 +69,6 @@
     <string name="chat">Chat</string>
     <string name="enterMessage">Enter the message...</string>
     <string name="sendMessage">Send</string>
+    <string name="messageEmpty">The message is empty</string>
 
 </resources>

@@ -126,14 +126,7 @@ public class ProyectoPomodorosActivity extends MainToolbar implements ConfirmAba
                                             mutableData.child(pomodoro.getKey()).getValue(Pomodoro.class);
                                     if (!pomodoroObtenido.getEmpezado()) {
                                         // si no está empezado borrar
-                                        databaseReferenceProyectosPomodoro.child(pomodoro.getKey()).removeValue(new DatabaseReference.CompletionListener() {
-                                            @Override
-                                            public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
-                                                if (databaseError != null) {
-                                                    showToast(true, R.string.error);
-                                                }
-                                            }
-                                        });
+                                        mutableData.child(pomodoro.getKey()).setValue(null);
                                     }
                                 }
                                 return Transaction.success(mutableData);
