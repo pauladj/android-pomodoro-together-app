@@ -70,4 +70,6 @@
     <string name="enterMessage">Escribe el mensaje...</string>
     <string name="sendMessage">Enviar</string>
     <string name="messageEmpty">El mensaje está vacío</string>
+    <string name="add">Añadir</string>
+
 </resources>
