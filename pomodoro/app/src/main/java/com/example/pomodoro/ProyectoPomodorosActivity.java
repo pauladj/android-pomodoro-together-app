@@ -113,11 +113,9 @@ public class ProyectoPomodorosActivity extends MainToolbar implements ConfirmAba
                         return;
                     }
 
-                    int clickedPosition = position;
-
                     try {
                         // obtener el pomodoro correspondiente a la posición
-                        Pomodoro pomodoro = list.get(clickedPosition);
+                        Pomodoro pomodoro = list.get(position);
                         databaseReferenceProyectosPomodoro.runTransaction(new Transaction.Handler() {
                             @NonNull
                             @Override
@@ -165,16 +163,13 @@ public class ProyectoPomodorosActivity extends MainToolbar implements ConfirmAba
                     return;
                 }
 
-                int clickedPosition = position;
-
                 try {
                     // obtener el pomodoro correspondiente a la posición
-                    Pomodoro pomodoro = list.get(clickedPosition);
+                    Pomodoro pomodoro = list.get(position);
 
                     if ((pomodoro.getEmpezado() & getStringPreference("pomodoroKey") != null) && !getBooleanPreference("individual") && servicioEnMarcha(Timer.class)) {
                         // ya hay un pomodoro iniciado
                         showToast(false, R.string.pomodoroActive);
-                        return;
                     } else {
                         // si el usuario no tiene otro pomodoro que esté empezado
                         if (servicioEnMarcha(Timer.class)) {
@@ -223,10 +218,8 @@ public class ProyectoPomodorosActivity extends MainToolbar implements ConfirmAba
                             i.putExtra("trabajar", pomodoro.getWork());
                             i.putExtra("descansar", pomodoro.getRelax());
                             startActivity(i);
-                            return;
                         }
                     }
-
                 } catch (IndexOutOfBoundsException e) {
                     showToast(false, R.string.error);
                 }

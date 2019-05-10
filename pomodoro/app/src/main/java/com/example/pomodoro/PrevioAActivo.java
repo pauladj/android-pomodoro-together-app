@@ -39,6 +39,7 @@ public class PrevioAActivo extends Common {
 
     private boolean internet; // si no hay internet
     private boolean alreadyActive; // this pomodoro is already active
+    private boolean pomodoroDeleted; // si el pomodoro se ha borrado después de haber entrado aqui
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -52,6 +53,7 @@ public class PrevioAActivo extends Common {
 
         outState.putBoolean("internet", internet);
         outState.putBoolean("alreadyActive", alreadyActive);
+        outState.putBoolean("pomodoroDeleted", pomodoroDeleted);
     }
 
     @Override
@@ -76,6 +78,7 @@ public class PrevioAActivo extends Common {
 
             internet = savedInstanceState.getBoolean("internet", false);
             alreadyActive = savedInstanceState.getBoolean("alreadyActive", false);
+            pomodoroDeleted = savedInstanceState.getBoolean("pomodoroDeleted", false);
         }
 
         // Definir los valores descansar/trabajar
@@ -90,17 +93,21 @@ public class PrevioAActivo extends Common {
     public void empezarPomodoroProyecto(View v){
         // definir referencia a la bd
         if (servicioEnMarcha(Timer.class) || getStringPreference("pomodoroKey") != null || getBooleanPreference("individual")){
-            // TODO probar que esto funcione
             showToast(false, R.string.finishPomodoro);
             return;
         }
         databaseReference =
-                FirebaseDatabase.getInstance().getReference("ProyectosPomodoro").child(pomodoroKey);
+                FirebaseDatabase.getInstance().getReference("ProyectosPomodoro");
         databaseReference.runTransaction(new Transaction.Handler() {
             @NonNull
             @Override
             public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
                 // actualizar pomodoro
+                if (!mutableData.hasChild(pomodoroKey)){
+                    // el pomodoro se ha borrado
+                    pomodoroDeleted = true;
+                    return Transaction.abort();
+                }
                 internet = false;
                 alreadyActive = false;
                 if (isNetworkAvailable()){
@@ -136,8 +143,9 @@ public class PrevioAActivo extends Common {
 
             @Override
             public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
-                if (databaseError != null){
-                    showToast(false, R.string.error);
+                if (pomodoroDeleted){
+                    // el pomodoro no existe
+                    showToast(true, R.string.pomodoroNotExists);
                     return;
                 }else if(!internet){
                     // Si no hay internet
@@ -146,8 +154,10 @@ public class PrevioAActivo extends Common {
                 }else if(alreadyActive){
                     showToast(true, R.string.pomodoroAlreadyActive);
                     return;
+                }else if (databaseError != null) {
+                    showToast(false, R.string.error);
+                    return;
                 }
-
                 // ENVIAR MINUTOS Y SI ES O NO EL QUE LO HA INICIADO
                 Intent i = new Intent(PrevioAActivo.this, CountDownTimerActivity.class);
                 i.putExtra("horaTrabajoFin", workFin);
