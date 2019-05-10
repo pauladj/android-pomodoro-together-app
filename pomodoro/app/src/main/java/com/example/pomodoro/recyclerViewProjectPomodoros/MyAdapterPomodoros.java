@@ -17,6 +17,11 @@ public class MyAdapterPomodoros extends RecyclerView.Adapter<ViewHolderPomodoros
     Context c;
     ArrayList<Pomodoro> pomodoros;
 
+    public interface ClickListener {
+        void onDeleteClicked(int position);
+        void onStartClicked(int position);
+    }
+
     private View.OnClickListener listener;
 
     public MyAdapterPomodoros(Context c, ArrayList<Pomodoro> pomodoros) {
@@ -40,6 +45,9 @@ public class MyAdapterPomodoros extends RecyclerView.Adapter<ViewHolderPomodoros
         if (pomodoro.getEmpezado()){
             // El pomodoro está iniciado
             holder.estado.setText(R.string.active);
+            holder.removePomodoro.setVisibility(View.INVISIBLE);
+        }else{
+            holder.estado.setText(R.string.start);
         }
     }
 
