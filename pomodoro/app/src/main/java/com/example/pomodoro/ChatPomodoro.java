@@ -21,6 +21,7 @@ import com.example.pomodoro.recyclerView_chat.MyAdapterChat;
 import com.example.pomodoro.services.Timer;
 import com.example.pomodoro.utilities.MainToolbar;
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -45,7 +46,12 @@ public class ChatPomodoro extends MainToolbar {
         @Override
         public void onReceive(Context context, Intent intent) {
             // el método que se ejecutará cuando se reciba un broadcast
-            
+            // se recibe cuando el pomodoro termina, volver a la pantalla principal
+            Intent i = new Intent (ChatPomodoro.this, ProyectosActivity.class);
+            // clear the activity stack, so the mainactivity view is recreated
+            i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(i);
+            finish();
         }
     };
 
@@ -169,7 +175,13 @@ public class ChatPomodoro extends MainToolbar {
         String formatted = format1.format(calendar.getTime());
         mensajeNuevo.setTimestamp(formatted);
 
-        databaseReference.push().setValue(mensajeNuevo).addOnFailureListener(new OnFailureListener() {
+        databaseReference.push().setValue(mensajeNuevo).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                // borrar mensaje anterior
+                noteMessageContainer.setText("");
+            }
+        }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
                 // si se ha producido un error mostrar mensaje

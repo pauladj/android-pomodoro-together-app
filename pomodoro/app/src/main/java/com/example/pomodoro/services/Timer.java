@@ -17,6 +17,7 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
+import android.support.v4.content.LocalBroadcastManager;
 import android.view.Gravity;
 import android.widget.Toast;
 
@@ -377,7 +378,6 @@ public class Timer extends Service {
                         tiempo);
                 aviso.setGravity(Gravity.BOTTOM | Gravity.CENTER, 0, 100);
                 aviso.show();
-                return;
             }
             databaseReference.child("empezado").setValue(false).addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
@@ -397,6 +397,8 @@ public class Timer extends Service {
                     aviso.setGravity(Gravity.BOTTOM | Gravity.CENTER, 0, 100);
                     aviso.show();
 
+                    stopChat();
+
                     stopSelf();
                 }
             }).addOnFailureListener(new OnFailureListener() {
@@ -412,8 +414,18 @@ public class Timer extends Service {
             });
         } else {
             // si es un pomodoro de un proyecto y no es el dueño pararlo
+            stopChat();
             stopSelf();
         }
+    }
+
+    /**
+     * Enviar broadcast para cerrar el chat
+     */
+    private void stopChat(){
+        LocalBroadcastManager broadcaster = LocalBroadcastManager.getInstance(getBaseContext());
+        Intent intent = new Intent("stopChat");
+        broadcaster.sendBroadcast(intent);
     }
 
     /**

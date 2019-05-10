@@ -271,8 +271,13 @@ public class CountDownTimerActivity extends MainToolbar {
     public void startChat(View v){
         boolean timerOnline = servicioEnMarcha(Timer.class); // el servicio está en marcha
         if (!timerOnline){
-            // si el servicio no está en marcha no mostrar el botón de chat
-            findViewById(R.id.buttonChat).setVisibility(View.GONE);
+            // si el servicio no está en marcha mensaje error
+            showToast(false, R.string.error);
+            return;
+        }
+
+        if (!isNetworkAvailable()){
+            showToast(true, R.string.internetNeeded);
             return;
         }
         // Iniciar la actividad de chat
