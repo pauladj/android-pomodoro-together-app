@@ -284,10 +284,6 @@ public class Timer extends Service {
 
             public void onFinish() {
                 // enviar a actividad para que actualice la UI
-                boolean finished = false;
-                if (isDescanso) {
-                    finished = true;
-                }
                 MessageEvent a = new MessageEvent("0:00", getStringToShow(),
                         100);
                 EventBus.getDefault().post(a);

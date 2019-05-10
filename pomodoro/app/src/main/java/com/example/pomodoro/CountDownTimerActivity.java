@@ -43,6 +43,8 @@ public class CountDownTimerActivity extends MainToolbar {
 
     private boolean finish; // si es true solo cerrar esta actividad
 
+    private boolean descanso; // si está en el descanso
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -51,6 +53,7 @@ public class CountDownTimerActivity extends MainToolbar {
         outState.putBoolean("empezarNuevo", empezarNuevo);
         outState.putBoolean("individual", individual);
         outState.putBoolean("finish", finish);
+        outState.putBoolean("descanso", descanso);
     }
 
     @Override
@@ -65,6 +68,7 @@ public class CountDownTimerActivity extends MainToolbar {
         empezarNuevo = savedInstanceState.getBoolean("empezarNuevo");
         individual = savedInstanceState.getBoolean("individual");
         finish = savedInstanceState.getBoolean("finish", false);
+        descanso = savedInstanceState.getBoolean("descanso", false);
     }
 
     @Override
@@ -73,6 +77,15 @@ public class CountDownTimerActivity extends MainToolbar {
         setContentView(R.layout.activity_count_down_timer);
 
         seekArc = findViewById(R.id.seekArc);
+
+        boolean timerOnline = servicioEnMarcha(Timer.class); // el servicio está en marcha
+        if (!timerOnline || getBooleanPreference("individual")){
+            // si el servicio no está en marcha no mostrar el botón de chat, o es uno individual
+            findViewById(R.id.buttonChat).setVisibility(View.GONE);
+        }else if(timerOnline && descanso){
+            // el servicio está activo y está en el descanso, no es individual
+            findViewById(R.id.buttonChat).setVisibility(View.VISIBLE);
+        }
 
         // valores por defecto
         ((TextView) findViewById(R.id.seekArcProgress)).setText("0:00");
@@ -101,6 +114,13 @@ public class CountDownTimerActivity extends MainToolbar {
                     e.putExtra("horaTrabajoFin", i.getStringExtra("horaTrabajoFin"));
                     e.putExtra("horaDescansoFin", i.getStringExtra("horaDescansoFin"));
                     e.putExtra("pomodoroKey", pomodoroKey);
+
+                    if (pomodoroKey == null && key != null){
+                        setStringPreference("timerKey", key);
+                    }else if(pomodoroKey != null & key == null){
+                        setStringPreference("timerKey", pomodoroKey);
+                    }
+
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                         startForegroundService(e);
                     } else {
@@ -223,6 +243,13 @@ public class CountDownTimerActivity extends MainToolbar {
         ((TextView) findViewById(R.id.seekArcProgress)).setText(event.getTime());
         // seekarc
         seekArc.setProgress(event.getPercentage());
+
+        if (!descanso && event.getText() == R.string.descansar && !getBooleanPreference(
+                "individual")){
+            // si empieza el descanso y no es individual
+            descanso = true;
+            findViewById(R.id.buttonChat).setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -235,6 +262,22 @@ public class CountDownTimerActivity extends MainToolbar {
     public void onStop() {
         EventBus.getDefault().unregister(this);
         super.onStop();
+    }
+
+    /**
+     * Start the pomodoro chat
+     * @param v
+     */
+    public void startChat(View v){
+        boolean timerOnline = servicioEnMarcha(Timer.class); // el servicio está en marcha
+        if (!timerOnline){
+            // si el servicio no está en marcha no mostrar el botón de chat
+            findViewById(R.id.buttonChat).setVisibility(View.GONE);
+            return;
+        }
+        // Iniciar la actividad de chat
+        Intent i = new Intent(CountDownTimerActivity.this, ChatPomodoro.class);
+        startActivity(i);
     }
 
     /**
