@@ -74,6 +74,7 @@
     <string name="see">Ver</string>
     <string name="timeToWork">Es hora de trabajar 💪</string>
     <string name="timeToRelax">Es hora de descansar 🎉</string>
+    <string name="googlePlayNeeded">Necesitas tener instalado Google Play para poder utilizar este programa</string>
 
 
 </resources>

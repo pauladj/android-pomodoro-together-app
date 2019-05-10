@@ -14,6 +14,8 @@ import com.example.pomodoro.fragments.loginfragment;
 import com.example.pomodoro.fragments.registro;
 import com.example.pomodoro.utilities.MainToolbar;
 import com.example.pomodoro.utilities.PagerAdapter;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 
 import org.json.JSONObject;
 
@@ -23,6 +25,22 @@ public class LoginRegistroActivity extends MainToolbar implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_registro);
+
+        // comprobar si el usuario tiene google play
+        GoogleApiAvailability api = GoogleApiAvailability.getInstance();
+        int code = api.isGooglePlayServicesAvailable(this);
+        if (code == ConnectionResult.SUCCESS) {
+            // nothing
+        }
+        else {
+            // si no tiene google play se carga una plantilla en blanco
+            setContentView(R.layout.blank);
+            showToast(true, R.string.googlePlayNeeded);
+            if (api.isUserResolvableError(code)){
+                api.getErrorDialog(this, code, 58).show();
+            }
+            return;
+        }
 
         // cargar barra
         loadToolbar();

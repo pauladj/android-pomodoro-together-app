@@ -74,5 +74,5 @@
     <string name="see">See</string>
     <string name="timeToWork">It\'s time to work 💪</string>
     <string name="timeToRelax">It\'s time to relax 🎉</string>
-
+    <string name="googlePlayNeeded">You need Google Play for this app to work</string>
 </resources>
