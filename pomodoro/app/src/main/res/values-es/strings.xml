@@ -71,5 +71,9 @@
     <string name="sendMessage">Enviar</string>
     <string name="messageEmpty">El mensaje está vacío</string>
     <string name="add">Añadir</string>
+    <string name="see">Ver</string>
+    <string name="timeToWork">Es hora de trabajar 💪</string>
+    <string name="timeToRelax">Es hora de descansar 🎉</string>
+
 
 </resources>

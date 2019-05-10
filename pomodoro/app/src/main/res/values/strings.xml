@@ -71,4 +71,8 @@
     <string name="sendMessage">Send</string>
     <string name="messageEmpty">The message is empty</string>
     <string name="add">Add</string>
+    <string name="see">See</string>
+    <string name="timeToWork">It\'s time to work 💪</string>
+    <string name="timeToRelax">It\'s time to relax 🎉</string>
+
 </resources>
