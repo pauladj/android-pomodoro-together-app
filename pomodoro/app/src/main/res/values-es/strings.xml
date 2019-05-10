@@ -66,5 +66,8 @@
     <string name="cannotLeave">Debes de parar el pomodoro activo antes de abandonar el grupo</string>
     <string name="pomodoroDeleted">El pomodoro se ha borrado correctamente</string>
     <string name="pomodoroNotExists">Este pomodoro ya no existe</string>
-
+    <string name="chat">Chat</string>
+    <string name="enterMessage">Escribe el mensaje...</string>
+    <string name="sendMessage">Enviar</string>
+    <string name="messageEmpty">El mensaje está vacío</string>
 </resources>

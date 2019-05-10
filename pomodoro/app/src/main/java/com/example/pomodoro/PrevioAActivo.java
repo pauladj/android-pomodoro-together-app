@@ -112,7 +112,7 @@ public class PrevioAActivo extends Common {
                 alreadyActive = false;
                 if (isNetworkAvailable()){
                     internet = true;
-                    if ((boolean) mutableData.child("empezado").getValue()){
+                    if ((boolean) mutableData.child(pomodoroKey).child("empezado").getValue()){
                         // si ya ha sido empezado justo antes
                         alreadyActive = true;
                         return Transaction.abort();
@@ -123,16 +123,16 @@ public class PrevioAActivo extends Common {
                     calendar.add(Calendar.MINUTE, trabajar);
                     Date a = calendar.getTime();
                     workFin = a.toString();
-                    mutableData.child("horaWorkFin").setValue(workFin);
+                    mutableData.child(pomodoroKey).child("horaWorkFin").setValue(workFin);
 
                     calendar = Calendar.getInstance();
                     calendar.setTime(a);
                     calendar.add(Calendar.MINUTE, descansar);
                     relaxFin = calendar.getTime().toString();
-                    mutableData.child("horaDescansoFin").setValue(relaxFin);
+                    mutableData.child(pomodoroKey).child("horaDescansoFin").setValue(relaxFin);
 
-                    mutableData.child("usuario").setValue(getActiveUsername());
-                    mutableData.child("empezado").setValue(true);
+                    mutableData.child(pomodoroKey).child("usuario").setValue(getActiveUsername());
+                    mutableData.child(pomodoroKey).child("empezado").setValue(true);
 
                     return Transaction.success(mutableData);
                 }else{

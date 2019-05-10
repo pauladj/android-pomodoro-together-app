@@ -58,16 +58,36 @@
         </LinearLayout>
     </RelativeLayout>
 
-    <Button
-        android:id="@+id/buttonDetener"
-        style="@style/Widget.AppCompat.Button.Borderless"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_weight="1"
-        android:onClick="stopPomodoro"
-        android:text="@string/detener"
-        android:textAlignment="center"
-        android:textSize="18sp" />
+        android:gravity="center"
+        android:layout_height="0dp">
+
+        <Button
+            android:id="@+id/buttonDetener"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="wrap_content"
+            android:onClick="stopPomodoro"
+            android:text="@string/detener"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:textSize="18sp" />
+
+        <Button
+            android:id="@+id/buttonChat"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@+id/buttonDetener"
+            android:onClick="startChat"
+            android:visibility="gone"
+            android:layout_marginStart="10dp"
+            android:text="@string/chat"
+            android:textAlignment="center"
+            android:textSize="18sp" />
+
+    </RelativeLayout>
 
 
 </LinearLayout>
