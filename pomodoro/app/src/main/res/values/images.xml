@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="imageopction">
+        <item>@string/gallery</item>
+        <item>@string/photo</item>
+    </string-array>
+    <string-array name="imageopctionCode">
+        <item>gallery</item>
+        <item>photo</item>
+    </string-array>
+</resources>

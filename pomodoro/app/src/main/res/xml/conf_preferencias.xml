@@ -23,9 +23,9 @@
             android:title="@string/sonido" />
         <ListPreference
             android:dialogTitle="@string/colordetexto"
-            android:entries="@array/colorsname"
+            android:entries="@array/colors"
             android:defaultValue="default"
-            android:entryValues="@array/colorsname"
+            android:entryValues="@array/colorsCode"
             android:key="colors"
             android:summary="@string/preferences_colortext"
             android:title="@string/preferences_colorTitle" />
@@ -34,7 +34,7 @@
             android:dialogTitle="@string/adimagen"
             android:entries="@array/imageopction"
             android:defaultValue="default"
-            android:entryValues="@array/imageopction"
+            android:entryValues="@array/imageopctionCode"
             android:key="image"
             android:summary="@string/preferences_image"
             android:title="@string/preferences_imageTitle" />
