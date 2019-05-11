@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">this.Pomodoro</string>
+    <string name="app_name">Pomodoro app</string>
     <string name="menuEdit">Edit</string>
     <string name="nuevoPomodoro">Pomodoro</string>
     <string name="loadingData">Loading data...</string>
