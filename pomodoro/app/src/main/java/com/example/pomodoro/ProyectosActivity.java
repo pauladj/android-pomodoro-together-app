@@ -83,10 +83,8 @@ public class ProyectosActivity extends MainToolbar implements NuevoProyecto.List
                         }
 
                         // fecha ahora
-                        java.util.Date fechaActual = new java.util.Date();
                         Calendar calendar = Calendar.getInstance(Locale.US);
                         calendar.setTimeZone(TimeZone.getTimeZone("GMT"));
-                        calendar.setTime(fechaActual);
                         long milisecondsNow = calendar.getTimeInMillis();
 
                         Date fin = stringToDate(pomodoro.getHoraDescansoFin());

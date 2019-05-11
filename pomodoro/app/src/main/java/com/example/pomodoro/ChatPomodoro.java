@@ -174,10 +174,8 @@ public class ChatPomodoro extends MainToolbar {
         mensajeNuevo.setText(noteMessage);
         mensajeNuevo.setUsuario(getActiveUsername());
 
-        java.util.Date fechaActual = new java.util.Date();
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeZone(TimeZone.getTimeZone("GMT"));
-        calendar.setTime(fechaActual);
         SimpleDateFormat format1 = new SimpleDateFormat("HH:mm:ss");
         String formatted = format1.format(calendar.getTime());
         mensajeNuevo.setTimestamp(formatted);

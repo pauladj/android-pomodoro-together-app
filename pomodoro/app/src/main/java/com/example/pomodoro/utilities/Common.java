@@ -351,7 +351,6 @@ public class Common extends LanguageActivity implements ConectarAlServidor.TaskC
         try {
             // TODO recoger este null
             Calendar cal = Calendar.getInstance();
-            cal.setTimeZone(TimeZone.getTimeZone("GMT"));
             SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", Locale.US);
             cal.setTime(sdf.parse(time));// all done
             return cal.getTime();

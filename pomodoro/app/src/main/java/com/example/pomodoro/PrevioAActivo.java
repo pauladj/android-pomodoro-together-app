@@ -123,16 +123,14 @@ public class PrevioAActivo extends Common {
                         alreadyActive = true;
                         return Transaction.abort();
                     }
-                    java.util.Date fechaActual = new java.util.Date();
                     Calendar calendar = Calendar.getInstance(Locale.US);
                     calendar.setTimeZone(TimeZone.getTimeZone("GMT"));
-                    calendar.setTime(fechaActual);
                     calendar.add(Calendar.MINUTE, trabajar);
                     Date a = calendar.getTime();
                     workFin = a.toString();
                     mutableData.child(pomodoroKey).child("horaWorkFin").setValue(workFin);
 
-                    calendar = Calendar.getInstance();
+                    calendar = Calendar.getInstance(Locale.US);
                     calendar.setTimeZone(TimeZone.getTimeZone("GMT"));
                     calendar.setTime(a);
                     calendar.add(Calendar.MINUTE, descansar);

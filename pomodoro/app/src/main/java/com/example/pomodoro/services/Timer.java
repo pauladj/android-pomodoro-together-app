@@ -122,10 +122,8 @@ public class Timer extends Service {
             Date horaTrabajoFin = stringToDate(extras.getString("horaTrabajoFin"));
             Date horaDescansoFin = stringToDate(extras.getString("horaDescansoFin"));
 
-            java.util.Date fechaActual = new java.util.Date();
             Calendar calendar = Calendar.getInstance(Locale.US);
             calendar.setTimeZone(TimeZone.getTimeZone("GMT"));
-            calendar.setTime(fechaActual);
             long milisecondsNow = calendar.getTimeInMillis();
 
             calendar.setTime(horaTrabajoFin);
