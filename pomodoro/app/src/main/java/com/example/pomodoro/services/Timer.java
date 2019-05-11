@@ -488,16 +488,6 @@ public class Timer extends Service {
      */
     private void lanzarNotificacion() {
 
-        // if the user clicks on "see" the pomodoro will open
-        Intent i = new Intent(this, CountDownTimerActivity.class);
-        i.putExtra("nuevo", false);
-
-        // limpiamos el stack y creamos uno propio
-        PendingIntent intentEnNot =
-                TaskStackBuilder.create(this)
-                        .addParentStack(ProyectosActivity.class)
-                        .addNextIntent(i)
-                        .getPendingIntent(NOTIFICACION_POMODORO_CODE, PendingIntent.FLAG_UPDATE_CURRENT);
 
         int stringOfNotifications = R.string.timeToRelax;
         if (getStringToShow() == R.string.work){
@@ -509,11 +499,7 @@ public class Timer extends Service {
                 .setContentTitle(getResources().getString(R.string.app_name))
                 .setContentText(getResources().getString(stringOfNotifications))
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                .setAutoCancel(false)
-                .setContentIntent(intentEnNot)
-                .addAction(android.R.drawable.ic_menu_view,
-                        getResources().getString(R.string.see),
-                        intentEnNot);
+                .setAutoCancel(false);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             CharSequence name = getString(R.string.app_name);

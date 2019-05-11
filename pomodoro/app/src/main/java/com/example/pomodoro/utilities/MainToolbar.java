@@ -90,7 +90,7 @@ public class MainToolbar extends Common {
 
             setStringPreference("pomodoroKey", null);
             setBooleanPreference("individual", false);
-            setStringPreference("imagePath", null);
+            setStringPreference("imagepath", null);
 
             Intent i = new Intent(this, LoginRegistroActivity.class);
             startActivity(i);

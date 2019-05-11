@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.util.Base64;
@@ -228,7 +229,7 @@ public class ConectarAlServidor extends Fragment {
                         if (json.get("imagepath") != null){
                             // el usuario tiene una imagen
                             // descargar una imagen
-                            String imageUrl = strings[0];
+                            String imageUrl = json.get("imagepath").toString();
 
                             // la nota es una imagen, se descarga y se guarda
                             String imageLocalPath = downloadAndSaveImage(imageUrl);
@@ -243,13 +244,30 @@ public class ConectarAlServidor extends Fragment {
                                         "preferencias_especiales",
                                         Context.MODE_PRIVATE);
 
-                                // guardar fecha y hora del último fetch
                                 SharedPreferences.Editor editor2= prefs_especiales.edit();
-                                editor2.putString("imagePath", imageLocalPath);
+                                editor2.putString("imagepath", imageLocalPath);
+                                editor2.apply();
+
+                                // cambiar preferencia
+                                prefs_especiales = getActivity().getSharedPreferences(
+                                        "preferencias_especiales",
+                                        Context.MODE_PRIVATE);
+
+                                editor2 = prefs_especiales.edit();
+                                editor2.putBoolean("withimage", true);
                                 editor2.apply();
                             }
 
                         }else{
+                            // cambiar preferencia
+                            SharedPreferences prefs_especiales = getActivity().getSharedPreferences(
+                                    "preferencias_especiales",
+                                    Context.MODE_PRIVATE);
+
+                            SharedPreferences.Editor editor2 = prefs_especiales.edit();
+                            editor2.putBoolean("withimage", false);
+                            editor2.apply();
+
                             success = true;
                         }
 
@@ -315,7 +333,7 @@ public class ConectarAlServidor extends Fragment {
 
                     // guardar fecha y hora del último fetch
                     SharedPreferences.Editor editor2= prefs_especiales.edit();
-                    editor2.putString("imagePath", uri);
+                    editor2.putString("imagepath", uri);
                     editor2.apply();
 
                     success = true;

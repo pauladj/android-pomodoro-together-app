@@ -17,13 +17,14 @@
         tools:ignore="ContentDescription" />
 
     <LinearLayout
+        android:id="@+id/bigContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:background="@android:drawable/screen_background_light_transparent"
+        android:gravity="center"
         android:orientation="vertical"
         android:weightSum="3"
-        android:layout_centerInParent="true"
-        android:layout_centerHorizontal="true"
-        android:gravity="center"
         tools:context=".CountDownTimerActivity">
 
         <RelativeLayout
@@ -75,17 +76,17 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
+            android:layout_height="0dp"
             android:layout_weight="1"
-            android:gravity="center"
-            android:layout_height="0dp">
+            android:gravity="center">
 
             <Button
                 android:id="@+id/buttonDetener"
                 style="@style/Widget.AppCompat.Button.Borderless"
                 android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:onClick="stopPomodoro"
                 android:text="@string/detener"
-                android:layout_height="wrap_content"
                 android:textAlignment="center"
                 android:textSize="18sp" />
 
@@ -94,13 +95,13 @@
                 style="@style/Widget.AppCompat.Button.Colored"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
                 android:layout_toEndOf="@+id/buttonDetener"
                 android:onClick="startChat"
-                android:visibility="gone"
-                android:layout_marginStart="10dp"
                 android:text="@string/chat"
                 android:textAlignment="center"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                android:visibility="gone" />
 
         </RelativeLayout>
 

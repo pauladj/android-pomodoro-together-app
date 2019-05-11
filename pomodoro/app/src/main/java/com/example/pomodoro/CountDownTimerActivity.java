@@ -98,17 +98,26 @@ public class CountDownTimerActivity extends MainToolbar {
         ((TextView) findViewById(R.id.seekArcProgress)).setText("0:00");
         seekArc.setProgress(100);
 
-        if (getBooleanPreference("withimage") && getStringPreference("imagePath") != null){
+        boolean conImagen = false;
+        if (getBooleanPreference("withimage") && getStringPreference("imagepath") != null){
             // cargar imagen en el fondo
             ((ImageView) findViewById(R.id.backgroundImage)).setImageURI(Uri.parse(getStringPreference("imagepath")));
+            conImagen = true;
         }
 
-        if (getStringPreference("colors").equals("blanco")){
+        if (getStringPreference("colors") != null && getStringPreference("colors").equals("white")){
             // cambiar el color texto y ruleta
             ((Button) findViewById(R.id.buttonDetener)).setTextColor(getResources().getColor(R.color.colorWhite));
             ((TextView) findViewById(R.id.textMin)).setTextColor(getResources().getColor(R.color.colorWhite));
             ((TextView) findViewById(R.id.seekArcProgress)).setTextColor(getResources().getColor(R.color.colorWhite));
             ((SeekArc) findViewById(R.id.seekArc)).setProgressColor(getResources().getColor(R.color.colorWhite));
+            ((Button) findViewById(R.id.buttonChat)).setBackgroundColor(getResources().getColor(R.color.colorWhite));
+            ((Button) findViewById(R.id.buttonChat)).setTextColor(getResources().getColor(R.color.colorAccent));
+
+            if (!conImagen){
+                ((LinearLayout) findViewById(R.id.bigContainer)).setBackgroundColor(getResources().getColor(R.color.colorAccent));
+            }
+
         }
 
         if (savedInstanceState == null) {

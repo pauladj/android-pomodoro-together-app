@@ -64,8 +64,10 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements
                     "preferencias_especiales",
                     Context.MODE_PRIVATE);
 
-            prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-            Boolean withimage = prefs.getBoolean("withimage", false);
+            boolean withImage = prefs_especiales.getBoolean(key, false);
+            SharedPreferences.Editor editor2 = prefs_especiales.edit();
+            editor2.putBoolean(key, !withImage);
+            editor2.apply();
 
             img = true;
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());

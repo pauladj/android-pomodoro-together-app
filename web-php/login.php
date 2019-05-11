@@ -47,7 +47,7 @@ function success($message){
 
 
          $json = array(
-           'success' => $message,
+           'success' => "ok",
            'imagepath' => $row['imagepath']
          );
          echo(json_encode($json));
