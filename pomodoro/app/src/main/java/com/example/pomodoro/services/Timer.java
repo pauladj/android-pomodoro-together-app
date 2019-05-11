@@ -104,7 +104,7 @@ public class Timer extends Service {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationManager elmanager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             NotificationChannel canalservicio = new NotificationChannel("IdCanal",
-                    "NombreCanal", NotificationManager.IMPORTANCE_DEFAULT);
+                    "Pomodoros", NotificationManager.IMPORTANCE_DEFAULT);
             elmanager.createNotificationChannel(canalservicio);
             Notification.Builder builder = new Notification.Builder(this, "IdCanal")
                     .setContentTitle(getString(R.string.app_name))

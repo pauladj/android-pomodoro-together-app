@@ -74,6 +74,10 @@ public class CountDownTimerActivity extends MainToolbar {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (!checkFCMAvailable()){
+            return;
+        }
+
         setContentView(R.layout.activity_count_down_timer);
 
         seekArc = findViewById(R.id.seekArc);

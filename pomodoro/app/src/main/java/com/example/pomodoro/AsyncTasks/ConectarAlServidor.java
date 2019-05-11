@@ -193,6 +193,7 @@ public class ConectarAlServidor extends Fragment {
                     username = strings[0];
                     parametrosJSON.put("username", username);
                     parametrosJSON.put("password", strings[1]);
+                    parametrosJSON.put("token", strings[2]);
 
                     PrintWriter out = new PrintWriter(urlConnection.getOutputStream());
                     out.print(parametrosJSON.toString());
