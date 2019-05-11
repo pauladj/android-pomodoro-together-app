@@ -76,4 +76,6 @@
     <string name="timeToRelax">It\'s time to relax 🎉</string>
     <string name="googlePlayNeeded">You need Google Play for this app to work</string>
     <string name="backgroundNeeded">You need to enabled background mode for this app to work. Go to battery settings and enabled it.</string>
+    <string name="someoneelse">Someone else has logged in with this user</string>
+
 </resources>

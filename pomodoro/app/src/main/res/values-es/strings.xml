@@ -76,6 +76,6 @@
     <string name="timeToRelax">Es hora de descansar 🎉</string>
     <string name="googlePlayNeeded">Necesitas tener instalado Google Play para poder utilizar este programa</string>
     <string name="backgroundNeeded">La aplicación debe poder ejecutarse en segundo plano. Cambia la configuración en el apartado batería del móvil.</string>
-
+    <string name="someoneelse">Alguien más se ha logeado con este usuario</string>
 
 </resources>

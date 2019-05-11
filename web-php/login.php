@@ -39,8 +39,10 @@ function success($message){
            $resultado = execute($con, "UPDATE users SET token='".$token."' WHERE username='".$username."'");
          }else{
            // enviar mensaje fcm al último logeado con este user
-           send_message_to_user($username, $lastToken);
-           $resultado = execute($con, "UPDATE users SET token='".$token."' WHERE username='".$username."'");
+           if ($lastToken != $token){
+             send_message_to_user($username, $lastToken);
+             $resultado = execute($con, "UPDATE users SET token='".$token."' WHERE username='".$username."'");
+           }
          }
 
          success("ok");
