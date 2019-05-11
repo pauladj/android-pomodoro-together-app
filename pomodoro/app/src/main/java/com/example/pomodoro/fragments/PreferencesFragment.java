@@ -3,6 +3,7 @@ package com.example.pomodoro.fragments;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -11,6 +12,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.v4.app.NotificationCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.util.Log;
 import android.view.Gravity;
@@ -56,24 +58,34 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements
             SharedPreferences.Editor editor2 = prefs_especiales.edit();
             editor2.putBoolean(key, !sound);
             editor2.apply();
-        }else if(key.equals("image")){
-            img = true;
-            Log.d("imagen", "onSharedPreferenceChanged: se ha pulsado imagen ");
+        }else if(key.equals("withimage")){
+            // sonido cuando el pomodoro acaba
+            SharedPreferences prefs_especiales = getActivity().getSharedPreferences(
+                    "preferencias_especiales",
+                    Context.MODE_PRIVATE);
+
             prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-            String language = prefs.getString("image", "gallery");
-
-            Log.i("aqui", language);
-
-            if(language.equals("gallery")){
-                Intent elIntentGal = new Intent(Intent.ACTION_PICK,
-                        android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                getActivity().startActivityForResult(elIntentGal, CODIGO_GALERIA);
+            Boolean withimage = prefs.getBoolean("withimage", false);
+            if(withimage){
+                img = true;
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setTitle(R.string.adimagen);
+                String[] opciones = {getResources().getString(R.string.gallery),getResources().getString(R.string.photo)};
+                builder.setItems(opciones, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String text = "";
+                        if (which == 0) {  // en blanco
+                            Intent elIntentGal = new Intent(Intent.ACTION_PICK,
+                                    android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                            getActivity().startActivityForResult(elIntentGal, CODIGO_GALERIA);
+                        } else if (which == 1) {
+                            ((PreferencesActivity)getActivity()).tryTakingPhotoWithTheCamera();
+                        }
+                    }
+                });
+                builder.show();
             }
-            else if(language.equals("photo")){
-                ((PreferencesActivity)getActivity()).tryTakingPhotoWithTheCamera();
-            }
-
-
         }else if(key.equals("colors")){
             Log.d("colors", "onSharedPreferenceChanged: se ha pulsado colors");
             prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());

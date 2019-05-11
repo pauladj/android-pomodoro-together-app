@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <PreferenceCategory android:title="@string/preferences_basicConfiguration">
         <ListPreference
             android:dialogTitle="@string/preferences_LanguageTitle"
@@ -21,6 +22,10 @@
             android:defaultValue="false"
             android:key="sound"
             android:title="@string/sonido" />
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="withimage"
+            android:title="@string/imgbackground" />
         <ListPreference
             android:dialogTitle="@string/colordetexto"
             android:entries="@array/colors"
@@ -30,14 +35,6 @@
             android:summary="@string/preferences_colortext"
             android:title="@string/preferences_colorTitle" />
 
-        <ListPreference
-            android:dialogTitle="@string/adimagen"
-            android:entries="@array/imageopction"
-            android:defaultValue="default"
-            android:entryValues="@array/imageopctionCode"
-            android:key="image"
-            android:summary="@string/preferences_image"
-            android:title="@string/preferences_imageTitle" />
 
 
     </PreferenceCategory>

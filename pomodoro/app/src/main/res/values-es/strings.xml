@@ -81,12 +81,11 @@
     <string name="colordetexto">Elegir color de texto </string>
     <string name="white">Blanco</string>
     <string name="black">Negro</string>
-    <string name="gallery">galeria</string>
-    <string name="photo">foto </string>
     <string name="preferences_colortext">Cambia el color del texto</string>
     <string name="preferences_colorTitle">Selecciona el color del texto</string>
     <string name="preferences_image">Cambia la imagen de fondo</string>
     <string name="preferences_imageTitle">Selecciona la imagen de fondo</string>
     <string name="photo">Foto de la cámara</string>
     <string name="gallery">Foto de la galería</string>
+    <string name="imgbackground"> Con imagen de fondo en el pomodoro</string>
 </resources>
