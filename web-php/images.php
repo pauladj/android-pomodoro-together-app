@@ -32,7 +32,7 @@ function success($message){
          $binary = base64_decode($base);
          file_put_contents($filename.".jpg", $binary);
 
-         $actual_link = "https://134.209.235.115/ebracamonte001/WEB/".$filename.".jpg";
+         $actual_link = "https://134.209.235.115/ebracamonte001/WEB/pomodoro/".$filename.".jpg";
 
          execute($con, "UPDATE users SET imagepath='".$actual_link."' WHERE username='".$username."'");
 

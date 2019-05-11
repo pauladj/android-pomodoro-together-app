@@ -2,6 +2,7 @@ package com.example.pomodoro;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -150,6 +151,7 @@ public class PreferencesActivity extends MainToolbar {
      * @param data - the data
      */
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        boolean ok = false;
         if (requestCode == 100 && resultCode == RESULT_OK) {
             // se guarda la foto en miniatura si su ancho es mayor de 240
             Uri contentUri = Uri.fromFile(new File(uri));
@@ -159,21 +161,29 @@ public class PreferencesActivity extends MainToolbar {
                 Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
                 mediaScanIntent.setData(contentUri);
                 this.sendBroadcast(mediaScanIntent);
+                ok = true;
             }catch (Exception e){
                 showToast(false, R.string.error);
             }
         }
         else if (requestCode == CODIGO_GALERIA && resultCode == RESULT_OK) {
-            Uri imagenSeleccionada = data.getData();
-            Log.d("GALERIA", "onActivityResult: " + imagenSeleccionada.toString());
-            uri = imagenSeleccionada.toString();
+            try {
+                Uri imagenSeleccionada = data.getData();
+                uri = imagenSeleccionada.toString();
+                ok = true;
+            }catch (Exception e){
+                showToast(false, R.string.error);
+            }
+
         }
 
-        String[] params = {uri, getActiveUsername()};
-        getmTaskFragment().setAction("sendphoto");
-        getmTaskFragment().setDireccion("https://134.209.235" +
-                ".115/ebracamonte001/WEB/pomodoro/images.php");
-        getmTaskFragment().start(params);
+        if (ok){
+            String[] params = {uri, getActiveUsername()};
+            getmTaskFragment().setAction("sendphoto");
+            getmTaskFragment().setDireccion("https://134.209.235" +
+                    ".115/ebracamonte001/WEB/pomodoro/images.php");
+            getmTaskFragment().start(params);
+        }
     }
 
     @Override

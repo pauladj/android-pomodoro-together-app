@@ -210,7 +210,7 @@ public class ConectarAlServidor extends Fragment {
                         }
                     }
                 } else if (action == "login") {
-                    // El usuario quiere registrarse
+                    // El usuario quiere logearse
                     username = strings[0];
                     parametrosJSON.put("username", username);
                     parametrosJSON.put("password", strings[1]);
@@ -223,9 +223,36 @@ public class ConectarAlServidor extends Fragment {
                     JSONObject json = getJsonFromResponse(urlConnection);
 
                     // if ok
-                    if (json.containsKey("success")) {
-                        // ok
-                        success = true;
+                    if (json.containsKey("success") && json.containsKey("imagepath")) {
+
+                        if (json.get("imagepath") != null){
+                            // el usuario tiene una imagen
+                            // descargar una imagen
+                            String imageUrl = strings[0];
+
+                            // la nota es una imagen, se descarga y se guarda
+                            String imageLocalPath = downloadAndSaveImage(imageUrl);
+                            if (imageLocalPath.equals("")) {
+                                // se ha producido un error al descargar/guardar la imagen
+                                success = false;
+                            }else{
+                                success = true;
+
+                                // guardar path de la imagen
+                                SharedPreferences prefs_especiales= getActivity().getSharedPreferences(
+                                        "preferencias_especiales",
+                                        Context.MODE_PRIVATE);
+
+                                // guardar fecha y hora del último fetch
+                                SharedPreferences.Editor editor2= prefs_especiales.edit();
+                                editor2.putString("imagePath", imageLocalPath);
+                                editor2.apply();
+                            }
+
+                        }else{
+                            success = true;
+                        }
+
                     } else {
                         String error = json.get("error").toString();
                         if (error.equals("wrong_credentials")) {
@@ -292,18 +319,6 @@ public class ConectarAlServidor extends Fragment {
                     editor2.apply();
 
                     success = true;
-                }else if(action == "downloadimage"){
-                    // descargar una imagen
-                    String imageUrl = strings[0];
-
-                    // la nota es una imagen, se descarga y se guarda
-                    String imageLocalPath = downloadAndSaveImage(imageUrl);
-                    if (imageLocalPath.equals("")) {
-                        // se ha producido un error al descargar/guardar la imagen
-                        success = false;
-                    }else{
-                        success = true;
-                    }
                 }
             } catch (Exception e) {
                 // error

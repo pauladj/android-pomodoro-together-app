@@ -2,6 +2,7 @@ package com.example.pomodoro;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -9,6 +10,8 @@ import android.support.annotation.Nullable;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -94,6 +97,19 @@ public class CountDownTimerActivity extends MainToolbar {
         // valores por defecto
         ((TextView) findViewById(R.id.seekArcProgress)).setText("0:00");
         seekArc.setProgress(100);
+
+        if (getBooleanPreference("withimage") && getStringPreference("imagePath") != null){
+            // cargar imagen en el fondo
+            ((ImageView) findViewById(R.id.backgroundImage)).setImageURI(Uri.parse(getStringPreference("imagepath")));
+        }
+
+        if (getStringPreference("colors").equals("blanco")){
+            // cambiar el color texto y ruleta
+            ((Button) findViewById(R.id.buttonDetener)).setTextColor(getResources().getColor(R.color.colorWhite));
+            ((TextView) findViewById(R.id.textMin)).setTextColor(getResources().getColor(R.color.colorWhite));
+            ((TextView) findViewById(R.id.seekArcProgress)).setTextColor(getResources().getColor(R.color.colorWhite));
+            ((SeekArc) findViewById(R.id.seekArc)).setProgressColor(getResources().getColor(R.color.colorWhite));
+        }
 
         if (savedInstanceState == null) {
             // primera vez

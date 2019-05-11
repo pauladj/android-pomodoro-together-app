@@ -27,7 +27,7 @@ function success($message){
   try {
      $con = connect();
 
-     $resultado = execute($con, "SELECT username, token FROM users WHERE username='".$username."' AND password='".$password."'");
+     $resultado = execute($con, "SELECT username, token, imagepath FROM users WHERE username='".$username."' AND password='".$password."'");
 
      if (!select_is_empty($resultado)) {
          // the user exists
@@ -45,7 +45,12 @@ function success($message){
            }
          }
 
-         success("ok");
+
+         $json = array(
+           'success' => $message,
+           'imagepath' => $row['imagepath']
+         );
+         echo(json_encode($json));
       }
 
    } catch (Exception $e) {

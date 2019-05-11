@@ -87,26 +87,22 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements
                 builder.show();
             }
         }else if(key.equals("colors")){
-            Log.d("colors", "onSharedPreferenceChanged: se ha pulsado colors");
             prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
             String color = prefs.getString("colors", "blanco");
 
-            Log.i("aqui", color);
+            SharedPreferences prefs_especiales = getActivity().getSharedPreferences(
+                    "preferencias_especiales",
+                    Context.MODE_PRIVATE);
 
-            if (color.equals("white")) {
-                //cambiar el color a blanco
-            }
-            else if (color.equals("black")){
-                // cambiamos el color
-            }
+            SharedPreferences.Editor editor2 = prefs_especiales.edit();
+            editor2.putString(key, color);
+            editor2.apply();
         }
-        if(!img) {
-            // Notification saying that the preference has been changed
-            int tiempo = Toast.LENGTH_SHORT;
-            Toast aviso = Toast.makeText(getActivity(), R.string.preferences_saved, tiempo);
-            aviso.setGravity(Gravity.BOTTOM | Gravity.CENTER, 0, 100);
-            aviso.show();
-        }
+        // Notification saying that the preference has been changed
+        int tiempo = Toast.LENGTH_SHORT;
+        Toast aviso = Toast.makeText(getActivity(), R.string.preferences_saved, tiempo);
+        aviso.setGravity(Gravity.BOTTOM | Gravity.CENTER, 0, 100);
+        aviso.show();
     }
 
 

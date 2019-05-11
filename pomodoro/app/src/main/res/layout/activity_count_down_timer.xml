@@ -1,93 +1,111 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:seekarc="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:weightSum="3"
-    android:layout_centerHorizontal="true"
-    android:gravity="center"
+    android:id="@+id/containerAll"
     tools:context=".CountDownTimerActivity">
 
-    <RelativeLayout
-        android:id="@+id/mainContainer"
+    <ImageView
+        android:id="@+id/backgroundImage"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="2">
+        android:layout_centerInParent="true"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        tools:ignore="ContentDescription" />
 
-        <com.triggertrap.seekarc.SeekArc
-            android:id="@+id/seekArc"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_centerInParent="true"
-            android:layout_gravity="center"
-            android:enabled="false"
-            android:padding="30dp"
-            seekarc:arcColor="@android:color/transparent"
-            seekarc:arcWidth="4dp"
-            seekarc:clockwise="true"
-            seekarc:max="100"
-            seekarc:progressColor="@android:color/black"
-            seekarc:progressWidth="5dp"
-            seekarc:rotation="180"
-            seekarc:thumb="@drawable/ic_punto"
-            seekarc:touchInside="true" />
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:layout_gravity="center"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/seekArcProgress"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textAlignment="center"
-                android:textSize="80sp" />
-
-            <TextView
-                android:id="@+id/textMin"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textAlignment="center"
-                android:textSize="20sp" />
-        </LinearLayout>
-    </RelativeLayout>
-
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_weight="1"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:weightSum="3"
+        android:layout_centerInParent="true"
+        android:layout_centerHorizontal="true"
         android:gravity="center"
-        android:layout_height="0dp">
+        tools:context=".CountDownTimerActivity">
 
-        <Button
-            android:id="@+id/buttonDetener"
-            style="@style/Widget.AppCompat.Button.Borderless"
-            android:layout_width="wrap_content"
-            android:onClick="stopPomodoro"
-            android:text="@string/detener"
-            android:layout_height="wrap_content"
-            android:textAlignment="center"
-            android:textSize="18sp" />
+        <RelativeLayout
+            android:id="@+id/mainContainer"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="2">
 
-        <Button
-            android:id="@+id/buttonChat"
-            style="@style/Widget.AppCompat.Button.Colored"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toEndOf="@+id/buttonDetener"
-            android:onClick="startChat"
-            android:visibility="gone"
-            android:layout_marginStart="10dp"
-            android:text="@string/chat"
-            android:textAlignment="center"
-            android:textSize="18sp" />
+            <com.triggertrap.seekarc.SeekArc
+                android:id="@+id/seekArc"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_centerInParent="true"
+                android:layout_gravity="center"
+                android:enabled="false"
+                android:padding="30dp"
+                seekarc:arcColor="@android:color/transparent"
+                seekarc:arcWidth="4dp"
+                seekarc:clockwise="true"
+                seekarc:max="100"
+                seekarc:progressColor="@android:color/black"
+                seekarc:progressWidth="5dp"
+                seekarc:rotation="180"
+                seekarc:thumb="@drawable/ic_punto"
+                seekarc:touchInside="true" />
 
-    </RelativeLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/seekArcProgress"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAlignment="center"
+                    android:textSize="80sp" />
+
+                <TextView
+                    android:id="@+id/textMin"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAlignment="center"
+                    android:textSize="20sp" />
+            </LinearLayout>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:layout_height="0dp">
+
+            <Button
+                android:id="@+id/buttonDetener"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="wrap_content"
+                android:onClick="stopPomodoro"
+                android:text="@string/detener"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:textSize="18sp" />
+
+            <Button
+                android:id="@+id/buttonChat"
+                style="@style/Widget.AppCompat.Button.Colored"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@+id/buttonDetener"
+                android:onClick="startChat"
+                android:visibility="gone"
+                android:layout_marginStart="10dp"
+                android:text="@string/chat"
+                android:textAlignment="center"
+                android:textSize="18sp" />
+
+        </RelativeLayout>
 
 
-</LinearLayout>
+    </LinearLayout>
+
+</RelativeLayout>
+
