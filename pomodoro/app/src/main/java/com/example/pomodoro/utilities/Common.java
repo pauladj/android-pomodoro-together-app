@@ -123,6 +123,7 @@ public class Common extends LanguageActivity implements ConectarAlServidor.TaskC
 
                 setStringPreference("pomodoroKey", null);
                 setBooleanPreference("individual", false);
+                setStringPreference("imagePath", null);
                 return false;
             }
         }

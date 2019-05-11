@@ -2,9 +2,18 @@ package com.example.pomodoro.AsyncTasks;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
+import android.util.Base64;
 import android.util.Pair;
 
 import com.example.pomodoro.R;
@@ -15,9 +24,15 @@ import org.json.simple.parser.JSONParser;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -141,6 +156,12 @@ public class ConectarAlServidor extends Fragment {
                 mCallbacks.loginSuccess(username);
             } else if (action.equals("signup") && success) {
                 mCallbacks.signUpSuccess();
+            }else if(action.equals("sendphoto") && success){
+                // la foto se ha subido correctamente al servidor
+
+            }else if(action == "downloadimage" && success){
+                // la foto se ha descargado correctamente
+
             }
         }
 
@@ -214,6 +235,68 @@ public class ConectarAlServidor extends Fragment {
                             throw new Exception("connection_error");
                         }
                     }
+                }else if(action == "sendphoto"){
+                    // Mandar una imagen tomada por la cámara de fotos
+
+                    // obtener, comprimir y transformar la imagen a Base64
+                    String uri = strings[0];
+                    String username = strings[1];
+
+                    Uri imagen = Uri.fromFile(new File(uri));
+
+                    Bitmap mBitmap =
+                            MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(),
+                                    imagen);
+
+                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+
+                    mBitmap.compress(Bitmap.CompressFormat.JPEG, 90, stream);
+                    byte[] fototransformada = stream.toByteArray();
+                    String fotoen64 = Base64.encodeToString(fototransformada,Base64.DEFAULT);
+
+                    // formar parámetros a enviar
+                    urlConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+
+                    Uri.Builder builder = new Uri.Builder()
+                            .appendQueryParameter("action", action)
+                            .appendQueryParameter("username", username)
+                            .appendQueryParameter("image", fotoen64);
+                    String parametrosURL = builder.build().getEncodedQuery();
+
+                    PrintWriter out = new PrintWriter(urlConnection.getOutputStream());
+                    out.print(parametrosURL);
+                    out.close();
+
+                    JSONObject json = getJsonFromResponse(urlConnection);
+
+                    // si se ha producido un problema
+                    if (!json.containsKey("success")){
+                        throw new Exception("connection_error");
+                    }
+
+                    // guardar path de la imagen
+                    SharedPreferences prefs_especiales= getActivity().getSharedPreferences(
+                            "preferencias_especiales",
+                            Context.MODE_PRIVATE);
+
+                    // guardar fecha y hora del último fetch
+                    SharedPreferences.Editor editor2= prefs_especiales.edit();
+                    editor2.putString("imagePath", uri);
+                    editor2.apply();
+
+                    success = true;
+                }else if(action == "downloadimage"){
+                    // descargar una imagen
+                    String imageUrl = strings[0];
+
+                    // la nota es una imagen, se descarga y se guarda
+                    String imageLocalPath = downloadAndSaveImage(imageUrl);
+                    if (imageLocalPath.equals("")) {
+                        // se ha producido un error al descargar/guardar la imagen
+                        success = false;
+                    }else{
+                        success = true;
+                    }
                 }
             } catch (Exception e) {
                 // error
@@ -221,6 +304,51 @@ public class ConectarAlServidor extends Fragment {
                 return Pair.create(true, R.string.serverError);
             }
             return null;
+        }
+
+        /**
+         * Download an image from the server and save it on the phone
+         * @param url - the url of the image to download
+         * @return - the local path of the image
+         */
+        private String downloadAndSaveImage(String url){
+            try {
+                HttpsURLConnection conn =
+                        GeneradorConexionesSeguras.getInstance().crearConexionSegura(getActivity(), url);
+
+                int responseCode = 0;
+
+                responseCode = conn.getResponseCode();
+                if (responseCode == HttpsURLConnection.HTTP_OK) {
+                    // se guarda la foto de tamaño normal
+                    Bitmap elBitmap = BitmapFactory.decodeStream(conn.getInputStream());
+
+                    File eldirectorio = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+                    String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+                    String fileName = timeStamp + "_";
+
+                    File imagenFich = new File(eldirectorio, fileName + ".jpg");
+                    OutputStream os = new FileOutputStream(imagenFich);
+
+                    elBitmap.compress(Bitmap.CompressFormat.JPEG, 100, os);
+                    os.flush();
+                    os.close();
+
+                    // avisar a la galería de que hay una nueva foto
+                    Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+                    Uri contentUri = Uri.fromFile(imagenFich);
+                    mediaScanIntent.setData(contentUri);
+                    getActivity().sendBroadcast(mediaScanIntent);
+
+                    return imagenFich.getPath(); // devolver el path local de la imagen
+
+                }else{
+                    throw new Exception();
+                }
+            } catch (Exception e) {
+                // error downloading image
+                return "";
+            }
         }
 
 
