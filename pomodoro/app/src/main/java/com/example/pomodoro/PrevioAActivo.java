@@ -123,8 +123,10 @@ public class PrevioAActivo extends Common {
                         alreadyActive = true;
                         return Transaction.abort();
                     }
-                    Calendar calendar = Calendar.getInstance(Locale.US);
-                    calendar.setTimeZone(TimeZone.getTimeZone("GMT"));
+                    TimeZone timeZone = TimeZone.getTimeZone("GMT");
+                    Calendar calendar = Calendar.getInstance(timeZone);
+                    //Calendar calendar = Calendar.getInstance(Locale.US);
+                    //calendar.setTimeZone(TimeZone.getTimeZone("GMT"));
                     calendar.add(Calendar.MINUTE, trabajar);
                     Date a = calendar.getTime();
                     workFin = a.toString();
