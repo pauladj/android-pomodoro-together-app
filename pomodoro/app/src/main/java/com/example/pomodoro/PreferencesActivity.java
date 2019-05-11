@@ -157,22 +157,30 @@ public class PreferencesActivity extends MainToolbar {
                 Bitmap elBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(),
                         contentUri);
 
-
                 // mandar aviso a la galería de que se ha añadido una imagen
                 Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
                 mediaScanIntent.setData(contentUri);
                 this.sendBroadcast(mediaScanIntent);
 
                 // mandar foto al servidor
-                String[] params = {uri};
+               /* String[] params = {uri};
                 getmTaskFragment().setAction("sendphoto");
-                getmTaskFragment().start(params);
+                getmTaskFragment().start(params);*/
             }catch (Exception e){
                 showToast(false, R.string.error);
             }
 
 
         }
+        else if (requestCode == CODIGO_GALERIA && resultCode == RESULT_OK) {
+            Uri imagenSeleccionada = data.getData();
+            Log.d("GALERIA", "onActivityResult: " + imagenSeleccionada.toString());
+            uri = imagenSeleccionada.toString();
+        }
+
+        String[] params = {uri, getActiveUsername()};
+        getmTaskFragment().setAction("sendphoto");
+        getmTaskFragment().start(params);
     }
 
     @Override
