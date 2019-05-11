@@ -8,6 +8,8 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.provider.MediaStore;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.util.Log;
@@ -19,6 +21,9 @@ import com.example.pomodoro.R;
 
 public class PreferencesFragment extends PreferenceFragmentCompat implements
         SharedPreferences.OnSharedPreferenceChangeListener {
+
+    int CODIGO_GALERIA = 111;
+    int CODIGO_FOTO =222;
 
     @Override
     public void onCreatePreferences(Bundle bundle, String s) {
@@ -53,8 +58,34 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements
             editor2.apply();
         }else if(key.equals("image")){
             Log.d("imagen", "onSharedPreferenceChanged: se ha pulsado imagen ");
+            prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            String language = prefs.getString("image", "gallery");
+
+            Log.i("aqui", language);
+
+            if(language.equals("gallery")){
+                Intent elIntentGal = new Intent(Intent.ACTION_PICK,
+                        android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                getActivity().startActivityForResult(elIntentGal, CODIGO_GALERIA);
+            }
+            else if(language.equals("photo")){
+                ((PreferencesActivity)getActivity()).tryTakingPhotoWithTheCamera();
+            }
+
+
         }else if(key.equals("colors")){
             Log.d("colors", "onSharedPreferenceChanged: se ha pulsado colors");
+            prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            String color = prefs.getString("colors", "blanco");
+
+            Log.i("aqui", color);
+
+            if (color.equals("white")) {
+                //cambiar el color a blanco
+            }
+            else if (color.equals("black")){
+                // cambiamos el color
+            }
         }
 
        // Notification saying that the preference has been changed
@@ -75,4 +106,10 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements
         super.onPause();
         getPreferenceManager().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
     }
+
+
+
+
+
+
 }
