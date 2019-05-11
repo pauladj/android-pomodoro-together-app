@@ -59,6 +59,11 @@ public class PrevioAActivo extends Common {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (!checkFCMAvailable()){
+            return;
+        }
+
         setContentView(R.layout.activity_previo_a_activity);
 
         if (savedInstanceState == null){

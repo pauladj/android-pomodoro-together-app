@@ -1,22 +1,28 @@
 package com.example.pomodoro.utilities;
 
 import android.app.ActivityManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.LocalBroadcastManager;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.example.pomodoro.AsyncTasks.ConectarAlServidor;
+import com.example.pomodoro.ChatPomodoro;
 import com.example.pomodoro.CountDownTimerActivity;
+import com.example.pomodoro.LoginRegistroActivity;
 import com.example.pomodoro.PreferencesActivity;
 import com.example.pomodoro.ProyectosActivity;
 import com.example.pomodoro.R;
@@ -32,6 +38,40 @@ public class Common extends LanguageActivity implements ConectarAlServidor.TaskC
 
     private static final String TAG_TASK_FRAGMENT = "task_fragment";
     private ConectarAlServidor mTaskFragment;
+    private BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // el método que se ejecutará cuando se reciba un broadcast
+            // si alguien más ha iniciado sesión con este mismo username, desconectar este
+            showToast(true, R.string.someoneelse);
+
+            // El usuario quiere salir de su cuenta
+            setActiveUsername(null);
+
+            // Parar el pomodoro activo si tiene
+            if (servicioEnMarcha(Timer.class)){
+                // parar el servicio pomodoro
+                Intent e = new Intent(Common.this, Timer.class);
+                e.putExtra("stop", true);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    startForegroundService(e);
+                } else {
+                    startService(e);
+                }
+            }
+            setStringPreference("pomodoroKey", null);
+            setBooleanPreference("individual", false);
+
+            // se recibe cuando el pomodoro termina, volver a la pantalla de login
+            Intent i = new Intent (Common.this, LoginRegistroActivity.class);
+            // clear the activity stack
+            i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(i);
+            finish();
+        }
+    };
+
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -48,6 +88,45 @@ public class Common extends LanguageActivity implements ConectarAlServidor.TaskC
             fm.beginTransaction().add(mTaskFragment, TAG_TASK_FRAGMENT).commit();
         }
 
+        // se registra el "broadcast" para cuando se reciban mensajes cortos
+        LocalBroadcastManager.getInstance(this).registerReceiver(receiver,
+                new IntentFilter("forceLogout"));
+    }
+
+    /**
+     * Comprueba si la aplicación tiene permisos para poder ejecutarse en segundo plano
+     * @return
+     */
+    public boolean checkFCMAvailable(){
+        // comprobar si los mensajes fcm han sido deshabilitados
+        ActivityManager am= (ActivityManager) this.getSystemService(Context.ACTIVITY_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            if (am.isBackgroundRestricted()) {
+                // no se permiten mensajes fcm
+                showToast(true, R.string.backgroundNeeded);
+
+                // plantilla en blanco
+                setContentView(R.layout.blank);
+
+                // logout forzoso
+                // El usuario quiere salir de su cuenta
+                setActiveUsername(null);
+
+                // TODO Probar que esto funcione
+                // Parar el pomodoro activo si tiene
+                if (servicioEnMarcha(Timer.class)){
+                    // parar el servicio pomodoro
+                    Intent e = new Intent(this, Timer.class);
+                    e.putExtra("stop", true);
+                    startForegroundService(e);
+                }
+
+                setStringPreference("pomodoroKey", null);
+                setBooleanPreference("individual", false);
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -277,6 +356,10 @@ public class Common extends LanguageActivity implements ConectarAlServidor.TaskC
         }
     }
 
-
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Unregister the broadcast
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
+    }
 }

@@ -22,6 +22,8 @@ import com.example.pomodoro.models.UserProyectos;
 import com.example.pomodoro.recyclerView.MyAdapter;
 import com.example.pomodoro.services.Timer;
 import com.example.pomodoro.utilities.MainToolbar;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.ChildEventListener;
@@ -51,6 +53,11 @@ public class ProyectosActivity extends MainToolbar implements NuevoProyecto.List
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (!checkFCMAvailable()){
+            return;
+        }
+
         // load main activity with fragment(s)
         setContentView(R.layout.activity_proyectos);
         // load top toolbar

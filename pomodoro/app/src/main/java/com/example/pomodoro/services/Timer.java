@@ -3,6 +3,7 @@ package com.example.pomodoro.services;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -17,12 +18,18 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.content.LocalBroadcastManager;
 import android.view.Gravity;
 import android.widget.Toast;
 
+import com.example.pomodoro.CountDownTimerActivity;
+import com.example.pomodoro.ProyectosActivity;
 import com.example.pomodoro.R;
 import com.example.pomodoro.models.MessageEvent;
+import com.example.pomodoro.utilities.Common;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
@@ -36,6 +43,9 @@ import java.util.Date;
 import java.util.Locale;
 
 public class Timer extends Service {
+
+    private final int NOTIFICACION_POMODORO_CODE = 100;
+    private final String NOTIFICACION_CHANNEL_ID = "101";
 
     private CountDownTimer cTimerTrabajo = null;
     private CountDownTimer cTimerDescanso = null;
@@ -85,6 +95,7 @@ public class Timer extends Service {
             if (player != null) {
                 player.stop();
             }
+            borrarNotificacion();
             stopSelf();
             return START_NOT_STICKY;
         }
@@ -93,7 +104,7 @@ public class Timer extends Service {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationManager elmanager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             NotificationChannel canalservicio = new NotificationChannel("IdCanal",
-                    "NombreCanal", NotificationManager.IMPORTANCE_DEFAULT);
+                    "Pomodoros", NotificationManager.IMPORTANCE_DEFAULT);
             elmanager.createNotificationChannel(canalservicio);
             Notification.Builder builder = new Notification.Builder(this, "IdCanal")
                     .setContentTitle(getString(R.string.app_name))
@@ -135,11 +146,13 @@ public class Timer extends Service {
                     // el trabajo ha terminado, el descanso sigue
                     isDescanso = true;
                     long mili = milisecondsDescanso - milisecondsNow;
+                    lanzarNotificacion();
                     startTimer(mili);
                 }
             } else {
                 // el trabajo no ha terminado
                 isDescanso = false;
+                lanzarNotificacion();
                 startTimer(milisecondsTrabajoFin);
             }
         } else {
@@ -148,6 +161,7 @@ public class Timer extends Service {
             minutosDescanso = extras.getInt("minutosDescanso");
             isDescanso = false;
             // empezar
+            lanzarNotificacion();
             startTimer(minutosTrabajo);
         }
 
@@ -228,6 +242,7 @@ public class Timer extends Service {
                 // Start relax period
                 if (!isDescanso) {
                     isDescanso = true;
+                    lanzarNotificacion();
                     startTimer(minutosDescanso);
                 } else {
                     // stop
@@ -239,6 +254,7 @@ public class Timer extends Service {
                     editor2.putBoolean("individual", false);
                     editor2.apply();
 
+                    borrarNotificacion();
                     stopSelf();
                 }
             }
@@ -303,6 +319,7 @@ public class Timer extends Service {
                 // Start relax period
                 if (!isDescanso) {
                     isDescanso = true;
+                    lanzarNotificacion();
                     startTimer(milisecondsDescansoFin);
                 } else {
                     // stop
@@ -367,6 +384,7 @@ public class Timer extends Service {
      * El pomodoro grupal ha terminado, actualizar datos firebase
      */
     private void pomodoroIsFinished() {
+        borrarNotificacion();
         if (pomodoroKey != null) {
             // no es un pomodoro individual, y este es el que lo ha creado
             DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("ProyectosPomodoro").child(pomodoroKey);
@@ -422,7 +440,7 @@ public class Timer extends Service {
     /**
      * Enviar broadcast para cerrar el chat
      */
-    private void stopChat(){
+    private void stopChat() {
         LocalBroadcastManager broadcaster = LocalBroadcastManager.getInstance(getBaseContext());
         Intent intent = new Intent("stopChat");
         broadcaster.sendBroadcast(intent);
@@ -454,5 +472,63 @@ public class Timer extends Service {
             return false;
         }
         return false;
+    }
+
+    /**
+     * Borrar la notificación actual
+     */
+    private void borrarNotificacion() {
+        NotificationManager elManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        elManager.cancel(NOTIFICACION_POMODORO_CODE);
+    }
+
+    /**
+     * Lanza una nueva notificación
+     */
+    private void lanzarNotificacion() {
+
+        // if the user clicks on "see" the pomodoro will open
+        Intent i = new Intent(this, CountDownTimerActivity.class);
+        i.putExtra("nuevo", false);
+
+        // limpiamos el stack y creamos uno propio
+        PendingIntent intentEnNot =
+                TaskStackBuilder.create(this)
+                        .addParentStack(ProyectosActivity.class)
+                        .addNextIntent(i)
+                        .getPendingIntent(NOTIFICACION_POMODORO_CODE, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        int stringOfNotifications = R.string.timeToRelax;
+        if (getStringToShow() == R.string.work){
+            stringOfNotifications = R.string.timeToWork;
+        }
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, NOTIFICACION_CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_clock)
+                .setContentTitle(getResources().getString(R.string.app_name))
+                .setContentText(getResources().getString(stringOfNotifications))
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setAutoCancel(false)
+                .setContentIntent(intentEnNot)
+                .addAction(android.R.drawable.ic_menu_view,
+                        getResources().getString(R.string.see),
+                        intentEnNot);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = getString(R.string.app_name);
+            String description = getString(R.string.activePomodoro);
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel(NOTIFICACION_CHANNEL_ID, name, importance);
+            channel.setDescription(description);
+
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+
+        // mostrar notificación
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+        notificationManager.notify(NOTIFICACION_POMODORO_CODE, builder.build());
+
     }
 }

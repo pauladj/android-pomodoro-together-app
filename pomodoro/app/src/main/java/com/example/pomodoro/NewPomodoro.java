@@ -87,6 +87,11 @@ public class NewPomodoro extends MainToolbar {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (!checkFCMAvailable()){
+            return;
+        }
+
         setContentView(R.layout.activity_new_individual_pomodoro);
 
         // cargar barra

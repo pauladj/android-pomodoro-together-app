@@ -65,6 +65,11 @@ public class ProyectoPomodorosActivity extends MainToolbar implements ConfirmAba
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (!checkFCMAvailable()){
+            return;
+        }
+
         setContentView(R.layout.activity_proyecto_pomodoros);
 
         databaseReferenceUserProyectos = FirebaseDatabase.getInstance().getReference("UserProyectos");

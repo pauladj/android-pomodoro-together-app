@@ -6,10 +6,14 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.widget.EditText;
+
 import com.example.pomodoro.fragments.loginfragment;
 import com.example.pomodoro.fragments.registro;
 import com.example.pomodoro.utilities.MainToolbar;
 import com.example.pomodoro.utilities.PagerAdapter;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import org.json.JSONObject;
 
@@ -18,7 +22,29 @@ public class LoginRegistroActivity extends MainToolbar implements
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // comprobar si el usuario tiene google play
+        GoogleApiAvailability api = GoogleApiAvailability.getInstance();
+        int code = api.isGooglePlayServicesAvailable(this);
+        if (code == ConnectionResult.SUCCESS) {
+            // nothing
+        } else {
+            // si no tiene google play se carga una plantilla en blanco
+            setContentView(R.layout.blank);
+            showToast(true, R.string.googlePlayNeeded);
+            if (api.isUserResolvableError(code)) {
+                api.getErrorDialog(this, code, 58).show();
+            }
+            return;
+        }
+
+        // comprobar si los mensajes fcm han sido deshabilitados
+        if (!checkFCMAvailable()) {
+            return;
+        }
+
         setContentView(R.layout.activity_login_registro);
+
 
         // cargar barra
         loadToolbar();
@@ -61,7 +87,6 @@ public class LoginRegistroActivity extends MainToolbar implements
     }
 
 
-
     /**
      * El usuario ha introducido su username y password y quiere logearse
      *
@@ -71,21 +96,29 @@ public class LoginRegistroActivity extends MainToolbar implements
     @Override
     public void login(String username, String password) {
         if (validadoresIniciarSesion(username, password)) {
-            JSONObject parametrosJSON = new JSONObject();
             try {
-                parametrosJSON.put("username", username);
-                parametrosJSON.put("password", password);
+                FirebaseInstanceId.getInstance().getInstanceId()
+                    .addOnCompleteListener(task -> {
+                        if (!task.isSuccessful()) {
+                            showToast(false, R.string.serverError);
+                            return;
+                        }
 
-                String[] params = {username, password};
-                getmTaskFragment().setAction("login");
-                getmTaskFragment().setDireccion("https://134.209.235" +
-                        ".115/ebracamonte001/WEB/pomodoro/login.php");
-                getmTaskFragment().start(params);
+                        // Get new Instance ID token
+                        String firebaseToken = task.getResult().getToken();
+
+                        String[] params = {username, password, firebaseToken};
+                        getmTaskFragment().setAction("login");
+                        getmTaskFragment().setDireccion("https://134.209.235" +
+                                ".115/ebracamonte001/WEB/pomodoro/login.php");
+                        getmTaskFragment().start(params);
+                    })
+                    .addOnFailureListener(exception -> {
+                        showToast(false, R.string.serverError);
+                    });
             } catch (Exception e) {
                 showToast(false, R.string.error);
             }
-
-
         }
     }
 

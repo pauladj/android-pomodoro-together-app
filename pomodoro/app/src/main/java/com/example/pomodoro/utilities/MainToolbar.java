@@ -8,7 +8,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.pomodoro.LoginRegistroActivity;
-import com.example.pomodoro.MainActivity;
 import com.example.pomodoro.R;
 import com.example.pomodoro.dialogs.AddUserToProject;
 import com.example.pomodoro.dialogs.ConfirmAbandonarProyecto;

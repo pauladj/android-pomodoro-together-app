@@ -67,6 +67,11 @@ public class ChatPomodoro extends MainToolbar {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (!checkFCMAvailable()){
+            return;
+        }
+
         setContentView(R.layout.activity_chat_pomodoro);
 
         // load top toolbar
