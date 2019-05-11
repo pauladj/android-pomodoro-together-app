@@ -123,7 +123,7 @@ public class PrevioAActivo extends Common {
                         return Transaction.abort();
                     }
                     java.util.Date fechaActual = new java.util.Date();
-                    Calendar calendar = Calendar.getInstance(Locale.ENGLISH);
+                    Calendar calendar = Calendar.getInstance(Locale.US);
                     calendar.setTime(fechaActual);
                     calendar.add(Calendar.MINUTE, trabajar);
                     Date a = calendar.getTime();

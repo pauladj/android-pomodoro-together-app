@@ -349,7 +349,7 @@ public class Common extends LanguageActivity implements ConectarAlServidor.TaskC
     public Date stringToDate(String time) {
         try {
             Calendar cal = Calendar.getInstance();
-            SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", Locale.ENGLISH);
+            SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", Locale.US);
             cal.setTime(sdf.parse(time));// all done
             return cal.getTime();
         } catch (Exception e) {

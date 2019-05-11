@@ -122,14 +122,14 @@ public class Timer extends Service {
             Date horaDescansoFin = stringToDate(extras.getString("horaDescansoFin"));
 
             java.util.Date fechaActual = new java.util.Date();
-            Calendar calendar = Calendar.getInstance(Locale.ENGLISH);
+            Calendar calendar = Calendar.getInstance(Locale.US);
             calendar.setTime(fechaActual);
             long milisecondsNow = calendar.getTimeInMillis();
 
             calendar.setTime(horaTrabajoFin);
             milisecondsTrabajoFin = calendar.getTimeInMillis();
 
-            calendar = Calendar.getInstance(Locale.ENGLISH);
+            calendar = Calendar.getInstance(Locale.US);
             calendar.setTime(horaDescansoFin);
             long milisecondsDescanso = calendar.getTimeInMillis();
 
@@ -372,7 +372,7 @@ public class Timer extends Service {
     private Date stringToDate(String time) {
         try {
             Calendar cal = Calendar.getInstance();
-            SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", Locale.ENGLISH);
+            SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", Locale.US);
             cal.setTime(sdf.parse(time));// all done
             return cal.getTime();
         } catch (Exception e) {

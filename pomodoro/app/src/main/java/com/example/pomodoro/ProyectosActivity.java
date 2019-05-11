@@ -82,12 +82,12 @@ public class ProyectosActivity extends MainToolbar implements NuevoProyecto.List
 
                         // fecha ahora
                         java.util.Date fechaActual = new java.util.Date();
-                        Calendar calendar = Calendar.getInstance(Locale.ENGLISH);
+                        Calendar calendar = Calendar.getInstance(Locale.US);
                         calendar.setTime(fechaActual);
                         long milisecondsNow = calendar.getTimeInMillis();
 
                         Date fin = stringToDate(pomodoro.getHoraDescansoFin());
-                        calendar = Calendar.getInstance(Locale.ENGLISH);
+                        calendar = Calendar.getInstance(Locale.US);
                         calendar.setTime(fin);
                         long milisecondsFin = calendar.getTimeInMillis();
 
