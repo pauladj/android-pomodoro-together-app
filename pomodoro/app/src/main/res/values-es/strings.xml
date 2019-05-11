@@ -70,4 +70,12 @@
     <string name="enterMessage">Escribe el mensaje...</string>
     <string name="sendMessage">Enviar</string>
     <string name="messageEmpty">El mensaje está vacío</string>
+    <string name="adimagen">Añadir imagen de fondo</string>
+    <string name="colordetexto">Elegir color de texto </string>
+    <string name="white">Blanco</string>
+    <string name="black">Negro</string>
+    <string name="preferences_colortext">Cambia el color del texto</string>
+    <string name="preferences_colorTitle">Selecciona el color del texto</string>
+    <string name="preferences_image">Cambia la imagen de fondo</string>
+    <string name="preferences_imageTitle">Selecciona la imagen de fondo</string>
 </resources>

@@ -9,6 +9,7 @@
             android:key="language"
             android:summary="@string/preferences_LanguageSummary"
             android:title="@string/preferences_LanguageTitle" />
+
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/advancedSettings">
         <SwitchPreference
@@ -20,5 +21,25 @@
             android:defaultValue="false"
             android:key="sound"
             android:title="@string/sonido" />
+        <ListPreference
+            android:dialogTitle="@string/colordetexto"
+            android:entries="@array/colorsname"
+            android:defaultValue="default"
+            android:entryValues="@array/colorsname"
+            android:key="colors"
+            android:summary="@string/preferences_colortext"
+            android:title="@string/preferences_colorTitle" />
+
+        <ListPreference
+            android:dialogTitle="@string/adimagen"
+            android:entries="@array/imageopction"
+            android:defaultValue="default"
+            android:entryValues="@array/imageopction"
+            android:key="image"
+            android:summary="@string/preferences_image"
+            android:title="@string/preferences_imageTitle" />
     </PreferenceCategory>
+
+
+
 </PreferenceScreen>

@@ -70,5 +70,18 @@
     <string name="enterMessage">Enter the message...</string>
     <string name="sendMessage">Send</string>
     <string name="messageEmpty">The message is empty</string>
+    <string name="adimagen">Add background image</string>
+    <string name="colordetexto">Choose color text </string>
+    <string name="white">White</string>
+    <string name="black">Black </string>
+    <string name="gallery">From Gallery</string>
+    <string name="photo">Take a Picture</string>
+    <string name="preferences_colortext">Change the text color</string>
+    <string name="preferences_colorTitle">Select the color of text</string>
+    <string name="preferences_image">Change the background image</string>
+    <string name="preferences_imageTitle">Select the background image</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

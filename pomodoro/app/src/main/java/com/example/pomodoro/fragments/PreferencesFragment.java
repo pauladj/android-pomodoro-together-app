@@ -10,6 +10,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.preference.PreferenceFragmentCompat;
+import android.util.Log;
 import android.view.Gravity;
 import android.widget.Toast;
 
@@ -50,6 +51,10 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements
             SharedPreferences.Editor editor2 = prefs_especiales.edit();
             editor2.putBoolean(key, !sound);
             editor2.apply();
+        }else if(key.equals("image")){
+            Log.d("imagen", "onSharedPreferenceChanged: se ha pulsado imagen ");
+        }else if(key.equals("colors")){
+            Log.d("colors", "onSharedPreferenceChanged: se ha pulsado colors");
         }
 
        // Notification saying that the preference has been changed

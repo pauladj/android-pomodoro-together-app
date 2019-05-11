@@ -10,4 +10,12 @@
         <item>spanish</item>
         <item>english</item>
     </string-array>
+    <string-array name="colorsname">
+        <item>@string/black</item>
+        <item>@string/white</item>
+    </string-array>
+    <string-array name="imageopction">
+        <item>@string/gallery</item>
+        <item>@string/photo</item>
+    </string-array>
 </resources>

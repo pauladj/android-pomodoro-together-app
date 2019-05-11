@@ -3,6 +3,7 @@ package com.example.pomodoro;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.BottomNavigationView;
+import android.support.v4.app.Fragment;
 import android.view.Menu;
 
 import com.example.pomodoro.utilities.MainToolbar;
@@ -23,6 +24,7 @@ public class PreferencesActivity extends MainToolbar {
         selectConfiguration(bottomMenu);
         addListenerToBottomMenu(bottomMenu);
     }
+
 
 
     @Override
