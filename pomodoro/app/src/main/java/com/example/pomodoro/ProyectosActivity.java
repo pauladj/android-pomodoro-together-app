@@ -26,6 +26,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.api.client.util.DateTime;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -38,6 +39,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
 
 public class ProyectosActivity extends MainToolbar implements NuevoProyecto.ListenerDelDialogo {
 
@@ -83,11 +85,13 @@ public class ProyectosActivity extends MainToolbar implements NuevoProyecto.List
                         // fecha ahora
                         java.util.Date fechaActual = new java.util.Date();
                         Calendar calendar = Calendar.getInstance(Locale.US);
+                        calendar.setTimeZone(TimeZone.getTimeZone("GMT"));
                         calendar.setTime(fechaActual);
                         long milisecondsNow = calendar.getTimeInMillis();
 
                         Date fin = stringToDate(pomodoro.getHoraDescansoFin());
                         calendar = Calendar.getInstance(Locale.US);
+                        calendar.setTimeZone(TimeZone.getTimeZone("GMT"));
                         calendar.setTime(fin);
                         long milisecondsFin = calendar.getTimeInMillis();
 

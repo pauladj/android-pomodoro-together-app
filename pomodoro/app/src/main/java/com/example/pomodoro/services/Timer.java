@@ -41,6 +41,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
 
 public class Timer extends Service {
 
@@ -123,6 +124,7 @@ public class Timer extends Service {
 
             java.util.Date fechaActual = new java.util.Date();
             Calendar calendar = Calendar.getInstance(Locale.US);
+            calendar.setTimeZone(TimeZone.getTimeZone("GMT"));
             calendar.setTime(fechaActual);
             long milisecondsNow = calendar.getTimeInMillis();
 
@@ -130,6 +132,7 @@ public class Timer extends Service {
             milisecondsTrabajoFin = calendar.getTimeInMillis();
 
             calendar = Calendar.getInstance(Locale.US);
+            calendar.setTimeZone(TimeZone.getTimeZone("GMT"));
             calendar.setTime(horaDescansoFin);
             long milisecondsDescanso = calendar.getTimeInMillis();
 
@@ -371,7 +374,9 @@ public class Timer extends Service {
      */
     private Date stringToDate(String time) {
         try {
+            // TODO recoger este null
             Calendar cal = Calendar.getInstance();
+            cal.setTimeZone(TimeZone.getTimeZone("GMT"));
             SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", Locale.US);
             cal.setTime(sdf.parse(time));// all done
             return cal.getTime();

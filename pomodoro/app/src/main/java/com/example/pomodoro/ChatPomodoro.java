@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
 
 public class ChatPomodoro extends MainToolbar {
 
@@ -175,6 +176,7 @@ public class ChatPomodoro extends MainToolbar {
 
         java.util.Date fechaActual = new java.util.Date();
         Calendar calendar = Calendar.getInstance();
+        calendar.setTimeZone(TimeZone.getTimeZone("GMT"));
         calendar.setTime(fechaActual);
         SimpleDateFormat format1 = new SimpleDateFormat("HH:mm:ss");
         String formatted = format1.format(calendar.getTime());

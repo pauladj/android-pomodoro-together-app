@@ -25,6 +25,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
 
 public class PrevioAActivo extends Common {
 
@@ -124,6 +125,7 @@ public class PrevioAActivo extends Common {
                     }
                     java.util.Date fechaActual = new java.util.Date();
                     Calendar calendar = Calendar.getInstance(Locale.US);
+                    calendar.setTimeZone(TimeZone.getTimeZone("GMT"));
                     calendar.setTime(fechaActual);
                     calendar.add(Calendar.MINUTE, trabajar);
                     Date a = calendar.getTime();
@@ -131,6 +133,7 @@ public class PrevioAActivo extends Common {
                     mutableData.child(pomodoroKey).child("horaWorkFin").setValue(workFin);
 
                     calendar = Calendar.getInstance();
+                    calendar.setTimeZone(TimeZone.getTimeZone("GMT"));
                     calendar.setTime(a);
                     calendar.add(Calendar.MINUTE, descansar);
                     relaxFin = calendar.getTime().toString();

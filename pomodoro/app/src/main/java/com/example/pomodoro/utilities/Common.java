@@ -32,6 +32,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
 
 
 public class Common extends LanguageActivity implements ConectarAlServidor.TaskCallbacks  {
@@ -348,7 +349,9 @@ public class Common extends LanguageActivity implements ConectarAlServidor.TaskC
      */
     public Date stringToDate(String time) {
         try {
+            // TODO recoger este null
             Calendar cal = Calendar.getInstance();
+            cal.setTimeZone(TimeZone.getTimeZone("GMT"));
             SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", Locale.US);
             cal.setTime(sdf.parse(time));// all done
             return cal.getTime();
