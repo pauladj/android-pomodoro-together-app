@@ -242,11 +242,18 @@ public class ConectarAlServidor extends Fragment {
                     String uri = strings[0];
                     String username = strings[1];
 
-                    Uri imagen = Uri.fromFile(new File(uri));
+                    Bitmap mBitmap = null;
+                    if (uri.contains("content://")){
+                        mBitmap =
+                                BitmapFactory.decodeStream(getActivity().getContentResolver().openInputStream(Uri.parse(uri)));
+                    }else{
+                        Uri imagen = Uri.fromFile(new File(uri));
 
-                    Bitmap mBitmap =
-                            MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(),
-                                    imagen);
+                        mBitmap =
+                                MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(),
+                                        imagen);
+
+                    }
 
                     ByteArrayOutputStream stream = new ByteArrayOutputStream();
 

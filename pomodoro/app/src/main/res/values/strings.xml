@@ -87,4 +87,6 @@
     <string name="preferences_colorTitle">Select the color of text</string>
     <string name="preferences_image">Change the background image</string>
     <string name="preferences_imageTitle">Select the background image</string>
+    <string name="photo">Camera photo</string>
+    <string name="gallery">From gallery</string>
 </resources>

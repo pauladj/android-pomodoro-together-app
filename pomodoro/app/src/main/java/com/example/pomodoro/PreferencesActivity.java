@@ -130,7 +130,7 @@ public class PreferencesActivity extends MainToolbar {
         Uri uriimagen = null;
         try {
             fichImg = File.createTempFile(fileName, ".jpg", directorio);
-            uriimagen = FileProvider.getUriForFile(this, "com.example.proyecto1.provider",
+            uriimagen = FileProvider.getUriForFile(this, "com.example.pomodoro.provider",
                     fichImg);
 
             uri = fichImg.getPath();
@@ -154,23 +154,14 @@ public class PreferencesActivity extends MainToolbar {
             // se guarda la foto en miniatura si su ancho es mayor de 240
             Uri contentUri = Uri.fromFile(new File(uri));
             try {
-                Bitmap elBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(),
-                        contentUri);
 
                 // mandar aviso a la galería de que se ha añadido una imagen
                 Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
                 mediaScanIntent.setData(contentUri);
                 this.sendBroadcast(mediaScanIntent);
-
-                // mandar foto al servidor
-               /* String[] params = {uri};
-                getmTaskFragment().setAction("sendphoto");
-                getmTaskFragment().start(params);*/
             }catch (Exception e){
                 showToast(false, R.string.error);
             }
-
-
         }
         else if (requestCode == CODIGO_GALERIA && resultCode == RESULT_OK) {
             Uri imagenSeleccionada = data.getData();
@@ -180,6 +171,8 @@ public class PreferencesActivity extends MainToolbar {
 
         String[] params = {uri, getActiveUsername()};
         getmTaskFragment().setAction("sendphoto");
+        getmTaskFragment().setDireccion("https://134.209.235" +
+                ".115/ebracamonte001/WEB/pomodoro/images.php");
         getmTaskFragment().start(params);
     }
 
