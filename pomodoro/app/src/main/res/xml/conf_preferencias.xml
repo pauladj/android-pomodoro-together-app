@@ -38,6 +38,8 @@
             android:key="image"
             android:summary="@string/preferences_image"
             android:title="@string/preferences_imageTitle" />
+
+
     </PreferenceCategory>
 
 

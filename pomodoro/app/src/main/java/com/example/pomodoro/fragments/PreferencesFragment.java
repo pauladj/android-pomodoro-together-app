@@ -24,7 +24,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements
 
     int CODIGO_GALERIA = 111;
     int CODIGO_FOTO =222;
-
+    boolean img = false;
     @Override
     public void onCreatePreferences(Bundle bundle, String s) {
         addPreferencesFromResource(R.xml.conf_preferencias);
@@ -57,6 +57,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements
             editor2.putBoolean(key, !sound);
             editor2.apply();
         }else if(key.equals("image")){
+            img = true;
             Log.d("imagen", "onSharedPreferenceChanged: se ha pulsado imagen ");
             prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
             String language = prefs.getString("image", "gallery");
@@ -87,12 +88,13 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements
                 // cambiamos el color
             }
         }
-
-       // Notification saying that the preference has been changed
-        int tiempo = Toast.LENGTH_SHORT;
-        Toast aviso = Toast.makeText(getActivity(), R.string.preferences_saved, tiempo);
-        aviso.setGravity(Gravity.BOTTOM| Gravity.CENTER, 0, 100);
-        aviso.show();
+        if(!img) {
+            // Notification saying that the preference has been changed
+            int tiempo = Toast.LENGTH_SHORT;
+            Toast aviso = Toast.makeText(getActivity(), R.string.preferences_saved, tiempo);
+            aviso.setGravity(Gravity.BOTTOM | Gravity.CENTER, 0, 100);
+            aviso.show();
+        }
     }
 
 

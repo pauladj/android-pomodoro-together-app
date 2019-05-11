@@ -81,6 +81,8 @@
     <string name="colordetexto">Choose color text </string>
     <string name="white">White</string>
     <string name="black">Black </string>
+    <string name="gallery">gallery</string>
+    <string name="photo">photo </string>
     <string name="preferences_colortext">Change the text color</string>
     <string name="preferences_colorTitle">Select the color of text</string>
     <string name="preferences_image">Change the background image</string>
