@@ -6,7 +6,7 @@
 
     <item
         android:id="@+id/active"
-        android:title= "@string/activePomodoro"
+        android:title= "@string/activePomo"
         android:icon="@drawable/ic_clock"/>
 
     <item

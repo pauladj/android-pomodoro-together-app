@@ -4,8 +4,9 @@
     <string name="nuevoPomodoro">Pomodoro</string>
     <string name="loadingData">Cargando datos...</string>
     <string name="encurso">Emitiendo</string>
-    <string name="myProjects">Mis Proyectos</string>
+    <string name="myProjects">Proyectos</string>
     <string name="activePomodoro">Pomodoro Activo</string>
+    <string name="activePomo">Activo</string>
     <string name="settings">Configuración</string>
     <string name="active">Unirse</string>
     <string name="addProject">Proyecto</string>

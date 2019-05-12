@@ -4,9 +4,10 @@
     <string name="nuevoPomodoro">Pomodoro</string>
     <string name="loadingData">Loading data...</string>
     <string name="encurso">Online</string>
-    <string name="myProjects">My Projects</string>
+    <string name="myProjects">Projects</string>
     <string name="activePomodoro">Active Pomodoro</string>
-    <string name="active">Active</string>
+    <string name="activePomo">Active</string>
+    <string name="active">Join</string>
     <string name="settings">Settings</string>
     <string name="addProject">Project</string>
     <string name="logout">Logout</string>
