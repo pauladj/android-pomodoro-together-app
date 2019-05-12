@@ -35,10 +35,10 @@
             seekarc:clockwise="true"
             seekarc:max="60"
             seekarc:progress="50"
-            seekarc:progressColor="@android:color/black"
+            seekarc:progressColor="@android:color/white"
             seekarc:progressWidth="5dp"
             seekarc:rotation="180"
-            seekarc:thumb="@drawable/ic_punto"
+            seekarc:thumb="@drawable/ic_punto_blanco"
             seekarc:touchInside="true" />
 
         <LinearLayout
@@ -52,12 +52,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="50"
+                android:textColor="@color/colorWhite"
                 android:textAlignment="center"
                 android:textSize="80sp" />
             <TextView
                 android:id="@+id/textMin"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textColor="@color/colorWhite"
                 android:textAlignment="center"
                 android:text="@string/minutes"
                 android:textSize="20sp" />

@@ -122,6 +122,7 @@ public class CountDownTimerActivity extends MainToolbar {
             ((Button) findViewById(R.id.buttonDetener)).setTextColor(getResources().getColor(R.color.colorWhite));
             ((TextView) findViewById(R.id.textMin)).setTextColor(getResources().getColor(R.color.colorWhite));
             ((TextView) findViewById(R.id.seekArcProgress)).setTextColor(getResources().getColor(R.color.colorWhite));
+            ((SeekArc) findViewById(R.id.seekArc)).setArcColor(getResources().getColor(R.color.colorAccent));
             ((SeekArc) findViewById(R.id.seekArc)).setProgressColor(getResources().getColor(R.color.colorWhite));
             ((Button) findViewById(R.id.buttonChat)).setBackgroundColor(getResources().getColor(R.color.colorWhite));
             ((Button) findViewById(R.id.buttonChat)).setTextColor(getResources().getColor(R.color.colorAccent));
