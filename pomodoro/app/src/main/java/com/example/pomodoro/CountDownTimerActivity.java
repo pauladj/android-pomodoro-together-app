@@ -2,9 +2,13 @@ package com.example.pomodoro;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapRegionDecoder;
+import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.Gravity;
@@ -30,6 +34,8 @@ import com.triggertrap.seekarc.SeekArc;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+
+import java.io.FileNotFoundException;
 
 public class CountDownTimerActivity extends MainToolbar {
 
@@ -99,10 +105,16 @@ public class CountDownTimerActivity extends MainToolbar {
         seekArc.setProgress(100);
 
         boolean conImagen = false;
-        if (getBooleanPreference("withimage") && getStringPreference("imagepath") != null){
-            // cargar imagen en el fondo
-            ((ImageView) findViewById(R.id.backgroundImage)).setImageURI(Uri.parse(getStringPreference("imagepath")));
-            conImagen = true;
+        try{
+            if (getBooleanPreference("withimage") && getStringPreference("imagepath") != null){
+                // cargar imagen en el fondo
+                Uri uri = Uri.parse(getStringPreference("imagepath"));
+
+                ((ImageView) findViewById(R.id.backgroundImage)).setImageURI(uri);
+                conImagen = true;
+            }
+        }catch (Exception e){
+            showToast(false, R.string.imageNotFound);
         }
 
         if (getStringPreference("colors") != null && getStringPreference("colors").equals("white")){

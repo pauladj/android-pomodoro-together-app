@@ -92,5 +92,6 @@
     <string name="gallery">Foto de la galería</string>
     <string name="imgbackground"> Con imagen de fondo en el pomodoro</string>
     <string name="gmtneeded">Se necesita que tu móvil se encuentre configurado con una zona horaria GMT</string>
+    <string name="imageNotFound">No se ha podido encontrar la imagen del pomodoro</string>
 
 </resources>
