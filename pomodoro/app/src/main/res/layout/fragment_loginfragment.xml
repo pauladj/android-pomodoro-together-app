@@ -33,7 +33,7 @@
 
         <Button
             android:id="@+id/loginbutton"
-            android:background="@color/colorAccent"
+            android:backgroundTint="@color/colorAccent"
             android:textColor="@color/colorWhite"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
