@@ -12,10 +12,12 @@ public class ViewHolderChat extends RecyclerView.ViewHolder  {
 
     public TextView noteMessage;
     public TextView noteDate;
+    public TextView noteWho;
 
     public ViewHolderChat(View v) {
         super(v);
         noteMessage = v.findViewById(R.id.text_message_body);
         noteDate = v.findViewById(R.id.text_message_time);
+        noteWho = v.findViewById(R.id.text_message_who);
     }
 }

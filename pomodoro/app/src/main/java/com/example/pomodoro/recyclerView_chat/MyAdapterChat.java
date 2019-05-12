@@ -69,6 +69,10 @@ public class MyAdapterChat extends RecyclerView.Adapter<ViewHolderChat> {
     public void onBindViewHolder(ViewHolderChat elViewHolder, int i) {
         elViewHolder.noteMessage.setText(chats.get(i).getText());
         elViewHolder.noteDate.setText(chats.get(i).getTimestamp());
+        if (elViewHolder.noteWho != null){
+            // el mensaje no es mio
+            elViewHolder.noteWho.setText(chats.get(i).getUsuario());
+        }
     }
 
     @Override

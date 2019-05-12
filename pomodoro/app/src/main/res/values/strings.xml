@@ -84,13 +84,13 @@
     <string name="colordetexto">Choose color text </string>
     <string name="white">White</string>
     <string name="black">Black </string>
-    <string name="preferences_colortext">Change the text color</string>
+    <string name="preferences_colortext">Change the pomodoro text color</string>
     <string name="preferences_colorTitle">Select the color of text</string>
     <string name="preferences_image">Change the background image</string>
     <string name="preferences_imageTitle">Select the background image</string>
     <string name="photo">Camera photo</string>
     <string name="gallery">From gallery</string>
-    <string name="imgbackground"> With image background in pomodoro</string>
+    <string name="imgbackground">Background image for pomodoro</string>
     <string name="gmtneeded">You need to configure the mobile phone to have GMT zone</string>
     <string name="imageNotFound">The image could not be found</string>
     <string name="passwordShort">The password needs to be at least 4 letters long</string>
