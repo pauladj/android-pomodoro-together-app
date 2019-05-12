@@ -237,7 +237,6 @@ public class ConectarAlServidor extends Fragment {
                                 // se ha producido un error al descargar/guardar la imagen
                                 success = false;
                             }else{
-                                success = true;
 
                                 // guardar path de la imagen
                                 SharedPreferences prefs_especiales= getActivity().getSharedPreferences(
@@ -249,6 +248,13 @@ public class ConectarAlServidor extends Fragment {
                                 editor2.apply();
 
                                 // cambiar preferencia
+                                SharedPreferences prefs =
+                                        PreferenceManager.getDefaultSharedPreferences(getActivity());
+                                SharedPreferences.Editor editor3 = prefs.edit();
+                                editor3 = prefs.edit();
+                                editor3.putBoolean("withimage", true);
+                                editor3.apply();
+
                                 prefs_especiales = getActivity().getSharedPreferences(
                                         "preferencias_especiales",
                                         Context.MODE_PRIVATE);
@@ -256,6 +262,7 @@ public class ConectarAlServidor extends Fragment {
                                 editor2 = prefs_especiales.edit();
                                 editor2.putBoolean("withimage", true);
                                 editor2.apply();
+                                success = true;
                             }
 
                         }else{
@@ -267,6 +274,13 @@ public class ConectarAlServidor extends Fragment {
                             SharedPreferences.Editor editor2 = prefs_especiales.edit();
                             editor2.putBoolean("withimage", false);
                             editor2.apply();
+
+                            SharedPreferences prefs =
+                                    PreferenceManager.getDefaultSharedPreferences(getActivity());
+                            SharedPreferences.Editor editor3 = prefs.edit();
+                            editor3 = prefs.edit();
+                            editor3.putBoolean("withimage", false);
+                            editor3.apply();
 
                             success = true;
                         }

@@ -41,6 +41,7 @@ public class PrevioAActivo extends Common {
     private boolean internet; // si no hay internet
     private boolean alreadyActive; // this pomodoro is already active
     private boolean pomodoroDeleted; // si el pomodoro se ha borrado después de haber entrado aqui
+    private boolean gmt; // si el móvil está configurado con/sin gmt
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -55,6 +56,7 @@ public class PrevioAActivo extends Common {
         outState.putBoolean("internet", internet);
         outState.putBoolean("alreadyActive", alreadyActive);
         outState.putBoolean("pomodoroDeleted", pomodoroDeleted);
+        outState.putBoolean("gmt", gmt);
     }
 
     @Override
@@ -85,6 +87,7 @@ public class PrevioAActivo extends Common {
             internet = savedInstanceState.getBoolean("internet", false);
             alreadyActive = savedInstanceState.getBoolean("alreadyActive", false);
             pomodoroDeleted = savedInstanceState.getBoolean("pomodoroDeleted", false);
+            gmt = savedInstanceState.getBoolean("gmt", false);
         }
 
         // Definir los valores descansar/trabajar
@@ -116,24 +119,28 @@ public class PrevioAActivo extends Common {
                 }
                 internet = false;
                 alreadyActive = false;
+                gmt = true;
                 if (isNetworkAvailable()){
                     internet = true;
                     if ((boolean) mutableData.child(pomodoroKey).child("empezado").getValue()){
                         // si ya ha sido empezado justo antes
                         alreadyActive = true;
                         return Transaction.abort();
+                    }else if(!isGMT()){
+                        // el móvil no está configurado con gmt
+                        gmt = false;
+                        return Transaction.abort();
                     }
+
                     TimeZone timeZone = TimeZone.getTimeZone("GMT");
-                    Calendar calendar = Calendar.getInstance(timeZone);
-                    //Calendar calendar = Calendar.getInstance(Locale.US);
-                    //calendar.setTimeZone(TimeZone.getTimeZone("GMT"));
+                    Calendar calendar = Calendar.getInstance(timeZone, Locale.US);
                     calendar.add(Calendar.MINUTE, trabajar);
                     Date a = calendar.getTime();
                     workFin = a.toString();
                     mutableData.child(pomodoroKey).child("horaWorkFin").setValue(workFin);
 
-                    calendar = Calendar.getInstance(Locale.US);
-                    calendar.setTimeZone(TimeZone.getTimeZone("GMT"));
+                    timeZone = TimeZone.getTimeZone("GMT");
+                    calendar = Calendar.getInstance(timeZone, Locale.US);
                     calendar.setTime(a);
                     calendar.add(Calendar.MINUTE, descansar);
                     relaxFin = calendar.getTime().toString();
@@ -159,8 +166,11 @@ public class PrevioAActivo extends Common {
                     // Si no hay internet
                     showToast(true, R.string.internetNeeded);
                     return;
-                }else if(alreadyActive){
+                }else if(alreadyActive) {
                     showToast(true, R.string.pomodoroAlreadyActive);
+                    return;
+                }else if(!gmt){
+                    showToast(true, R.string.gmtneeded);
                     return;
                 }else if (databaseError != null) {
                     showToast(false, R.string.error);

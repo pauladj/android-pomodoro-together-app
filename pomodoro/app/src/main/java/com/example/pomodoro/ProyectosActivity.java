@@ -83,13 +83,17 @@ public class ProyectosActivity extends MainToolbar implements NuevoProyecto.List
                         }
 
                         // fecha ahora
-                        Calendar calendar = Calendar.getInstance(Locale.US);
-                        calendar.setTimeZone(TimeZone.getTimeZone("GMT"));
+                        TimeZone timeZone = TimeZone.getTimeZone("GMT");
+                        Calendar calendar = Calendar.getInstance(timeZone, Locale.US);
                         long milisecondsNow = calendar.getTimeInMillis();
 
                         Date fin = stringToDate(pomodoro.getHoraDescansoFin());
-                        calendar = Calendar.getInstance(Locale.US);
-                        calendar.setTimeZone(TimeZone.getTimeZone("GMT"));
+                        if (fin == null){
+                            // fallo en la conversión de la fecha
+                            continue;
+                        }
+                        timeZone = TimeZone.getTimeZone("GMT");
+                        calendar = Calendar.getInstance(timeZone, Locale.US);
                         calendar.setTime(fin);
                         long milisecondsFin = calendar.getTimeInMillis();
 

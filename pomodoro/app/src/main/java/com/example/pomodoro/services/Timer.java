@@ -122,15 +122,39 @@ public class Timer extends Service {
             Date horaTrabajoFin = stringToDate(extras.getString("horaTrabajoFin"));
             Date horaDescansoFin = stringToDate(extras.getString("horaDescansoFin"));
 
-            Calendar calendar = Calendar.getInstance(Locale.US);
-            calendar.setTimeZone(TimeZone.getTimeZone("GMT"));
+            if (horaTrabajoFin == null || horaDescansoFin == null){
+                // fallo en la conversión de la fecha
+                int tiempo = Toast.LENGTH_SHORT;
+                Context context = getApplicationContext();
+                Toast aviso = Toast.makeText(context, getResources().getString(R.string.error),
+                        tiempo);
+                aviso.setGravity(Gravity.BOTTOM | Gravity.CENTER, 0, 100);
+                aviso.show();
+
+                // borrar datos del pomodoro iniciado
+                SharedPreferences prefs_especiales = getSharedPreferences(
+                        "preferencias_especiales",
+                        Context.MODE_PRIVATE);
+
+                SharedPreferences.Editor editor2 = prefs_especiales.edit();
+                editor2.putString("pomodoroKey", null);
+                editor2.apply();
+
+                // Parar el pomodoro activo si tiene
+                borrarNotificacion();
+                stopSelf();
+                return START_NOT_STICKY;
+            }
+
+            TimeZone timeZone = TimeZone.getTimeZone("GMT");
+            Calendar calendar = Calendar.getInstance(timeZone, Locale.US);
             long milisecondsNow = calendar.getTimeInMillis();
 
             calendar.setTime(horaTrabajoFin);
             milisecondsTrabajoFin = calendar.getTimeInMillis();
 
-            calendar = Calendar.getInstance(Locale.US);
-            calendar.setTimeZone(TimeZone.getTimeZone("GMT"));
+            timeZone = TimeZone.getTimeZone("GMT");
+            calendar = Calendar.getInstance(timeZone, Locale.US);
             calendar.setTime(horaDescansoFin);
             long milisecondsDescanso = calendar.getTimeInMillis();
 
@@ -372,9 +396,7 @@ public class Timer extends Service {
      */
     private Date stringToDate(String time) {
         try {
-            // TODO recoger este null
-            Calendar cal = Calendar.getInstance();
-            cal.setTimeZone(TimeZone.getTimeZone("GMT"));
+            Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"), Locale.US);
             SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", Locale.US);
             cal.setTime(sdf.parse(time));// all done
             return cal.getTime();

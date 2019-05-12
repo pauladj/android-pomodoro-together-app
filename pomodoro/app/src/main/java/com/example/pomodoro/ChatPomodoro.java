@@ -168,14 +168,16 @@ public class ChatPomodoro extends MainToolbar {
             // si el mensaje está vacío mostrar toast y no enviar
             showToast(false, R.string.messageEmpty);
             return;
+        }else if(!isGMT()){
+            showToast(false, R.string.gmtneeded);
+            return;
         }
         // el mensaje no está vacío, enviar
         Chat mensajeNuevo = new Chat();
         mensajeNuevo.setText(noteMessage);
         mensajeNuevo.setUsuario(getActiveUsername());
 
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeZone(TimeZone.getTimeZone("GMT"));
+        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT"), Locale.US);
         SimpleDateFormat format1 = new SimpleDateFormat("HH:mm:ss");
         String formatted = format1.format(calendar.getTime());
         mensajeNuevo.setTimestamp(formatted);

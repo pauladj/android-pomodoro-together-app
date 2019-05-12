@@ -88,4 +88,6 @@
     <string name="photo">Foto de la cámara</string>
     <string name="gallery">Foto de la galería</string>
     <string name="imgbackground"> Con imagen de fondo en el pomodoro</string>
+    <string name="gmtneeded">Se necesita que tu móvil se encuentre configurado con una zona horaria GMT</string>
+
 </resources>

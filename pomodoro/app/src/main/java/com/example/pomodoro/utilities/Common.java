@@ -113,7 +113,6 @@ public class Common extends LanguageActivity implements ConectarAlServidor.TaskC
                 // El usuario quiere salir de su cuenta
                 setActiveUsername(null);
 
-                // TODO Probar que esto funcione
                 // Parar el pomodoro activo si tiene
                 if (servicioEnMarcha(Timer.class)){
                     // parar el servicio pomodoro
@@ -124,7 +123,6 @@ public class Common extends LanguageActivity implements ConectarAlServidor.TaskC
 
                 setStringPreference("pomodoroKey", null);
                 setBooleanPreference("individual", false);
-                setStringPreference("imagepath", null);
                 return false;
             }
         }
@@ -349,8 +347,7 @@ public class Common extends LanguageActivity implements ConectarAlServidor.TaskC
      */
     public Date stringToDate(String time) {
         try {
-            // TODO recoger este null
-            Calendar cal = Calendar.getInstance();
+            Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"), Locale.US);
             SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", Locale.US);
             cal.setTime(sdf.parse(time));// all done
             return cal.getTime();
@@ -364,5 +361,21 @@ public class Common extends LanguageActivity implements ConectarAlServidor.TaskC
         super.onDestroy();
         // Unregister the broadcast
         LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
+    }
+
+    /**
+     * Comprobar si la fecha se obtiene en formato GMT
+     * @return - true or false
+     */
+    public boolean isGMT(){
+        TimeZone timeZone = TimeZone.getTimeZone("GMT");
+        Calendar calendar = Calendar.getInstance(timeZone, Locale.US);
+        Date a = calendar.getTime();
+        String fecha = a.toString();
+        if (fecha.contains("GMT")){
+            return true;
+        }else{
+            return false;
+        }
     }
 }
