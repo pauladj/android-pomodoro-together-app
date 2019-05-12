@@ -20,7 +20,9 @@
     <string name="error">Se ha producido un error</string>
     <string name="pomodoroNotActive">El pomodoro no está activo</string>
     <string name="work">Trabajar</string>
+    <string name="work2">Trabajo</string>
     <string name="descansar">Descansar</string>
+    <string name="descansar2">Descanso</string>
     <string name="leaveProject">Abandonar proyecto</string>
     <string name="projectAbandoned">El proyecto se ha abandonado</string>
     <string name="confirmarAbandono">Abandonar proyecto</string>

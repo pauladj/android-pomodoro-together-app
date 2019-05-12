@@ -21,6 +21,8 @@
     <string name="pomodoroNotActive">The pomodoro is not active</string>
     <string name="work">Work</string>
     <string name="descansar">Relax</string>
+    <string name="work2">Work</string>
+    <string name="descansar2">Relax</string>
     <string name="leaveProject">Leave project</string>
     <string name="confirmarAbandono">Leave project</string>
     <string name="projectAbandoned">The project has been left</string>

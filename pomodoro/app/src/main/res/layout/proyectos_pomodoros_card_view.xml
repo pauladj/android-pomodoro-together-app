@@ -22,22 +22,22 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:weightSum="10"
+            android:weightSum="12"
             android:orientation="horizontal">
 
             <RelativeLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_gravity="center">
+                android:layout_gravity="center"
+                android:layout_weight="1">
 
                 <ImageButton
                     android:id="@+id/buttonDeletePomodoro"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="#00ffffff"
-                    android:layout_centerVertical="true"
                     android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:background="#00ffffff"
                     android:src="@drawable/ic_outline_remove" />
 
             </RelativeLayout>
@@ -45,9 +45,10 @@
             <RelativeLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="3"
                 android:layout_gravity="start"
-                android:padding="20dp">
+                android:layout_weight="3"
+                android:paddingTop="20dp"
+                android:paddingBottom="20dp">
 
 
                 <TextView
@@ -55,55 +56,58 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
-                    />
+                    android:textSize="12sp" />
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/minutosTrabajo"
                     android:layout_centerHorizontal="true"
-                    android:text="@string/work"
-                    />
+                    android:text="@string/work2"
+                    android:textSize="12sp" />
             </RelativeLayout>
 
             <RelativeLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="3"
-                android:padding="20dp">
+                android:layout_weight="4"
+                android:paddingTop="20dp"
+                android:paddingBottom="20dp">
 
                 <TextView
                     android:id="@+id/minutosDescanso"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
-                    />
+                    android:textSize="12sp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/minutosDescanso"
                     android:layout_centerHorizontal="true"
-                    android:text="@string/descansar"
-                    />
+                    android:text="@string/descansar2"
+                    android:textSize="12sp" />
             </RelativeLayout>
 
             <RelativeLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_gravity="end"
-                android:layout_weight="3"
-                android:padding="20dp">
+                android:layout_weight="4"
+                android:paddingTop="20dp"
+                android:paddingEnd="20dp"
+                android:paddingBottom="20dp">
 
                 <TextView
                     android:id="@+id/estado"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
-                    android:theme="@style/EmitiendoText"
-                    android:textAppearance="@style/EmitiendoText"
                     android:layout_centerVertical="true"
-                    android:textSize="13sp"
-                    />
+                    android:textAppearance="@style/EmitiendoText"
+                    android:textSize="12sp"
+                    android:theme="@style/EmitiendoText" />
             </RelativeLayout>
 
         </LinearLayout>

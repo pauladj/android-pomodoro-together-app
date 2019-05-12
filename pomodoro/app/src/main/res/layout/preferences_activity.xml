@@ -10,13 +10,14 @@
         layout="@layout/main_toolbar"/>
 
     <fragment
-        android:name="com.example.pomodoro.fragments.PreferencesFragment"
         android:id="@+id/preferencesFragment"
+        android:name="com.example.pomodoro.fragments.PreferencesFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="?attr/actionBarSize"
-        android:layout_marginStart="0dp"
-        android:layout_marginEnd="0dp"/>
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView"
+        app:layout_constraintEnd_toStartOf="@id/bottomNavigationView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/labarra" />
 
     <android.support.design.widget.BottomNavigationView
         android:id="@+id/bottomNavigationView"
