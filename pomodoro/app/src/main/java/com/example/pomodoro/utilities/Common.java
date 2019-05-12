@@ -242,6 +242,7 @@ public class Common extends LanguageActivity implements ConectarAlServidor.TaskC
                 if (item.getItemId() == R.id.projects && !item.isChecked()) {
                     // ver todos los proyectos
                     Intent i = new Intent(Common.this, ProyectosActivity.class);
+                    i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(i);
                     finish();
                     return true;

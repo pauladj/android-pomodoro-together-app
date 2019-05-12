@@ -175,7 +175,7 @@ public class PreferencesActivity extends MainToolbar {
                 showToast(false, R.string.error);
             }
 
-        } 
+        }
 
         if (ok){
             String[] params = {uri, getActiveUsername()};
