@@ -93,4 +93,6 @@
     <string name="imgbackground"> With image background in pomodoro</string>
     <string name="gmtneeded">You need to configure the mobile phone to have GMT zone</string>
     <string name="imageNotFound">The image could not be found</string>
+    <string name="passwordShort">The password needs to be at least 4 letters long</string>
+    <string name="emailNotValid">The email is not valid</string>
 </resources>

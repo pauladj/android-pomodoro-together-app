@@ -26,7 +26,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements
 
     int CODIGO_GALERIA = 111;
     int CODIGO_FOTO =222;
-    boolean img = false;
+
     @Override
     public void onCreatePreferences(Bundle bundle, String s) {
         addPreferencesFromResource(R.xml.conf_preferencias);
@@ -69,28 +69,32 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements
             editor2.putBoolean(key, !withImage);
             editor2.apply();
 
-            img = true;
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            builder.setTitle(R.string.adimagen);
-            String[] opciones = {getResources().getString(R.string.gallery),getResources().getString(R.string.photo)};
-            builder.setItems(opciones, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    String text = "";
-                    if (which == 0) {  // en blanco
-                        Intent elIntentGal = new Intent(Intent.ACTION_PICK,
-                                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                        getActivity().startActivityForResult(elIntentGal, CODIGO_GALERIA);
-                    } else if (which == 1) {
-                        ((PreferencesActivity)getActivity()).tryTakingPhotoWithTheCamera();
+            boolean conImagen = !withImage;
+
+            if (conImagen){
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setTitle(R.string.adimagen);
+                String[] opciones = {getResources().getString(R.string.gallery),getResources().getString(R.string.photo)};
+                builder.setItems(opciones, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String text = "";
+                        if (which == 0) {  // en blanco
+                            Intent elIntentGal = new Intent(Intent.ACTION_PICK,
+                                    android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                            getActivity().startActivityForResult(elIntentGal, CODIGO_GALERIA);
+                        } else if (which == 1) {
+                            ((PreferencesActivity)getActivity()).tryTakingPhotoWithTheCamera();
+                        }
                     }
-                }
-            });
-            builder.show();
+                });
+                builder.show();
+            }
+
 
         }else if(key.equals("colors")){
             prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-            String color = prefs.getString("colors", "blanco");
+            String color = prefs.getString("colors", "white");
 
             SharedPreferences prefs_especiales = getActivity().getSharedPreferences(
                     "preferencias_especiales",

@@ -163,7 +163,7 @@ public class LoginRegistroActivity extends MainToolbar implements
      */
     @Override
     public void registrarse(String nombreusuario, String password, String email) {
-        if (!validadoresIniciarSesion(nombreusuario, password) || email.trim().isEmpty()) {
+        if (!validadoresIniciarSesion(nombreusuario, password) || email.trim().isEmpty() || !validEmail(email)) {
             return;
         }
 
@@ -195,8 +195,25 @@ public class LoginRegistroActivity extends MainToolbar implements
         if (username.trim().isEmpty() || password.trim().isEmpty()) {
             showToast(false, R.string.valuesEmptyError);
             return false;
+        }else if(password.length() < 4){
+            showToast(false, R.string.passwordShort);
+            return false;
         }
         return true;
+    }
+
+    /**
+     * Validar el email
+     * @param email
+     * @return
+     */
+    private boolean validEmail(String email){
+        if (email.contains("@")){
+            return true;
+        }else{
+            showToast(false, R.string.emailNotValid);
+            return false;
+        }
     }
 
 
