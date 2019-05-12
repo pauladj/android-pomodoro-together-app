@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorWhite"
     tools:context=".fragments.registro">
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -10,9 +11,9 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_margin="5dp"
         android:layout_gravity="center"
+        android:layout_margin="5dp"
+        android:orientation="vertical"
         tools:context=".fragments.registro">
 
 
@@ -20,26 +21,26 @@
             android:id="@+id/Nombre"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:autofillHints="@string/username"
             android:ems="10"
             android:hint="@string/username"
-            android:autofillHints="@string/username"
             android:inputType="textPersonName" />
 
         <EditText
             android:id="@+id/editemail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:autofillHints="@string/correo"
             android:ems="10"
             android:hint="@string/correo"
-            android:autofillHints="@string/correo"
             android:inputType="textEmailAddress" />
 
         <EditText
             android:id="@+id/editTpass"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:ems="10"
             android:autofillHints="@string/password"
+            android:ems="10"
             android:hint="@string/password"
             android:inputType="textPassword" />
 
@@ -47,10 +48,9 @@
             android:id="@+id/btnguardar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:text="@string/signup"
             android:textColor="@color/colorWhite"
-            app:backgroundTint="@color/colorPrimary"
-            android:text="@string/signup"/>
-
+            app:backgroundTint="@color/colorPrimary" />
 
 
     </LinearLayout>

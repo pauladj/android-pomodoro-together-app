@@ -3,6 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorWhite"
+    android:backgroundTint="@color/colorWhite"
     tools:context=".fragments.loginfragment">
 
 
@@ -11,34 +13,34 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_margin="5dp"
-        android:orientation="vertical"
-        >
+        android:backgroundTint="@color/colorWhite"
+        android:orientation="vertical">
+
         <EditText
             android:id="@+id/editUsername"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:autofillHints="@string/username"
             android:ems="10"
             android:hint="@string/username"
-            android:inputType="textPersonName"
-            android:autofillHints="@string/username" />
+            android:inputType="textPersonName" />
 
         <EditText
             android:id="@+id/textpassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:autofillHints="@string/password"
             android:ems="10"
             android:hint="@string/password"
-            android:autofillHints="@string/password"
             android:inputType="textPassword" />
 
         <Button
             android:id="@+id/loginbutton"
-            android:backgroundTint="@color/colorAccent"
-            android:textColor="@color/colorWhite"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:backgroundTint="@color/colorWhite"
             android:text="@string/login"
-             />
+            android:textColor="@color/colorAccent" />
 
     </LinearLayout>
 
