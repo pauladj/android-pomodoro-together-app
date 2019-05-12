@@ -9,7 +9,7 @@
     tools:context=".NewPomodoro">
 
     <include android:id="@+id/labarra"
-        layout="@layout/main_toolbar_transparent"/>
+        layout="@layout/main_toolbar_transparent_white"/>
 
 
     <FrameLayout
