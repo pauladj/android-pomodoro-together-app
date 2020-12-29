@@ -5,6 +5,7 @@
 <div align="center">
     <img src="https://img.shields.io/badge/Android-≥5.0-green?logo=android" />
     <img src="https://img.shields.io/badge/Java-v1.8-orange?logo=java" />
+    <img src="https://img.shields.io/badge/PHP-v7.x-blue?logo=php" />
 </div>
 
 
