@@ -7,7 +7,6 @@
     <img src="https://img.shields.io/badge/Java-v1.8-orange?logo=java" />
 </div>
 
-[TOC]
 
 ### Descripción
 
