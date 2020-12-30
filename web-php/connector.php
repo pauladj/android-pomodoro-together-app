@@ -2,9 +2,9 @@
 
 
 define("DB_SERVER", "localhost"); #la dirección del servidor
-define("DB_USER", "Xebracamonte001"); #el usuario para esa base de datos
-define("DB_PASS", "wzG6bRdRg"); #la clave para ese usuario
-define("DB_DATABASE", "Xebracamonte001_pomodoro"); #la base de datos a la que hay que conectarse
+define("DB_USER", "xxxxx"); #el usuario para esa base de datos
+define("DB_PASS", "xxxxxx"); #la clave para ese usuario
+define("DB_DATABASE", "xxxxxx"); #la base de datos a la que hay que conectarse
 
 
 function connect(){
