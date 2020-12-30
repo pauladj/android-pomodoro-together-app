@@ -31,7 +31,7 @@ Para ello, añadimos los proyectos, que son agrupaciones de pomodoros en los que
 - Aplicación **multi idioma** a elección del usuario.
 
 ### Capturas de pantalla
-<div align="center"><img src="img\main-screen.jpg"  width="250" /><img src="img\pomodoro.jpg" width="250"/></div>
+<div align="center"><img src="img\main-screen.jpg"  width="250" />&nbsp;&nbsp;&nbsp;&nbsp;<img src="img\pomodoro.jpg" width="250"/></div>
 
 ### Índice de funcionalidades
 
