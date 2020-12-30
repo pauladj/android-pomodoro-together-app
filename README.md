@@ -15,9 +15,9 @@ La técnica del Pomodoro consiste en dividir el tiempo en periodos de 25 minutos
 
 Para ello, añadimos los proyectos, que son agrupaciones de pomodoros en los que se permite a los miembros hacer un pomodoro al mismo tiempo, con posibilidad de *chat* en los periodos de descanso.
 
-[Documentación pdf](https://github.com/pauladj/pomodoro-together-app/blob/images/Documentaci%C3%B3n.pdf)
+[Documentación pdf](https://github.com/pauladj/android-pomodoro-together-app/blob/images/Documentaci%C3%B3n.pdf)
 
-[Presentación pdf](https://github.com/pauladj/pomodoro-together-app/blob/images/Presentaci%C3%B3n.pdf)
+[Presentación pdf](https://github.com/pauladj/android-pomodoro-together-app/blob/images/Presentaci%C3%B3n.pdf)
 
 ### Herramientas y conceptos utilizados
 
