@@ -11,7 +11,7 @@
 
 ### Descripción
 
-La técnica del Pomodoro consiste en dividir el tiempo en periodos de 25 minutos de trabajo o enfoque hacia alguna tarea, separados por pausas dedicadas al descanso. Mediante **esta aplicación** conseguimos que un método solitario como puede parecer el anterior, se pueda hacer de forma **grupal**.
+La técnica del Pomodoro consiste en dividir el tiempo en periodos de 25 minutos de trabajo o enfoque hacia alguna tarea, separados por pausas dedicadas al descanso. Mediante esta aplicación conseguimos que un método solitario como puede parecer el anterior, se pueda hacer de forma grupal.
 
 Para ello, añadimos los proyectos, que son agrupaciones de pomodoros en los que se permite a los miembros hacer un pomodoro al mismo tiempo, con posibilidad de *chat* en los periodos de descanso.
 
